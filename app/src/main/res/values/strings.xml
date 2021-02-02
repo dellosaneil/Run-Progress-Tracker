@@ -12,4 +12,11 @@
     <string name="workout_setGoal">Set Goal</string>
 
 
+<!--    Notifications-->
+    <string name="notification_group">Run Tracker Application</string>
+    <string name="notification_title">Run Tracker Application</string>
+    <string name="notification_content">00:00:00</string>
+
+
+
 </resources>

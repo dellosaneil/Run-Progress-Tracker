@@ -1,4 +1,4 @@
-package com.example.exercisetracker.bottomNavFragments.workout
+package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -22,9 +22,7 @@ class WorkoutOngoing : Fragment() {
 
     private var _binding: FragmentWorkoutOngoingBinding? = null
     private val binding get() = _binding!!
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
+
 
 
     override fun onCreateView(
@@ -32,19 +30,14 @@ class WorkoutOngoing : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         requestLocationPermission()
-        buildLocationRequest()
-        buildLocationCallback()
+        
 
-        updateLocation()
+
         return binding.root
     }
 
-    @SuppressLint("MissingPermission")
-    private fun updateLocation(){
-        fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null)
-    }
+
 
 
 
@@ -53,27 +46,6 @@ class WorkoutOngoing : Fragment() {
         _binding = null
     }
 
-    private fun buildLocationRequest() {
-        locationRequest = LocationRequest()
-        locationRequest.apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 500
-            fastestInterval = 250
-            smallestDisplacement = 1f
-        }
-    }
-
-    private fun buildLocationCallback() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    Log.i(TAG, "onLocationResult: ${location.latitude}")
-                    Log.i(TAG, "onLocationResult: ${location.longitude}")
-                }
-            }
-        }
-
-    }
 
 
     override fun onRequestPermissionsResult(

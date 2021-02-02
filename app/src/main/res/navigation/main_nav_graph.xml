@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/workoutOngoing"
-        android:name="com.example.exercisetracker.bottomNavFragments.workout.WorkoutOngoing"
+        android:name="com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOngoing"
         android:label="fragment_workout_ongoing"
         tools:layout="@layout/fragment_workout_ongoing" />
 </navigation>
