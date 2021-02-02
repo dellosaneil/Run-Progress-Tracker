@@ -1,17 +1,13 @@
 package com.example.exercisetracker.utility
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.ActivityMainBinding
-import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +34,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }

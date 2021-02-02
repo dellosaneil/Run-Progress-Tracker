@@ -15,9 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_CONTENT
+import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_TITLE
 import com.example.exercisetracker.utility.Constants.Companion.ONGOING_NOTIFICATION_ID
 import com.google.android.gms.location.*
+import com.example.exercisetracker.R
 
 
 class WorkoutOnGoingService : Service() {
@@ -48,12 +50,13 @@ class WorkoutOnGoingService : Service() {
         val notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
             .setAutoCancel(false)
             .setOngoing(true)
-            .setContentTitle(NOTIFICATION_TITLE)
-            .setContentText(NOTIFICATION_CONTENT)
+            .setContentTitle(getString(R.string.notification_title))
+            .setSmallIcon(R.drawable.ic_run_24)
+            .setContentText(getString(R.string.notification_content))
             .setContentIntent(createPendingIntent())
             .build()
 
-        startForeground(1, notification)
+        startForeground(NOTIFICATION_ID, notification)
 
     }
 

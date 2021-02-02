@@ -1,22 +1,21 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
-import com.google.android.gms.location.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
-class WorkoutOngoing : Fragment() {
+class WorkoutOngoing : Fragment(), View.OnClickListener {
 
     private val TAG = "WorkoutOngoing"
 
@@ -31,21 +30,24 @@ class WorkoutOngoing : Fragment() {
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
         requestLocationPermission()
-        
+        setOnClickListeners()
 
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also{
+            requireActivity().startService(it)
+        }
 
         return binding.root
     }
 
-
-
-
+    private fun setOnClickListeners() {
+        binding.workoutOngoingStartOrPause.setOnClickListener(this)
+        binding.workoutOnGoingStop.setOnClickListener(this)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 
 
     override fun onRequestPermissionsResult(
@@ -69,6 +71,19 @@ class WorkoutOngoing : Fragment() {
             if (!EasyPermissions.hasPermissions(requireContext(), backgroundLocation)) {
                 EasyPermissions.requestPermissions(this, "TEST", LOCATION_CODE, backgroundLocation)
             }
+        }
+    }
+
+    private fun startRun(){
+        
+
+
+    }
+
+
+    override fun onClick(v: View?) {
+        when(v!!.id){
+            R.id.workoutOngoing_startOrPause -> startRun()
         }
     }
 }
