@@ -9,6 +9,7 @@
 
 <!--    Workout-->
     <string name="workout_startWorkout">Start Workout</string>
+    <string name="workout_setGoal">Set Goal</string>
 
 
 </resources>
