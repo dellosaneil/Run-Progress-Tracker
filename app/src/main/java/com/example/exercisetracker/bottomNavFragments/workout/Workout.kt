@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.serviceRunning
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.databinding.FragmentWorkoutBinding
 import com.example.exercisetracker.utility.FragmentLifecycleLog
@@ -27,8 +28,13 @@ class Workout : FragmentLifecycleLog() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.workoutButton.setOnClickListener {
-            Navigation.findNavController(view)
-                .navigate(R.id.workout_workoutGoal)
+            if(serviceRunning){
+                Navigation.findNavController(it).navigate(R.id.workout_workoutOnGoing)
+            }else{
+                Navigation.findNavController(it)
+                    .navigate(R.id.workout_workoutGoal)
+            }
+
         }
     }
 

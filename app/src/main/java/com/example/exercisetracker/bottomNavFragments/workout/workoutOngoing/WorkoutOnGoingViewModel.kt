@@ -1,15 +1,12 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 
-
 class WorkoutOnGoingViewModel : ViewModel() {
 
-    private val TAG = "WorkoutOnGoingViewModel"
 
     private var _isRunning = MutableLiveData(false)
     private var _firstStart = MutableLiveData(false)

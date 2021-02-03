@@ -29,6 +29,13 @@ import com.google.android.gms.location.*
 
 class WorkoutOnGoingService : Service() {
 
+    companion object{
+        var serviceRunning = false
+        var currentState : String? = null
+
+    }
+
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
@@ -55,18 +62,24 @@ class WorkoutOnGoingService : Service() {
 
     private fun stopRunningForeground() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        currentState = STOP
+        serviceRunning = false
         stopSelf()
     }
 
     private fun pauseRunningForeground(){
+        currentState = PAUSE
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun resumeRunningForeground(){
+        currentState = RESUME
         updateLocation()
     }
 
     private fun startRunningForeground() {
+        currentState = START
+        serviceRunning = true
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

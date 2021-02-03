@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
@@ -39,18 +40,31 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
 
-        val args = arguments?.getInt("Test")
-        if (args != null) {
-            binding.workoutOngoingStartOrPause.text = "PAUSE"
-            binding.workoutOnGoingStop.visibility = View.VISIBLE
-            workoutOnGoingViewModel.startRun()
-            workoutOnGoingViewModel.changeState()
-        }
-
+        handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
         return binding.root
     }
+
+    private fun handleNotificationContinue(){
+        currentState?.let{
+            workoutOnGoingViewModel.startRun()
+            binding.workoutOnGoingStop.visibility = View.VISIBLE
+            when (it) {
+                START -> {
+                    workoutOnGoingViewModel.changeState()
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                }
+                PAUSE -> {
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_resumeRun)
+                }
+                else -> {
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                }
+            }
+        }
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

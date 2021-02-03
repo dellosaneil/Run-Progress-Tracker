@@ -19,6 +19,9 @@
         <action
             android:id="@+id/workout_workoutGoal"
             app:destination="@id/workoutGoal" />
+        <action
+            android:id="@+id/workout_workoutOnGoing"
+            app:destination="@id/workoutOngoing" />
     </fragment>
     <fragment
         android:id="@+id/statistics"
