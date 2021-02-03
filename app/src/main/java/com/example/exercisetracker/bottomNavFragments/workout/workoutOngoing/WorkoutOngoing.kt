@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
 
+    private val TAG = "WorkoutOngoing"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,9 +38,9 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
         requestLocationPermission()
         setOnClickListeners()
-
         return binding.root
     }
+
 
     private fun setOnClickListeners() {
         binding.workoutOngoingStartOrPause.setOnClickListener(this)
@@ -49,7 +51,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         super.onDestroyView()
         _binding = null
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -82,11 +83,13 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
                 Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                     service.action = RESUME
                     requireActivity().startService(service)
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
                 }
             } else {
                 Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                     service.action = PAUSE
                     requireActivity().startService(service)
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_resumeRun)
                 }
             }
         }
@@ -108,6 +111,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             R.id.workoutOngoing_startOrPause -> {
                 if (workoutOnGoingViewModel.firstStart().value == false) {
                     startWorkout()
+                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
                 } else {
                     resumeOrPauseWorkout()
                 }

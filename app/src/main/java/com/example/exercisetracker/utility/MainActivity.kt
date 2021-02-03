@@ -14,7 +14,6 @@ import com.example.exercisetracker.databinding.ActivityMainBinding
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 
 
-private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,12 +30,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpNavController() {
         binding.bottomNavigationView.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener{_, destination,_ ->
-            run {
-                when(destination.id){
-                    R.id.history, R.id.workout, R.id.statistics -> binding.bottomNavigationView.visibility = View.VISIBLE
-                    else -> binding.bottomNavigationView.visibility = View.GONE
-                }
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.history, R.id.workout, R.id.statistics -> binding.bottomNavigationView.visibility =
+                    View.VISIBLE
+                else -> binding.bottomNavigationView.visibility = View.GONE
             }
         }
     }
@@ -46,14 +44,11 @@ class MainActivity : AppCompatActivity() {
         navigateToWorkoutOngoing(intent)
     }
 
-
-    private fun navigateToWorkoutOngoing(intent: Intent?){
+    private fun navigateToWorkoutOngoing(intent: Intent?) {
         navController = findNavController(R.id.nav_host_fragment_container)
-        if(intent?.action == ACTION_NOTIFICATION_SERVICE){
+        if (intent?.action == ACTION_NOTIFICATION_SERVICE) {
             navController.navigate(R.id.action_global_workout_service)
         }
-
-
     }
 
 }

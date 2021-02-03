@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -33,6 +34,9 @@ class WorkoutOnGoingService : Service() {
     private lateinit var locationCallback: LocationCallback
 
 
+    private val testList = mutableListOf<Location>()
+
+
     private val TAG = "WorkoutOnGoingService"
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -40,15 +44,19 @@ class WorkoutOnGoingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action){
+        when (intent?.action) {
             START -> startRunningForeground()
-            RESUME -> startRunningForeground()
-            PAUSE -> startRunningForeground()
+            RESUME -> updateLocation()
+            PAUSE -> pauseRunningForeground()
             STOP -> startRunningForeground()
         }
-
         return START_STICKY
     }
+    private fun pauseRunningForeground(){
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+
 
     private fun startRunningForeground() {
         val notificationManager =
@@ -91,6 +99,8 @@ class WorkoutOnGoingService : Service() {
         buildLocationCallback()
     }
 
+
+
     @SuppressLint("MissingPermission")
     private fun updateLocation() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
@@ -115,12 +125,11 @@ class WorkoutOnGoingService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    Log.i(TAG, "onLocationResult: ${location.latitude}")
-                    Log.i(TAG, "onLocationResult: ${location.longitude}")
+                    testList.add(location)
+                    Log.i(TAG, "onLocationResult: ${testList.size}")
                 }
             }
         }
     }
-
 
 }

@@ -12,6 +12,7 @@
     <string name="workout_setGoal">Set Goal</string>
     <string name="workout_startRun">Start Workout</string>
     <string name="workout_pauseRun">Pause Workout</string>
+    <string name="workout_resumeRun">Resume Workout</string>
     <string name="workout_stopRun">Stop Workout</string>
 
 
