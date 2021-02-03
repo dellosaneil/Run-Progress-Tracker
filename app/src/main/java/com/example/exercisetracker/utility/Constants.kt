@@ -12,6 +12,9 @@ class Constants {
         const val RESUME = "resume"
         const val STOP = "stop"
         const val ACTION_NOTIFICATION_SERVICE = "notification_service"
+
+        const val DATABASE_NAME = "workout_db"
+
     }
 
 }

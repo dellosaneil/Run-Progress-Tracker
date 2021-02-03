@@ -35,7 +35,6 @@ class WorkoutOnGoingService : Service() {
 
     }
 
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
