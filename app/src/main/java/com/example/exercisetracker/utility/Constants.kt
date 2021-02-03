@@ -7,8 +7,10 @@ class Constants {
         const val CHANNEL_ID = "foreground_channel"
         const val NOTIFICATION_ID = 1
 
-        const val NOTIFICATION_TITLE = "Running Application Tracker"
-        const val NOTIFICATION_CONTENT = "00:00:00"
+        const val START = "start"
+        const val PAUSE = "pause"
+        const val RESUME = "resume"
+        const val STOP = "stop"
     }
 
 }

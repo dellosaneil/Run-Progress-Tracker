@@ -8,20 +8,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
+import com.example.exercisetracker.utility.Constants.Companion.PAUSE
+import com.example.exercisetracker.utility.Constants.Companion.RESUME
+import com.example.exercisetracker.utility.Constants.Companion.START
+import com.example.exercisetracker.utility.Constants.Companion.STOP
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
 class WorkoutOngoing : Fragment(), View.OnClickListener {
 
-    private val TAG = "WorkoutOngoing"
 
     private var _binding: FragmentWorkoutOngoingBinding? = null
     private val binding get() = _binding!!
-
+    private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -31,10 +35,6 @@ class WorkoutOngoing : Fragment(), View.OnClickListener {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
         requestLocationPermission()
         setOnClickListeners()
-
-        Intent(requireActivity(), WorkoutOnGoingService::class.java).also{
-            requireActivity().startService(it)
-        }
 
         return binding.root
     }
@@ -74,16 +74,50 @@ class WorkoutOngoing : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun startRun(){
-        
+    private fun resumeOrPauseWorkout() {
+        workoutOnGoingViewModel.changeState()
+        workoutOnGoingViewModel.isRunning().observe(viewLifecycleOwner) {
+            if (it) {
+                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                    service.action = RESUME
+                    requireActivity().startService(service)
+                }
+            } else {
+                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                    service.action = PAUSE
+                    requireActivity().startService(service)
+                }
+            }
+        }
+    }
 
-
+    private fun startWorkout() {
+        workoutOnGoingViewModel.startRun()
+        workoutOnGoingViewModel.changeState()
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+            service.action = START
+            requireActivity().startService(service)
+        }
     }
 
 
     override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.workoutOngoing_startOrPause -> startRun()
+        when (v!!.id) {
+            R.id.workoutOngoing_startOrPause -> {
+                if (workoutOnGoingViewModel.firstStart().value == false) {
+                    startWorkout()
+                } else {
+                    resumeOrPauseWorkout()
+                }
+            }
+            R.id.workoutOnGoing_stop -> stopRun()
+        }
+    }
+
+    private fun stopRun() {
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+            service.action = STOP
+            requireActivity().stopService(service)
         }
     }
 }
