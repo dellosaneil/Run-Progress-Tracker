@@ -8,8 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
@@ -36,9 +38,30 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
+
+        val args = arguments?.getInt("Test")
+        if (args != null) {
+            binding.workoutOngoingStartOrPause.text = "PAUSE"
+            binding.workoutOnGoingStop.visibility = View.VISIBLE
+            workoutOnGoingViewModel.startRun()
+            workoutOnGoingViewModel.changeState()
+        }
+
         requestLocationPermission()
         setOnClickListeners()
         return binding.root
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                isEnabled = false
+                Navigation.findNavController(binding.root).navigate(R.id.workoutOnGoing_workout)
+
+            }
+        })
     }
 
 
@@ -83,13 +106,15 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
                 Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                     service.action = RESUME
                     requireActivity().startService(service)
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_pauseRun)
                 }
             } else {
                 Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                     service.action = PAUSE
                     requireActivity().startService(service)
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_resumeRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_resumeRun)
                 }
             }
         }
@@ -111,7 +136,8 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             R.id.workoutOngoing_startOrPause -> {
                 if (workoutOnGoingViewModel.firstStart().value == false) {
                     startWorkout()
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_pauseRun)
                 } else {
                     resumeOrPauseWorkout()
                 }
@@ -123,7 +149,10 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private fun stopRun() {
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = STOP
-            requireActivity().stopService(service)
+            requireActivity().startService(service)
         }
+        workoutOnGoingViewModel.runStopped()
+        binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_startWorkout)
+        binding.workoutOnGoingStop.visibility = View.GONE
     }
 }

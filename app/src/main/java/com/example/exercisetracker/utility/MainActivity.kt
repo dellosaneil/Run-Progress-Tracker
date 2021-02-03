@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -47,7 +48,8 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToWorkoutOngoing(intent: Intent?) {
         navController = findNavController(R.id.nav_host_fragment_container)
         if (intent?.action == ACTION_NOTIFICATION_SERVICE) {
-            navController.navigate(R.id.action_global_workout_service)
+            val bundle = bundleOf("Test" to 1)
+            navController.navigate(R.id.action_global_workout_service, bundle)
         }
     }
 

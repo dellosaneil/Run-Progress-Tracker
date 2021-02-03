@@ -46,17 +46,25 @@ class WorkoutOnGoingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             START -> startRunningForeground()
-            RESUME -> updateLocation()
+            RESUME -> resumeRunningForeground()
             PAUSE -> pauseRunningForeground()
-            STOP -> startRunningForeground()
+            STOP -> stopRunningForeground()
         }
         return START_STICKY
     }
+
+    private fun stopRunningForeground() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        stopSelf()
+    }
+
     private fun pauseRunningForeground(){
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-
+    private fun resumeRunningForeground(){
+        updateLocation()
+    }
 
     private fun startRunningForeground() {
         val notificationManager =

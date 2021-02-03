@@ -26,4 +26,9 @@ class WorkoutOnGoingViewModel : ViewModel() {
         _firstStart.value = true
     }
 
+    fun runStopped() {
+        _firstStart.value = false
+    }
+
+
 }

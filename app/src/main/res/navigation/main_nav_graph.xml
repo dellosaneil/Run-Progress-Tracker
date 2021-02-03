@@ -5,16 +5,17 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/workout">
 
-    <action android:id="@+id/action_global_workout_service"
+    <action
+        android:id="@+id/action_global_workout_service"
         app:destination="@+id/workoutOngoing"
-        app:launchSingleTop="true"/>
+        app:launchSingleTop="true" />
 
 
     <fragment
         android:id="@+id/workout"
         android:name="com.example.exercisetracker.bottomNavFragments.workout.Workout"
         android:label="fragment_workout"
-        tools:layout="@layout/fragment_workout" >
+        tools:layout="@layout/fragment_workout">
         <action
             android:id="@+id/workout_workoutGoal"
             app:destination="@id/workoutGoal" />
@@ -33,7 +34,7 @@
         android:id="@+id/workoutGoal"
         android:name="com.example.exercisetracker.bottomNavFragments.workout.WorkoutGoal"
         android:label="fragment_workout_goal"
-        tools:layout="@layout/fragment_workout_goal" >
+        tools:layout="@layout/fragment_workout_goal">
         <action
             android:id="@+id/workoutGoal_workoutOngoing"
             app:destination="@id/workoutOngoing" />
@@ -42,5 +43,11 @@
         android:id="@+id/workoutOngoing"
         android:name="com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOngoing"
         android:label="fragment_workout_ongoing"
-        tools:layout="@layout/fragment_workout_ongoing" />
+        tools:layout="@layout/fragment_workout_ongoing">
+        <action
+            android:id="@+id/workoutOnGoing_workout"
+            app:destination="@id/workout"
+            app:popUpTo="@id/workout"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>
