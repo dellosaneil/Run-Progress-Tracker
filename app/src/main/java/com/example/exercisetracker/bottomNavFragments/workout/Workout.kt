@@ -9,8 +9,9 @@ import androidx.navigation.Navigation
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.databinding.FragmentWorkoutBinding
+import com.example.exercisetracker.utility.FragmentLifecycleLog
 
-class Workout : Fragment() {
+class Workout : FragmentLifecycleLog() {
     private var _binding: FragmentWorkoutBinding? = null
     private val binding get() = _binding!!
 

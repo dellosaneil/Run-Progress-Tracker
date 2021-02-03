@@ -1,14 +1,20 @@
 package com.example.exercisetracker.utility
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.ActivityMainBinding
+import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        navController = findNavController(R.id.nav_host_fragment_container)
+        navigateToWorkoutOngoing(intent)
         setUpNavController()
     }
 
@@ -34,4 +40,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navigateToWorkoutOngoing(intent)
+    }
+
+
+    private fun navigateToWorkoutOngoing(intent: Intent?){
+        navController = findNavController(R.id.nav_host_fragment_container)
+        if(intent?.action == ACTION_NOTIFICATION_SERVICE){
+            navController.navigate(R.id.action_global_workout_service)
+        }
+
+
+    }
+
 }

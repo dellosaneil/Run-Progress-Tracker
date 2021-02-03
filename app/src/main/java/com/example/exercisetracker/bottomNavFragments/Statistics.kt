@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
+import com.example.exercisetracker.utility.FragmentLifecycleLog
 
-class Statistics : Fragment() {
+class Statistics : FragmentLifecycleLog() {
 
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!

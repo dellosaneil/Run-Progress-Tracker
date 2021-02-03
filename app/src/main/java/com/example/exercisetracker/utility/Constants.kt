@@ -11,6 +11,7 @@ class Constants {
         const val PAUSE = "pause"
         const val RESUME = "resume"
         const val STOP = "stop"
+        const val ACTION_NOTIFICATION_SERVICE = "notification_service"
     }
 
 }

@@ -16,11 +16,12 @@ import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
+import com.example.exercisetracker.utility.FragmentLifecycleLog
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
-class WorkoutOngoing : Fragment(), View.OnClickListener {
+class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
 
     private var _binding: FragmentWorkoutOngoingBinding? = null
@@ -98,6 +99,7 @@ class WorkoutOngoing : Fragment(), View.OnClickListener {
             service.action = START
             requireActivity().startService(service)
         }
+        binding.workoutOnGoingStop.visibility = View.VISIBLE
     }
 
 

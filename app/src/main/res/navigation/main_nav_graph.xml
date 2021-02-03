@@ -5,6 +5,11 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/workout">
 
+    <action android:id="@+id/action_global_workout_service"
+        app:destination="@+id/workoutOngoing"
+        app:launchSingleTop="true"/>
+
+
     <fragment
         android:id="@+id/workout"
         android:name="com.example.exercisetracker.bottomNavFragments.workout.Workout"

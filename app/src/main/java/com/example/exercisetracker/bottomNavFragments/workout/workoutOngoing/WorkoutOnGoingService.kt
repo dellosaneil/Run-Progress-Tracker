@@ -13,13 +13,17 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
-import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_CONTENT
-import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
-import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_TITLE
-import com.example.exercisetracker.utility.Constants.Companion.ONGOING_NOTIFICATION_ID
-import com.google.android.gms.location.*
 import com.example.exercisetracker.R
+import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
+import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
+import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
+import com.example.exercisetracker.utility.Constants.Companion.ONGOING_NOTIFICATION_ID
+import com.example.exercisetracker.utility.Constants.Companion.PAUSE
+import com.example.exercisetracker.utility.Constants.Companion.RESUME
+import com.example.exercisetracker.utility.Constants.Companion.START
+import com.example.exercisetracker.utility.Constants.Companion.STOP
+import com.example.exercisetracker.utility.MainActivity
+import com.google.android.gms.location.*
 
 
 class WorkoutOnGoingService : Service() {
@@ -36,8 +40,13 @@ class WorkoutOnGoingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        updateLocation()
-        startRunningForeground()
+        when(intent?.action){
+            START -> startRunningForeground()
+            RESUME -> startRunningForeground()
+            PAUSE -> startRunningForeground()
+            STOP -> startRunningForeground()
+        }
+
         return START_STICKY
     }
 
@@ -55,13 +64,15 @@ class WorkoutOnGoingService : Service() {
             .setContentText(getString(R.string.notification_content))
             .setContentIntent(createPendingIntent())
             .build()
-
+        updateLocation()
         startForeground(NOTIFICATION_ID, notification)
 
     }
 
     private fun createPendingIntent(): PendingIntent {
-        val notificationIntent = Intent(this, WorkoutOngoing::class.java)
+        val notificationIntent = Intent(this, MainActivity::class.java).also {
+            it.action = ACTION_NOTIFICATION_SERVICE
+        }
         return PendingIntent.getActivity(this, 0, notificationIntent, 0)
     }
 
@@ -97,7 +108,6 @@ class WorkoutOnGoingService : Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 500
             fastestInterval = 250
-            smallestDisplacement = 1f
         }
     }
 
