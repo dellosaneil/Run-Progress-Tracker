@@ -35,7 +35,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private var _binding: FragmentWorkoutOngoingBinding? = null
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
-    private val args : WorkoutOngoingArgs by navArgs()
+    private val args: WorkoutOngoingArgs? by navArgs()
 
     private val TAG = "WorkoutOngoing"
 
@@ -50,25 +50,27 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         return binding.root
     }
 
-    private fun handleNotificationContinue(){
-        currentState?.let{
+    private fun handleNotificationContinue() {
+        currentState?.let {
             workoutOnGoingViewModel.startRun()
             binding.workoutOnGoingStop.visibility = View.VISIBLE
             when (it) {
                 START -> {
                     workoutOnGoingViewModel.changeState()
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_pauseRun)
                 }
                 PAUSE -> {
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_resumeRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_resumeRun)
                 }
                 else -> {
-                    binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_pauseRun)
+                    binding.workoutOngoingStartOrPause.text =
+                        resources.getString(R.string.workout_pauseRun)
                 }
             }
         }
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,13 +109,23 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private fun requestLocationPermission() {
         val permissionLocation = Manifest.permission.ACCESS_FINE_LOCATION
         if (!EasyPermissions.hasPermissions(requireContext(), permissionLocation)) {
-            EasyPermissions.requestPermissions(this, resources.getString(R.string.permission_rationale), LOCATION_CODE, permissionLocation)
+            EasyPermissions.requestPermissions(
+                this,
+                resources.getString(R.string.permission_rationale),
+                LOCATION_CODE,
+                permissionLocation
+            )
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val backgroundLocation = Manifest.permission.ACCESS_BACKGROUND_LOCATION
             if (!EasyPermissions.hasPermissions(requireContext(), backgroundLocation)) {
-                EasyPermissions.requestPermissions(this, resources.getString(R.string.permission_rationale), LOCATION_CODE, backgroundLocation)
+                EasyPermissions.requestPermissions(
+                    this,
+                    resources.getString(R.string.permission_rationale),
+                    LOCATION_CODE,
+                    backgroundLocation
+                )
             }
         }
     }
@@ -142,23 +154,23 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_startWorkout)
         binding.workoutOnGoingStop.visibility = View.GONE
     }
+
     private fun resumeOrPauseWorkout() {
         workoutOnGoingViewModel.changeState()
-        workoutOnGoingViewModel.isRunning().observe(viewLifecycleOwner) {
-            if (it) {
-                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                    service.action = RESUME
-                    requireActivity().startService(service)
-                    binding.workoutOngoingStartOrPause.text =
-                        resources.getString(R.string.workout_pauseRun)
-                }
-            } else {
-                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                    service.action = PAUSE
-                    requireActivity().startService(service)
-                    binding.workoutOngoingStartOrPause.text =
-                        resources.getString(R.string.workout_resumeRun)
-                }
+        val isRunning = workoutOnGoingViewModel.isRunning().value
+        if (isRunning == true) {
+            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                service.action = RESUME
+                requireActivity().startService(service)
+                binding.workoutOngoingStartOrPause.text =
+                    resources.getString(R.string.workout_pauseRun)
+            }
+        } else {
+            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                service.action = PAUSE
+                requireActivity().startService(service)
+                binding.workoutOngoingStartOrPause.text =
+                    resources.getString(R.string.workout_resumeRun)
             }
         }
     }
@@ -168,6 +180,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.changeState()
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = START
+            service.putExtra(WORKOUT_GOAL_BUNDLE, args?.workoutgoal)
             requireActivity().startService(service)
         }
         binding.workoutOnGoingStop.visibility = View.VISIBLE

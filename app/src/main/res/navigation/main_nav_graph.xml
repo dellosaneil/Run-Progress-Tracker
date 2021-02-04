@@ -54,6 +54,8 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="workoutgoal"
-            app:argType="com.example.exercisetracker.data.WorkoutGoalData" />
+            app:argType="com.example.exercisetracker.data.WorkoutGoalData"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

@@ -15,6 +15,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.exercisetracker.R
+import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
@@ -23,6 +24,7 @@ import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
+import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 
@@ -32,6 +34,7 @@ class WorkoutOnGoingService : Service() {
     companion object{
         var serviceRunning = false
         var currentState : String? = null
+        var workoutGoal : WorkoutGoalData? = null
 
     }
 
@@ -51,7 +54,7 @@ class WorkoutOnGoingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            START -> startRunningForeground()
+            START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()
             PAUSE -> pauseRunningForeground()
             STOP -> stopRunningForeground()
@@ -67,16 +70,19 @@ class WorkoutOnGoingService : Service() {
     }
 
     private fun pauseRunningForeground(){
+        Log.i(TAG, "pauseRunningForeground: $workoutGoal")
         currentState = PAUSE
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun resumeRunningForeground(){
+        Log.i(TAG, "resumeRunningForeground: $workoutGoal")
         currentState = RESUME
         updateLocation()
     }
 
-    private fun startRunningForeground() {
+    private fun startRunningForeground(intent: Intent) {
+        workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
         currentState = START
         serviceRunning = true
         val notificationManager =
