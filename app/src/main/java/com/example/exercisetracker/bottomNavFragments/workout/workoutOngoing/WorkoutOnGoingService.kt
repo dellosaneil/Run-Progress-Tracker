@@ -61,7 +61,7 @@ class WorkoutOnGoingService : Service() {
 
     private fun stopRunningForeground() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
-        currentState = STOP
+        currentState = null
         serviceRunning = false
         stopSelf()
     }

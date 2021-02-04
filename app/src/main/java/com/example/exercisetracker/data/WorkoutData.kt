@@ -13,8 +13,8 @@ import java.util.*
 @Entity(tableName = "workout_main")
 data class WorkoutData(
     val modeOfExercise : String,
-    @PrimaryKey val startTime : Date,
-    val endTime : Date,
+    @PrimaryKey val startTime : String,
+    val endTime : String,
     val route : List<LatLng>,
     val totalKM : Double,
     val totalTime: Long,

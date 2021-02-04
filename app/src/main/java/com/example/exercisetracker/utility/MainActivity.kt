@@ -1,30 +1,21 @@
 package com.example.exercisetracker.utility
 
-import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
-import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService
-import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.serviceRunning
 import com.example.exercisetracker.databinding.ActivityMainBinding
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
-
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-
-    private val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,5 +48,4 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.action_global_workout_service)
         }
     }
-
 }

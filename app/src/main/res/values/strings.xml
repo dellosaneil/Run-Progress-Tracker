@@ -14,12 +14,16 @@
     <string name="workout_pauseRun">Pause Workout</string>
     <string name="workout_resumeRun">Resume Workout</string>
     <string name="workout_stopRun">Stop Workout</string>
-
+    <string name="permission_rationale">This permission is required in order for the application to run properly.</string>
+    <string name="workout_type_of_exercise">Type of Exercise</string>
+    <string name="workoutGoal_km">Kilometers</string>
+    <string name="workoutGoal_minutes">Minutes</string>
 
 <!--    Notifications-->
     <string name="notification_group">Run Tracker Application</string>
     <string name="notification_title">Run Tracker Application</string>
     <string name="notification_content">00:00:00</string>
+
 
 
 

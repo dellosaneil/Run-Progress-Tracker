@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mode_of_exercise">
+        <item>Bicycle</item>
+        <item>Walk</item>
+        <item>Jog</item>
+    </string-array>
+
+    <string-array name="goal_type">
+        <item>Distance</item>
+        <item>Time</item>
+        <item>None</item>
+    </string-array>
+
+
+</resources>
