@@ -2,16 +2,25 @@ package com.example.exercisetracker.utility
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
+import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.ActivityMainBinding
+import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
+import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         navigateToWorkoutOngoing(intent)
         setUpNavController()
     }
-
 
     private fun setUpNavController() {
         binding.bottomNavigationView.setupWithNavController(navController)

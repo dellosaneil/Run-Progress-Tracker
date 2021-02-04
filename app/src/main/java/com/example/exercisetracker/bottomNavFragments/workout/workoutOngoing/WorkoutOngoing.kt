@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
@@ -25,10 +26,13 @@ import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
 import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
 import com.example.exercisetracker.utility.FragmentLifecycleLog
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
-
+@AndroidEntryPoint
 class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
 
@@ -153,6 +157,8 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.runStopped()
         binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_startWorkout)
         binding.workoutOnGoingStop.visibility = View.GONE
+
+
     }
 
     private fun resumeOrPauseWorkout() {

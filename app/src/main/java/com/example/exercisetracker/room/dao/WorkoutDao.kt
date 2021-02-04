@@ -14,15 +14,15 @@ interface WorkoutDao {
     suspend fun deleteFromDatabase(time: Long)
 
     @Query("SELECT * FROM workout_main ORDER BY totalKM")
-    fun retrieveDataByKM(): LiveData<WorkoutData>
+    fun retrieveDataByKM(): LiveData<List<WorkoutData>>
 
     @Query("SELECT * FROM workout_main ORDER BY  totalTime")
-    fun retrieveDataByTime(): LiveData<WorkoutData>
+    fun retrieveDataByTime(): LiveData<List<WorkoutData>>
 
     @Query("SELECT * FROM workout_main ORDER BY averageSpeed")
-    fun retrieveDataByAvgSpeed(): LiveData<WorkoutData>
+    fun retrieveDataByAvgSpeed(): LiveData<List<WorkoutData>>
 
     @Query("SELECT * FROM workout_main ORDER BY startTime")
-    fun retrieveDataByStartTime(): LiveData<WorkoutData>
+    fun retrieveDataByStartTime(): LiveData<List<WorkoutData>>
 
 }

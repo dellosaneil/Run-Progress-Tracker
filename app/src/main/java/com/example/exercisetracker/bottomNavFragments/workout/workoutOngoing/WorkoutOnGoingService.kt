@@ -15,7 +15,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.exercisetracker.R
+import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.data.WorkoutGoalData
+import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
@@ -27,26 +29,31 @@ import com.example.exercisetracker.utility.Constants.Companion.STOP
 import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class WorkoutOnGoingService : Service() {
 
-    companion object{
+    companion object {
         var serviceRunning = false
-        var currentState : String? = null
-        var workoutGoal : WorkoutGoalData? = null
-
+        var currentState: String? = null
+        var workoutGoal: WorkoutGoalData? = null
     }
+
+    @Inject
+    lateinit var workoutRepository: WorkoutRepository
+
+    private val serviceJob = Job()
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+
+    private val routeTaken = mutableListOf<LatLng>()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-
-
-    private val testList = mutableListOf<Location>()
-
-
-    private val TAG = "WorkoutOnGoingService"
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -66,17 +73,27 @@ class WorkoutOnGoingService : Service() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         currentState = null
         serviceRunning = false
-        stopSelf()
+        saveToDatabase()
     }
 
-    private fun pauseRunningForeground(){
-        Log.i(TAG, "pauseRunningForeground: $workoutGoal")
+    private fun saveToDatabase() {
+        serviceScope.launch {
+            workoutGoal?.let{
+                val temp = WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, 21.2, 23, 23.1)
+                workoutRepository.insertWorkout(temp)
+                stopSelf()
+            }
+        }
+    }
+
+
+    private fun pauseRunningForeground() {
         currentState = PAUSE
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun resumeRunningForeground(){
-        Log.i(TAG, "resumeRunningForeground: $workoutGoal")
+
+    private fun resumeRunningForeground() {
         currentState = RESUME
         updateLocation()
     }
@@ -100,7 +117,6 @@ class WorkoutOnGoingService : Service() {
             .build()
         updateLocation()
         startForeground(NOTIFICATION_ID, notification)
-
     }
 
     private fun createPendingIntent(): PendingIntent {
@@ -126,7 +142,6 @@ class WorkoutOnGoingService : Service() {
     }
 
 
-
     @SuppressLint("MissingPermission")
     private fun updateLocation() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
@@ -135,6 +150,8 @@ class WorkoutOnGoingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        serviceJob.cancel()
+        serviceScope.cancel()
     }
 
 
@@ -151,8 +168,8 @@ class WorkoutOnGoingService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    testList.add(location)
-                    Log.i(TAG, "onLocationResult: ${testList.size}")
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    routeTaken.add(latLng)
                 }
             }
         }

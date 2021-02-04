@@ -7,6 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class WorkoutGoalData(
     val startTime: Long = System.currentTimeMillis(),
     val modeOfExercise: String,
-    val kmGoal: Double = 0.0,
-    val minutesGoal : Double = 0.0
+    val kmGoal: Double? = null,
+    val minutesGoal : Double? = null
 ) : Parcelable
