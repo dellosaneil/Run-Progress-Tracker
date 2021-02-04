@@ -20,6 +20,7 @@ import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
+import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
 import com.example.exercisetracker.utility.Constants.Companion.ONGOING_NOTIFICATION_ID
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
@@ -30,19 +31,18 @@ import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUND
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkoutOnGoingService : Service() {
+    private val TAG = "WorkoutOnGoingService"
 
     companion object {
         var serviceRunning = false
         var currentState: String? = null
         var workoutGoal: WorkoutGoalData? = null
-        var willSave = false
     }
 
     @Inject
@@ -66,16 +66,16 @@ class WorkoutOnGoingService : Service() {
             START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()
             PAUSE -> pauseRunningForeground()
-            STOP -> stopRunningForeground()
+            STOP -> stopRunningForeground(intent)
         }
         return START_STICKY
     }
 
-    private fun stopRunningForeground() {
+    private fun stopRunningForeground(intent: Intent) {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         currentState = null
         serviceRunning = false
-        if(willSave){
+        if(intent.getBooleanExtra(EXTRA_SAVE, false)){
             saveToDatabase()
         }else{
             stopSelf()
@@ -85,14 +85,27 @@ class WorkoutOnGoingService : Service() {
     private fun saveToDatabase() {
         serviceScope.launch {
             workoutGoal?.let{
-                val temp = WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, 21.2, 23, 23.1)
+                val distance = computeDistance()
+                val temp = WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, distance, 23, 23.1)
                 workoutRepository.insertWorkout(temp)
                 stopSelf()
             }
         }
     }
 
-
+    private fun computeDistance(): Float {
+        val results = FloatArray(1)
+        var distance = 0.0f
+        for((index,_) in routeTaken.withIndex()){
+            if(index == routeTaken.size - 1){
+                break
+            }
+            Location.distanceBetween(routeTaken[index].latitude,routeTaken[index].longitude, routeTaken[index + 1].latitude, routeTaken[index + 1].longitude, results)
+            distance += results[0]
+        }
+        distance /= 1000.0f
+        return distance
+    }
 
 
     private fun pauseRunningForeground() {
@@ -160,6 +173,7 @@ class WorkoutOnGoingService : Service() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceJob.cancel()
         serviceScope.cancel()
+        Log.i(TAG, "onDestroy: ")
     }
 
 

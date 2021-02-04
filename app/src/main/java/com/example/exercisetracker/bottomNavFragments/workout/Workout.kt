@@ -31,15 +31,14 @@ class Workout : FragmentLifecycleLog() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.workoutButton.setOnClickListener {
-            if(serviceRunning){
+            if (serviceRunning) {
                 Navigation.findNavController(it).navigate(R.id.workout_workoutOnGoing)
-            }else{
+            } else {
                 Navigation.findNavController(it)
                     .navigate(R.id.workout_workoutGoal)
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

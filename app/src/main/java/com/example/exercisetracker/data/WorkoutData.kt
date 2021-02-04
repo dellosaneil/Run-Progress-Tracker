@@ -17,7 +17,7 @@ data class WorkoutData(
     val startTime : Long,
     val endTime : Long,
     val route : List<LatLng>,
-    val totalKM : Double,
+    val totalKM : Float,
     val totalTime: Long,
     val averageSpeed: Double
 ): Parcelable{

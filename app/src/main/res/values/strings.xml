@@ -19,13 +19,17 @@
     <string name="workoutGoal_km">Kilometers</string>
     <string name="workoutGoal_minutes">Minutes</string>
     <string name="workoutGoal_requiredField">Required Field</string>
-
+    <string name="workoutDialog_title">Would you like to save workout?</string>
+    <string name="workoutDialog_content">Add workout to list of workouts</string>
+    
+    
 <!--    Notifications-->
     <string name="notification_group">Run Tracker Application</string>
     <string name="notification_title">Run Tracker Application</string>
     <string name="notification_content">00:00:00</string>
 
-
-
-
+<!--Global-->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="discard">Discard</string>
 </resources>
