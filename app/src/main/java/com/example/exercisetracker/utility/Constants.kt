@@ -15,6 +15,8 @@ class Constants {
 
         const val DATABASE_NAME = "workout_db"
 
+        const val WORKOUT_GOAL_BUNDLE = "workout_bundle"
+
     }
 
 }

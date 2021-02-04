@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import androidx.core.view.isEmpty
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.Navigation
 import com.example.exercisetracker.R
+import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.databinding.FragmentWorkoutGoalBinding
 
 class WorkoutGoal : Fragment() {
@@ -65,22 +65,25 @@ class WorkoutGoal : Fragment() {
 
     private fun checkValues(): Boolean {
         var completeFields = true
-        if(binding.workoutGoalTypeOfExercise.editText?.text?.isEmpty()!!){
+        if (binding.workoutGoalTypeOfExercise.editText?.text?.isEmpty()!!) {
             completeFields = false
-            binding.workoutGoalTypeOfExercise.error = resources.getString(R.string.workoutGoal_requiredField)
-        }else{
+            binding.workoutGoalTypeOfExercise.error =
+                resources.getString(R.string.workoutGoal_requiredField)
+        } else {
             binding.workoutGoalTypeOfExercise.error = null
         }
-        if(binding.workoutGoalGoalType.editText?.text?.isEmpty()!!){
+        if (binding.workoutGoalGoalType.editText?.text?.isEmpty()!!) {
             completeFields = false
-            binding.workoutGoalGoalType.error = resources.getString(R.string.workoutGoal_requiredField)
-        }else{
+            binding.workoutGoalGoalType.error =
+                resources.getString(R.string.workoutGoal_requiredField)
+        } else {
             binding.workoutGoalGoalType.error = null
-            if(binding.workoutGoalGoalType.editText?.text.toString() != "None"){
-                if(binding.workoutGoalGoal.editText?.text?.isEmpty()!!){
+            if (binding.workoutGoalGoalType.editText?.text.toString() != "None") {
+                if (binding.workoutGoalGoal.editText?.text?.isEmpty()!!) {
                     completeFields = false
-                    binding.workoutGoalGoal.error = resources.getString(R.string.workoutGoal_requiredField)
-                }else{
+                    binding.workoutGoalGoal.error =
+                        resources.getString(R.string.workoutGoal_requiredField)
+                } else {
                     binding.workoutGoalGoal.error = null
                 }
             }
@@ -91,12 +94,30 @@ class WorkoutGoal : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        redirectToOnGoingWorkout(view)
+    }
+
+    private fun redirectToOnGoingWorkout(view : View){
         binding.workoutGoalSetGoal.setOnClickListener {
-            if(checkValues()) {
-                Navigation.findNavController(view).navigate(R.id.workoutGoal_workoutOngoing)
+            if (checkValues()) {
+                val workoutGoal: WorkoutGoalData
+                val typeOfExercise = binding.workoutGoalTypeOfExercise.editText?.text?.toString()
+                workoutGoal = if (binding.workoutGoalGoalType.editText?.text.toString() == "None") {
+                    WorkoutGoalData(modeOfExercise = typeOfExercise!!)
+                } else {
+                    val goal = binding.workoutGoalGoal.editText?.text.toString().toDouble()
+                    if (binding.workoutGoalGoalType.editText?.text?.toString() == "Time") {
+                        WorkoutGoalData(modeOfExercise = typeOfExercise!!, minutesGoal = goal)
+                    } else {
+                        WorkoutGoalData(modeOfExercise = typeOfExercise!!, kmGoal = goal)
+                    }
+                }
+                val action = WorkoutGoalDirections.workoutGoalWorkoutOngoing(workoutGoal)
+                Navigation.findNavController(view).navigate(action)
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

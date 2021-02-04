@@ -12,14 +12,18 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.data.WorkoutData
+import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
+import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -31,14 +35,15 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private var _binding: FragmentWorkoutOngoingBinding? = null
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
+    private val args : WorkoutOngoingArgs by navArgs()
 
+    private val TAG = "WorkoutOngoing"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
-
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
