@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchTime
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
@@ -41,6 +43,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     @Inject
     lateinit var workoutRepository: WorkoutRepository
 
+    private val TAG = "WorkoutOngoing"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +54,10 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
+        stopWatchTime.observe(viewLifecycleOwner){
+            Log.i(TAG, "onCreateView: $it")
+        }
+
         return binding.root
     }
 

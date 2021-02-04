@@ -14,6 +14,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.data.WorkoutGoalData
@@ -33,6 +35,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,6 +46,8 @@ class WorkoutOnGoingService : Service() {
         var serviceRunning = false
         var currentState: String? = null
         var workoutGoal: WorkoutGoalData? = null
+        private val mStopWatchTime = MutableLiveData(0L)
+        val stopWatchTime : LiveData<Long> = mStopWatchTime
     }
 
     @Inject
@@ -57,9 +62,26 @@ class WorkoutOnGoingService : Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
+
+    private fun startTimer(){
+        val timeStarted = System.currentTimeMillis()
+        serviceScope.launch {
+            while(true){
+                if(currentState == PAUSE || currentState == STOP){
+                    break
+                }
+                withContext(Main) {
+                    mStopWatchTime.value = System.currentTimeMillis() - timeStarted
+                }
+                delay(1000)
+            }
+        }
+    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -120,6 +142,7 @@ class WorkoutOnGoingService : Service() {
     }
 
     private fun startRunningForeground(intent: Intent) {
+        startTimer()
         workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
         currentState = START
         serviceRunning = true
