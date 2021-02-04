@@ -1,13 +1,13 @@
 package com.example.exercisetracker.bottomNavFragments.workout
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.core.view.isEmpty
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.Navigation
 import com.example.exercisetracker.R
@@ -27,7 +27,7 @@ class WorkoutGoal : Fragment() {
     ): View {
         _binding = FragmentWorkoutGoalBinding.inflate(inflater, container, false)
         setUpDropDownMenu()
-        testFunction()
+        setGoalListener()
         return binding.root
     }
 
@@ -41,17 +41,19 @@ class WorkoutGoal : Fragment() {
         (binding.workoutGoalGoalType.editText as? AutoCompleteTextView)?.setAdapter(goalAdapter)
     }
 
-    private fun testFunction(){
+    private fun setGoalListener() {
         binding.workoutGoalGoalType.editText?.doOnTextChanged { text, _, _, _ ->
             binding.workoutGoalGoal.editText?.text?.clear()
-            when(text.toString()){
+            when (text.toString()) {
                 "Distance" -> {
                     binding.workoutGoalGoal.visibility = View.VISIBLE
-                    binding.workoutGoalGoal.suffixText = resources.getString(R.string.workoutGoal_km)
+                    binding.workoutGoalGoal.suffixText =
+                        resources.getString(R.string.workoutGoal_km)
                 }
                 "Time" -> {
                     binding.workoutGoalGoal.visibility = View.VISIBLE
-                    binding.workoutGoalGoal.suffixText = resources.getString(R.string.workoutGoal_minutes)
+                    binding.workoutGoalGoal.suffixText =
+                        resources.getString(R.string.workoutGoal_minutes)
                 }
                 else -> {
                     binding.workoutGoalGoal.visibility = View.GONE
@@ -59,15 +61,40 @@ class WorkoutGoal : Fragment() {
 
             }
         }
+    }
 
-
+    private fun checkValues(): Boolean {
+        var completeFields = true
+        if(binding.workoutGoalTypeOfExercise.editText?.text?.isEmpty()!!){
+            completeFields = false
+            binding.workoutGoalTypeOfExercise.error = resources.getString(R.string.workoutGoal_requiredField)
+        }else{
+            binding.workoutGoalTypeOfExercise.error = null
+        }
+        if(binding.workoutGoalGoalType.editText?.text?.isEmpty()!!){
+            completeFields = false
+            binding.workoutGoalGoalType.error = resources.getString(R.string.workoutGoal_requiredField)
+        }else{
+            binding.workoutGoalGoalType.error = null
+            if(binding.workoutGoalGoalType.editText?.text.toString() != "None"){
+                if(binding.workoutGoalGoal.editText?.text?.isEmpty()!!){
+                    completeFields = false
+                    binding.workoutGoalGoal.error = resources.getString(R.string.workoutGoal_requiredField)
+                }else{
+                    binding.workoutGoalGoal.error = null
+                }
+            }
+        }
+        return completeFields
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.workoutGoalSetGoal.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.workoutGoal_workoutOngoing)
+            if(checkValues()) {
+                Navigation.findNavController(view).navigate(R.id.workoutGoal_workoutOngoing)
+            }
         }
     }
 
@@ -75,12 +102,6 @@ class WorkoutGoal : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-
-
-
-
 }
 
 

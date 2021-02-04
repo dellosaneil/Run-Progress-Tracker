@@ -18,6 +18,7 @@
     <string name="workout_type_of_exercise">Type of Exercise</string>
     <string name="workoutGoal_km">Kilometers</string>
     <string name="workoutGoal_minutes">Minutes</string>
+    <string name="workoutGoal_requiredField">Required Field</string>
 
 <!--    Notifications-->
     <string name="notification_group">Run Tracker Application</string>
