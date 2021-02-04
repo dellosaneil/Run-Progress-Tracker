@@ -30,6 +30,7 @@ import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUND
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class WorkoutOnGoingService : Service() {
         var serviceRunning = false
         var currentState: String? = null
         var workoutGoal: WorkoutGoalData? = null
+        var willSave = false
     }
 
     @Inject
@@ -73,7 +75,11 @@ class WorkoutOnGoingService : Service() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         currentState = null
         serviceRunning = false
-        saveToDatabase()
+        if(willSave){
+            saveToDatabase()
+        }else{
+            stopSelf()
+        }
     }
 
     private fun saveToDatabase() {
@@ -85,6 +91,8 @@ class WorkoutOnGoingService : Service() {
             }
         }
     }
+
+
 
 
     private fun pauseRunningForeground() {
@@ -174,5 +182,4 @@ class WorkoutOnGoingService : Service() {
             }
         }
     }
-
 }

@@ -16,9 +16,11 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.willSave
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
+import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
@@ -26,11 +28,13 @@ import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
 import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
 import com.example.exercisetracker.utility.FragmentLifecycleLog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
@@ -40,14 +44,17 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
     private val args: WorkoutOngoingArgs? by navArgs()
+    
+    @Inject
+    lateinit var workoutRepository: WorkoutRepository
 
-    private val TAG = "WorkoutOngoing"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
+
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
@@ -149,7 +156,24 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
     }
 
+    private fun alertDialogSaveWorkout(){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Would you like to save workout?")
+            .setMessage("Add workout to list of workouts")
+            .setPositiveButton("Save"){ _,_ ->
+                willSave = true
+            }
+            .setNegativeButton("Discard"){_,_ ->
+                willSave = false
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+
+
     private fun stopRun() {
+        alertDialogSaveWorkout()
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = STOP
             requireActivity().startService(service)
@@ -157,8 +181,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.runStopped()
         binding.workoutOngoingStartOrPause.text = resources.getString(R.string.workout_startWorkout)
         binding.workoutOnGoingStop.visibility = View.GONE
-
-
     }
 
     private fun resumeOrPauseWorkout() {
