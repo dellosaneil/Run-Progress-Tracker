@@ -97,20 +97,31 @@ class WorkoutOnGoingService : Service() {
             stopSelf()
         }
     }
+
+    private val TAG = "WorkoutOnGoingService"
+
     private fun saveToDatabase() {
         serviceScope.launch {
             workoutGoal?.let{
+                val timeFinished = System.currentTimeMillis()
                 val distance = computeDistance()
-                val temp = stopWatchTime.value?.let { timeFinished ->
-                    WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, distance,
-                        timeFinished, 23.1)
+
+                val temp = stopWatchTime.value?.let { workoutLength ->
+                    val avgSpeed = computeAverageSpeed(distance, workoutLength)
+                    WorkoutData(it.modeOfExercise, it.startTime, timeFinished, routeTaken, distance,
+                        workoutLength, avgSpeed)
                 }
                 if (temp != null) {
                     workoutRepository.insertWorkout(temp)
+                    Log.i(TAG, "saveToDatabase: $temp")
                 }
                 stopSelf()
             }
         }
+    }
+
+    private fun computeAverageSpeed(distance: Float, workoutLength: Long): Double {
+        return (distance / workoutLength.toFloat() / 3600).toDouble()
     }
 
     private fun computeDistance(): Float {

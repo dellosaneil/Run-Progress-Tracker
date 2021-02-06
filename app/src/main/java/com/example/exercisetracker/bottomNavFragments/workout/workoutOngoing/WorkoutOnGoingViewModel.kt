@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModel
 
 class WorkoutOnGoingViewModel : ViewModel() {
 
-    private val TAG = "WorkoutOnGoingViewModel"
-
     private val _isRunning = MutableLiveData(false)
     private val _firstStart = MutableLiveData(false)
     private  val _stopWatchTimer = MutableLiveData("00:00:00:00")
