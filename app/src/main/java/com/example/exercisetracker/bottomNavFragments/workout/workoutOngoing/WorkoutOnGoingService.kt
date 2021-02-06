@@ -1,11 +1,8 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.app.NotificationManager.IMPORTANCE_LOW
-import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -61,6 +58,8 @@ class WorkoutOnGoingService : Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+    private lateinit var notificationManager : NotificationManager
+    private lateinit var notification : NotificationCompat.Builder
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -69,14 +68,32 @@ class WorkoutOnGoingService : Service() {
     private fun runTimer(previousTime : Long){
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
+            Log.i(TAG, "runTimer: $currentState")
             while(currentState != PAUSE && currentState != STOP && currentState != null){
                 withContext(Main) {
                     mStopWatchTime.value = System.currentTimeMillis() - timeStarted + previousTime
                 }
                 delay(100)
+                notification.setContentText(mStopWatchTime.value?.let { convertMilliSecondsToText(it) })
+                notificationManager.notify(NOTIFICATION_ID, notification.build())
             }
         }
     }
+
+    private fun convertMilliSecondsToText(time : Long): String{
+        var timeMilli = time
+        val hours = (timeMilli / 3_600_000).toInt()
+        timeMilli -= hours * 3_600_000
+        val minutes = (timeMilli / 60_000).toInt()
+        timeMilli -= minutes * 60_000
+        val seconds = (timeMilli / 1_000).toInt()
+
+        val hourString = if(hours <= 9) "0$hours" else hours
+        val minuteString = if(minutes <= 9) "0$minutes" else minutes
+        val secondString = if(seconds <= 9) "0$seconds" else seconds
+        return "$hourString : $minuteString : $secondString"
+    }
+
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -152,25 +169,24 @@ class WorkoutOnGoingService : Service() {
     }
 
     private fun startRunningForeground(intent: Intent) {
+        currentState = START
         stopWatchTime.value?.let { runTimer(it) }
         workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
-        currentState = START
         serviceRunning = true
-        val notificationManager =
+        notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(notificationManager)
         }
-        val notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
+        notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
             .setAutoCancel(false)
             .setOngoing(true)
             .setContentTitle(getString(R.string.notification_title))
             .setSmallIcon(R.drawable.ic_run_24)
             .setContentText(getString(R.string.notification_content))
             .setContentIntent(createPendingIntent())
-            .build()
         updateLocation()
-        startForeground(NOTIFICATION_ID, notification)
+        startForeground(NOTIFICATION_ID, notification.build())
     }
 
     private fun createPendingIntent(): PendingIntent {

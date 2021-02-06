@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.serviceRunning
 import com.example.exercisetracker.databinding.FragmentWorkoutBinding
 import com.example.exercisetracker.repository.WorkoutRepository
@@ -25,6 +26,11 @@ class Workout : FragmentLifecycleLog() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutBinding.inflate(inflater, container, false)
+        if(currentState != null){
+            binding.workoutButton.text = getString(R.string.workout_continueWorkout)
+        }
+
+
         return binding.root
     }
 

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -182,6 +181,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         binding.workoutOnGoingStartOrPause.text =
             resources.getString(R.string.workout_startWorkout)
         binding.workoutOnGoingStop.visibility = View.GONE
+        currentState = null
         Navigation.findNavController(binding.root).navigate(R.id.workoutOnGoing_workout)
     }
 

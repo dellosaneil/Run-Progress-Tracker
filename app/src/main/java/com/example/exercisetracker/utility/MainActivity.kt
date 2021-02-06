@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.ActivityMainBinding
 import com.example.exercisetracker.repository.WorkoutRepository

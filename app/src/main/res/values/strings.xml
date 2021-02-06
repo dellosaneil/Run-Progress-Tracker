@@ -8,6 +8,7 @@
     <string name="statistics">Statistics</string>
 
 <!--    Workout-->
+    <string name="workout_continueWorkout">Continue Workout</string>
     <string name="workout_startWorkout">Start Workout</string>
     <string name="workout_setGoal">Set Goal</string>
     <string name="workout_startRun">Start Workout</string>
