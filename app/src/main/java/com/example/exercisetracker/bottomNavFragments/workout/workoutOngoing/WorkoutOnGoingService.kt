@@ -11,6 +11,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -90,21 +91,23 @@ class WorkoutOnGoingService : Service() {
 
     private fun stopRunningForeground(intent: Intent) {
         fusedLocationClient.removeLocationUpdates(locationCallback)
-        currentState = null
-        serviceRunning = false
         if(intent.getBooleanExtra(EXTRA_SAVE, false)){
             saveToDatabase()
         }else{
             stopSelf()
         }
     }
-
     private fun saveToDatabase() {
         serviceScope.launch {
             workoutGoal?.let{
                 val distance = computeDistance()
-                val temp = WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, distance, 23, 23.1)
-                workoutRepository.insertWorkout(temp)
+                val temp = stopWatchTime.value?.let { timeFinished ->
+                    WorkoutData(it.modeOfExercise, it.startTime, System.currentTimeMillis(), routeTaken, distance,
+                        timeFinished, 23.1)
+                }
+                if (temp != null) {
+                    workoutRepository.insertWorkout(temp)
+                }
                 stopSelf()
             }
         }
@@ -188,10 +191,13 @@ class WorkoutOnGoingService : Service() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        currentState = null
+        serviceRunning = false
+        mStopWatchTime.value = 0L
+        workoutGoal = null
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceJob.cancel()
-        serviceScope.cancel()
+        super.onDestroy()
     }
 
 

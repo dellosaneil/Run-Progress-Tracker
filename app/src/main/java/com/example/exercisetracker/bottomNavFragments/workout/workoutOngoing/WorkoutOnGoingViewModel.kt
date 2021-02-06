@@ -1,6 +1,5 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,8 +18,14 @@ class WorkoutOnGoingViewModel : ViewModel() {
         _stopWatchTimer.value = convertMilliSecondsToText(it)
     }
 
+    init{
+        startStopWatch()
+    }
+
+
     fun stopWatchTimer() : LiveData<String> = _stopWatchTimer
-    fun startStopWatch(){
+
+    private fun startStopWatch(){
         WorkoutOnGoingService.stopWatchTime.observeForever(stopwatchObserver)
     }
 

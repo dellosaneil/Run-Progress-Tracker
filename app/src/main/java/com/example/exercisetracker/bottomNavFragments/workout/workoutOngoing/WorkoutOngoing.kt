@@ -48,12 +48,19 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
-
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
+        displayStopwatchTimer()
         return binding.root
     }
+
+    private fun displayStopwatchTimer() {
+        workoutOnGoingViewModel.stopWatchTimer().observe(viewLifecycleOwner) {
+            binding.workoutOnGoingTimer.text = it
+        }
+    }
+
 
     private fun handleNotificationContinue() {
         currentState?.let {
@@ -84,7 +91,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             override fun handleOnBackPressed() {
                 isEnabled = false
                 Navigation.findNavController(binding.root).navigate(R.id.workoutOnGoing_workout)
-
             }
         })
     }
@@ -175,6 +181,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         binding.workoutOnGoingStartOrPause.text =
             resources.getString(R.string.workout_startWorkout)
         binding.workoutOnGoingStop.visibility = View.GONE
+        Navigation.findNavController(binding.root).navigate(R.id.workoutOnGoing_workout)
     }
 
     private fun stopRun() {
@@ -192,7 +199,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     }
 
     private fun resumeOrPauseIntent(action : String){
-        val viewText = if(action == RESUME) getString(R.string.workout_resumeRun) else getString(R.string.workout_pauseRun)
+        val viewText = if(action == RESUME) getString(R.string.workout_pauseRun) else getString(R.string.workout_resumeRun)
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = action
             requireActivity().startService(service)
@@ -203,10 +210,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private fun startWorkout() {
         workoutOnGoingViewModel.startRun()
         workoutOnGoingViewModel.changeState()
-        workoutOnGoingViewModel.startStopWatch()
-        workoutOnGoingViewModel.stopWatchTimer().observe(viewLifecycleOwner) {
-            binding.workoutOnGoingTimer.text = it
-        }
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = START
             service.putExtra(WORKOUT_GOAL_BUNDLE, args?.workoutgoal)
