@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
-import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchTime
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
@@ -157,33 +155,27 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             .setTitle(getString(R.string.workoutDialog_title))
             .setMessage(getString(R.string.workoutDialog_content))
             .setPositiveButton(getString(R.string.save)) { _, _ ->
-                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                    service.action = STOP
-                    service.putExtra(EXTRA_SAVE, true)
-                    requireActivity().startService(service)
-                }
-                workoutOnGoingViewModel.runStopped()
-                binding.workoutOnGoingStartOrPause.text =
-                    resources.getString(R.string.workout_startWorkout)
-                binding.workoutOnGoingStop.visibility = View.GONE
+                stopServiceIntent(true)
             }
             .setNegativeButton(getString(R.string.discard)) { _, _ ->
-                Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                    service.action = STOP
-                    service.putExtra(EXTRA_SAVE, false)
-                    requireActivity().startService(service)
-                }
-                workoutOnGoingViewModel.runStopped()
-                binding.workoutOnGoingStartOrPause.text =
-                    resources.getString(R.string.workout_startWorkout)
-                binding.workoutOnGoingStop.visibility = View.GONE
+                stopServiceIntent(false)
             }
             .setNeutralButton(getString(R.string.cancel), null)
             .setCancelable(false)
             .show()
-
     }
 
+    private fun stopServiceIntent(extra: Boolean) {
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+            service.action = STOP
+            service.putExtra(EXTRA_SAVE, extra)
+            requireActivity().startService(service)
+        }
+        workoutOnGoingViewModel.runStopped()
+        binding.workoutOnGoingStartOrPause.text =
+            resources.getString(R.string.workout_startWorkout)
+        binding.workoutOnGoingStop.visibility = View.GONE
+    }
 
     private fun stopRun() {
         alertDialogSaveWorkout()
@@ -193,19 +185,18 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.changeState()
         val isRunning = workoutOnGoingViewModel.isRunning().value
         if (isRunning == true) {
-            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                service.action = RESUME
-                requireActivity().startService(service)
-                binding.workoutOnGoingStartOrPause.text =
-                    resources.getString(R.string.workout_pauseRun)
-            }
+            resumeOrPauseIntent(RESUME)
         } else {
-            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                service.action = PAUSE
-                requireActivity().startService(service)
-                binding.workoutOnGoingStartOrPause.text =
-                    resources.getString(R.string.workout_resumeRun)
-            }
+            resumeOrPauseIntent(PAUSE)
+        }
+    }
+
+    private fun resumeOrPauseIntent(action : String){
+        val viewText = if(action == RESUME) getString(R.string.workout_resumeRun) else getString(R.string.workout_pauseRun)
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+            service.action = action
+            requireActivity().startService(service)
+            binding.workoutOnGoingStartOrPause.text = viewText
         }
     }
 
@@ -213,7 +204,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.startRun()
         workoutOnGoingViewModel.changeState()
         workoutOnGoingViewModel.startStopWatch()
-        workoutOnGoingViewModel.stopWatchTimer().observe(viewLifecycleOwner){
+        workoutOnGoingViewModel.stopWatchTimer().observe(viewLifecycleOwner) {
             binding.workoutOnGoingTimer.text = it
         }
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->

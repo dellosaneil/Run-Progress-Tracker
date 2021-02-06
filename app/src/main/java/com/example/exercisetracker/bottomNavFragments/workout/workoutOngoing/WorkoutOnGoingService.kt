@@ -11,7 +11,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -40,7 +39,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkoutOnGoingService : Service() {
-    private val TAG = "WorkoutOnGoingService"
 
     companion object {
         var serviceRunning = false
@@ -67,12 +65,12 @@ class WorkoutOnGoingService : Service() {
         return null
     }
 
-    private fun startTimer(){
+    private fun runTimer(previousTime : Long){
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
             while(currentState != PAUSE && currentState != STOP && currentState != null){
                 withContext(Main) {
-                    mStopWatchTime.value = System.currentTimeMillis() - timeStarted
+                    mStopWatchTime.value = System.currentTimeMillis() - timeStarted + previousTime
                 }
                 delay(100)
             }
@@ -135,11 +133,12 @@ class WorkoutOnGoingService : Service() {
 
     private fun resumeRunningForeground() {
         currentState = RESUME
+        stopWatchTime.value?.let { runTimer(it) }
         updateLocation()
     }
 
     private fun startRunningForeground(intent: Intent) {
-        startTimer()
+        stopWatchTime.value?.let { runTimer(it) }
         workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
         currentState = START
         serviceRunning = true
@@ -193,13 +192,11 @@ class WorkoutOnGoingService : Service() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceJob.cancel()
         serviceScope.cancel()
-        Log.i(TAG, "onDestroy: ")
     }
 
 
     private fun buildLocationRequest() {
-        locationRequest = LocationRequest()
-        locationRequest.apply {
+        locationRequest = LocationRequest().apply{
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 500
             fastestInterval = 250

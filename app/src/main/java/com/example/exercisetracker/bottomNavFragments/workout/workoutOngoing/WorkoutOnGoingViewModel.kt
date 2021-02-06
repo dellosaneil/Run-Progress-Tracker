@@ -58,14 +58,8 @@ class WorkoutOnGoingViewModel : ViewModel() {
         _firstStart.value = false
     }
 
-
     override fun onCleared() {
-        Log.i(TAG, "onCleared: ")
         WorkoutOnGoingService.stopWatchTime.removeObserver(stopwatchObserver)
         super.onCleared()
     }
-
-
-
-
 }
