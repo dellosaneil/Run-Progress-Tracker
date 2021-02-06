@@ -29,8 +29,6 @@ class Workout : FragmentLifecycleLog() {
         if(currentState != null){
             binding.workoutButton.text = getString(R.string.workout_continueWorkout)
         }
-
-
         return binding.root
     }
 
