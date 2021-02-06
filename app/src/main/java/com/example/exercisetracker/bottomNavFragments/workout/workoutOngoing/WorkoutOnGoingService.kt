@@ -70,14 +70,11 @@ class WorkoutOnGoingService : Service() {
     private fun startTimer(){
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
-            while(true){
-                if(currentState == PAUSE || currentState == STOP){
-                    break
-                }
+            while(currentState != PAUSE && currentState != STOP && currentState != null){
                 withContext(Main) {
                     mStopWatchTime.value = System.currentTimeMillis() - timeStarted
                 }
-                delay(1000)
+                delay(100)
             }
         }
     }

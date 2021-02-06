@@ -54,10 +54,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
-        stopWatchTime.observe(viewLifecycleOwner){
-            Log.i(TAG, "onCreateView: $it")
-        }
-
         return binding.root
     }
 
@@ -68,15 +64,15 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             when (it) {
                 START -> {
                     workoutOnGoingViewModel.changeState()
-                    binding.workoutOngoingStartOrPause.text =
+                    binding.workoutOnGoingStartOrPause.text =
                         resources.getString(R.string.workout_pauseRun)
                 }
                 PAUSE -> {
-                    binding.workoutOngoingStartOrPause.text =
+                    binding.workoutOnGoingStartOrPause.text =
                         resources.getString(R.string.workout_resumeRun)
                 }
                 else -> {
-                    binding.workoutOngoingStartOrPause.text =
+                    binding.workoutOnGoingStartOrPause.text =
                         resources.getString(R.string.workout_pauseRun)
                 }
             }
@@ -96,13 +92,13 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     }
 
     private fun setOnClickListeners() {
-        binding.workoutOngoingStartOrPause.setOnClickListener(this)
+        binding.workoutOnGoingStartOrPause.setOnClickListener(this)
         binding.workoutOnGoingStop.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.workoutOngoingStartOrPause.setOnClickListener(null)
+        binding.workoutOnGoingStartOrPause.setOnClickListener(null)
         binding.workoutOnGoingStop.setOnClickListener(null)
         _binding = null
     }
@@ -143,10 +139,10 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.workoutOngoing_startOrPause -> {
+            R.id.workoutOnGoing_startOrPause -> {
                 if (workoutOnGoingViewModel.firstStart().value == false) {
                     startWorkout()
-                    binding.workoutOngoingStartOrPause.text =
+                    binding.workoutOnGoingStartOrPause.text =
                         resources.getString(R.string.workout_pauseRun)
                 } else {
                     resumeOrPauseWorkout()
@@ -167,7 +163,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
                     requireActivity().startService(service)
                 }
                 workoutOnGoingViewModel.runStopped()
-                binding.workoutOngoingStartOrPause.text =
+                binding.workoutOnGoingStartOrPause.text =
                     resources.getString(R.string.workout_startWorkout)
                 binding.workoutOnGoingStop.visibility = View.GONE
             }
@@ -178,7 +174,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
                     requireActivity().startService(service)
                 }
                 workoutOnGoingViewModel.runStopped()
-                binding.workoutOngoingStartOrPause.text =
+                binding.workoutOnGoingStartOrPause.text =
                     resources.getString(R.string.workout_startWorkout)
                 binding.workoutOnGoingStop.visibility = View.GONE
             }
@@ -200,14 +196,14 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                 service.action = RESUME
                 requireActivity().startService(service)
-                binding.workoutOngoingStartOrPause.text =
+                binding.workoutOnGoingStartOrPause.text =
                     resources.getString(R.string.workout_pauseRun)
             }
         } else {
             Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                 service.action = PAUSE
                 requireActivity().startService(service)
-                binding.workoutOngoingStartOrPause.text =
+                binding.workoutOnGoingStartOrPause.text =
                     resources.getString(R.string.workout_resumeRun)
             }
         }
@@ -216,6 +212,10 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private fun startWorkout() {
         workoutOnGoingViewModel.startRun()
         workoutOnGoingViewModel.changeState()
+        workoutOnGoingViewModel.startStopWatch()
+        workoutOnGoingViewModel.stopWatchTimer().observe(viewLifecycleOwner){
+            binding.workoutOnGoingTimer.text = it
+        }
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = START
             service.putExtra(WORKOUT_GOAL_BUNDLE, args?.workoutgoal)
