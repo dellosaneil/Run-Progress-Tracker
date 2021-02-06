@@ -1,18 +1,21 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.data.WorkoutGoalData
@@ -42,8 +45,15 @@ class WorkoutOnGoingService : Service() {
         var serviceRunning = false
         var currentState: String? = null
         var workoutGoal: WorkoutGoalData? = null
-        private val mStopWatchTime = MutableLiveData(0L)
-        val stopWatchTime : LiveData<Long> = mStopWatchTime
+        private val mStopWatchRunningTime = MutableLiveData(0L)
+        val stopWatchRunningTime : LiveData<Long> = mStopWatchRunningTime
+
+        private val mStopWatchFragmentTime = MutableLiveData<String>("00:00:00:00")
+        val stopWatchFragmentTime : LiveData<String> = mStopWatchFragmentTime
+
+        private val mStopWatchServiceTime = MutableLiveData<String>("00:00:00")
+        val stopWatchServiceTime : LiveData<String> = mStopWatchServiceTime
+
     }
 
     @Inject
@@ -58,43 +68,62 @@ class WorkoutOnGoingService : Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
-    private lateinit var notificationManager : NotificationManager
-    private lateinit var notification : NotificationCompat.Builder
+    private var notificationManager : NotificationManager? = null
+    private var notification : NotificationCompat.Builder? = null
+
+    private var stopWatchTimeObserver : Observer<String>? = Observer {
+        if(notification == null){
+            createNotification()
+        }
+        notification?.setContentText(it)
+        notificationManager?.notify(NOTIFICATION_ID, notification?.build())
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     private fun runTimer(previousTime : Long){
+        stopWatchTimeObserver?.let { stopWatchServiceTime.observeForever(it) }
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
-            Log.i(TAG, "runTimer: $currentState")
             while(currentState != PAUSE && currentState != STOP && currentState != null){
                 withContext(Main) {
-                    mStopWatchTime.value = System.currentTimeMillis() - timeStarted + previousTime
+                    mStopWatchRunningTime.value = System.currentTimeMillis() - timeStarted + previousTime
+                    mStopWatchFragmentTime.value = convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
+                    mStopWatchServiceTime.value = convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
                 }
-                delay(100)
-                notification.setContentText(mStopWatchTime.value?.let { convertMilliSecondsToText(it) })
-                notificationManager.notify(NOTIFICATION_ID, notification.build())
+                delay(25)
             }
         }
     }
 
-    private fun convertMilliSecondsToText(time : Long): String{
-        var timeMilli = time
-        val hours = (timeMilli / 3_600_000).toInt()
-        timeMilli -= hours * 3_600_000
-        val minutes = (timeMilli / 60_000).toInt()
-        timeMilli -= minutes * 60_000
-        val seconds = (timeMilli / 1_000).toInt()
+    private suspend fun convertMilliSecondsToText(time : Long, toFragment : Boolean): String{
+        val timeInString = serviceScope.async { var timeMilli = time
+            val hours = (timeMilli / 3_600_000).toInt()
+            timeMilli -= hours * 3_600_000
+            val minutes = (timeMilli / 60_000).toInt()
+            timeMilli -= minutes * 60_000
+            val seconds = (timeMilli / 1_000).toInt()
+            timeMilli -= seconds * 1_000
 
-        val hourString = if(hours <= 9) "0$hours" else hours
-        val minuteString = if(minutes <= 9) "0$minutes" else minutes
-        val secondString = if(seconds <= 9) "0$seconds" else seconds
-        return "$hourString : $minuteString : $secondString"
+            return@async if(toFragment){
+                val hourString = if(hours <= 9) "0$hours" else hours
+                val minuteString = if(minutes <= 9) "0$minutes" else minutes
+                val secondString = if(seconds <= 9) "0$seconds" else seconds
+                val milliString = if(timeMilli <= 99) "0$timeMilli" else timeMilli
+                "$hourString : $minuteString : $secondString : $milliString"
+            }else{
+                val hourString = if(hours <= 9) "0$hours" else hours
+                val minuteString = if(minutes <= 9) "0$minutes" else minutes
+                val secondString = if(seconds <= 9) "0$seconds" else seconds
+                "$hourString : $minuteString : $secondString"
+            }
+        }
+        return timeInString.await()
+
+
     }
-
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -115,22 +144,19 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
-    private val TAG = "WorkoutOnGoingService"
-
     private fun saveToDatabase() {
         serviceScope.launch {
             workoutGoal?.let{
                 val timeFinished = System.currentTimeMillis()
                 val distance = computeDistance()
 
-                val temp = stopWatchTime.value?.let { workoutLength ->
+                val temp = stopWatchRunningTime.value?.let { workoutLength ->
                     val avgSpeed = computeAverageSpeed(distance, workoutLength)
                     WorkoutData(it.modeOfExercise, it.startTime, timeFinished, routeTaken, distance,
                         workoutLength, avgSpeed)
                 }
                 if (temp != null) {
                     workoutRepository.insertWorkout(temp)
-                    Log.i(TAG, "saveToDatabase: $temp")
                 }
                 stopSelf()
             }
@@ -158,25 +184,32 @@ class WorkoutOnGoingService : Service() {
 
     private fun pauseRunningForeground() {
         currentState = PAUSE
+        stopWatchTimeObserver?.let { stopWatchFragmentTime.removeObserver(it) }
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
 
     private fun resumeRunningForeground() {
         currentState = RESUME
-        stopWatchTime.value?.let { runTimer(it) }
+        stopWatchRunningTime.value?.let { runTimer(it) }
         updateLocation()
     }
 
     private fun startRunningForeground(intent: Intent) {
         currentState = START
-        stopWatchTime.value?.let { runTimer(it) }
+        stopWatchRunningTime.value?.let { runTimer(it) }
         workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
         serviceRunning = true
+        createNotification()
+        updateLocation()
+        startForeground(NOTIFICATION_ID, notification?.build())
+    }
+
+    private fun createNotification(){
         notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
+            createNotificationChannel(notificationManager!!)
         }
         notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
             .setAutoCancel(false)
@@ -185,9 +218,8 @@ class WorkoutOnGoingService : Service() {
             .setSmallIcon(R.drawable.ic_run_24)
             .setContentText(getString(R.string.notification_content))
             .setContentIntent(createPendingIntent())
-        updateLocation()
-        startForeground(NOTIFICATION_ID, notification.build())
     }
+
 
     private fun createPendingIntent(): PendingIntent {
         val notificationIntent = Intent(this, MainActivity::class.java).also {
@@ -220,9 +252,14 @@ class WorkoutOnGoingService : Service() {
     override fun onDestroy() {
         currentState = null
         serviceRunning = false
-        mStopWatchTime.value = 0L
+        mStopWatchRunningTime.value = 0L
+        mStopWatchServiceTime.value = "00:00:00"
+        mStopWatchFragmentTime.value = "00:00:00:00"
         workoutGoal = null
+        notification = null
+        notificationManager = null
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        stopWatchTimeObserver?.let { stopWatchFragmentTime.removeObserver(it) }
         serviceJob.cancel()
         super.onDestroy()
     }
