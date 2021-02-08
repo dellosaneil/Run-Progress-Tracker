@@ -30,9 +30,13 @@
         tools:layout="@layout/fragment_statistics" />
     <fragment
         android:id="@+id/history"
-        android:name="com.example.exercisetracker.bottomNavFragments.History"
+        android:name="com.example.exercisetracker.bottomNavFragments.history.History"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/history_workoutHistoryPolyline"
+            app:destination="@id/workoutHistoryPolyline" />
+    </fragment>
     <fragment
         android:id="@+id/workoutGoal"
         android:name="com.example.exercisetracker.bottomNavFragments.workout.WorkoutGoal"
@@ -58,4 +62,9 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
+    <fragment
+        android:id="@+id/workoutHistoryPolyline"
+        android:name="com.example.exercisetracker.bottomNavFragments.history.HistoryPolyline"
+        android:label="fragment_workout_history_polyline"
+        tools:layout="@layout/fragment_history_polyline" />
 </navigation>

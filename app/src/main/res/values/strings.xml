@@ -4,7 +4,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="workout">Workout</string>
-    <string name="history">Run History</string>
+    <string name="history">Workout History</string>
     <string name="statistics">Statistics</string>
 
 <!--    Workout-->
@@ -15,7 +15,6 @@
     <string name="workout_pauseRun">Pause Workout</string>
     <string name="workout_resumeRun">Resume Workout</string>
     <string name="workout_stopRun">Stop Workout</string>
-    <string name="permission_rationale">This permission is required in order for the application to run properly.</string>
     <string name="workout_type_of_exercise">Type of Exercise</string>
     <string name="workoutGoal_km">Kilometers</string>
     <string name="workoutGoal_minutes">Minutes</string>
@@ -23,6 +22,9 @@
     <string name="workoutDialog_title">Would you like to save workout?</string>
     <string name="workoutDialog_content">Add workout to list of workouts</string>
     <string name="workoutOnGoing_defaultTime">00:00:00:00</string>
+    <string name="workoutHistoryRV_time"><b>Time:</b>\n%1$s</string>
+    <string name="workoutHistoryRV_distance"><b>Distance:</b>\n%1$s</string>
+    <string name="workoutHistoryRV_speed"><b>Avg. Speed:</b>\n%1$s</string>
     
     
 <!--    Notifications-->
@@ -34,4 +36,10 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="discard">Discard</string>
+
+<!--    Map Polyline-->
+    <string name="workoutHistory_time">Time</string>
+    <string name="workoutHistory_distance">Distance</string>
+    <string name="workoutHistory_mode">Type of Exercise</string>
+
 </resources>

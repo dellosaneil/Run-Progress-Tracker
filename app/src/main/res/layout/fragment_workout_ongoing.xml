@@ -17,7 +17,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:textSize="36sp"
-        tools:text="0km" />
+        tools:text="0.00 km" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/workoutOnGoing_timer"

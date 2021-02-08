@@ -51,17 +51,16 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         handleNotificationContinue()
         requestLocationPermission()
         setOnClickListeners()
-        displayStopwatchTimer()
-        kilometers.observe(viewLifecycleOwner){
-            binding.workoutOnGoingKilometer.text = it
-        }
-
+        displayProgressIndicator()
         return binding.root
     }
 
-    private fun displayStopwatchTimer() {
+    private fun displayProgressIndicator() {
         stopWatchFragmentTime.observe(viewLifecycleOwner) {
             binding.workoutOnGoingTimer.text = it
+        }
+        kilometers.observe(viewLifecycleOwner){
+            binding.workoutOnGoingKilometer.text = it
         }
     }
 

@@ -18,9 +18,6 @@ class WorkoutGoal : Fragment() {
     private var _binding: FragmentWorkoutGoalBinding? = null
     private val binding get() = _binding!!
 
-
-    private val TAG = "WorkoutGoal"
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

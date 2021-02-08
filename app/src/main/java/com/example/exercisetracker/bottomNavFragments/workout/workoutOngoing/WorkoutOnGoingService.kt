@@ -55,10 +55,8 @@ class WorkoutOnGoingService : Service() {
         private val mStopWatchServiceTime = MutableLiveData("00:00:00")
         val stopWatchServiceTime: LiveData<String> = mStopWatchServiceTime
 
-        private val mKilometers = MutableLiveData("0km")
+        private val mKilometers = MutableLiveData("0.00km")
         val kilometers : LiveData<String> = mKilometers
-
-
     }
 
     @Inject
@@ -75,14 +73,14 @@ class WorkoutOnGoingService : Service() {
 
     private var notificationManager: NotificationManager? = null
     private var notification: NotificationCompat.Builder? = null
-
     private var stopWatchTimeObserver: Observer<String>? = null
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
 
-    private fun runTimer(previousTime: Long) {
+    private fun startObservingProgress(previousTime: Long) {
         stopWatchTimeObserver?.let { stopWatchServiceTime.observeForever(it) }
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
@@ -94,7 +92,7 @@ class WorkoutOnGoingService : Service() {
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
-                    mKilometers.value = "${computeDistance()} km"
+                    mKilometers.value = "${String.format("%.2f", computeDistance())} km"
                 }
                 delay(25)
             }
@@ -174,19 +172,32 @@ class WorkoutOnGoingService : Service() {
         return distance
     }
 
-    private fun createNotification() {
+    private fun createNotification(modeOfExercise: String?) {
         notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(notificationManager!!)
         }
+
+        val iconDrawable = notificationDrawable(modeOfExercise)
+
         notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
             .setAutoCancel(false)
             .setOngoing(true)
             .setContentTitle(getString(R.string.notification_title))
-            .setSmallIcon(R.drawable.ic_run_24)
+            .setSmallIcon(iconDrawable)
             .setContentText(getString(R.string.notification_defaultTime))
             .setContentIntent(createPendingIntent())
+    }
+
+    private fun notificationDrawable(modeOfExercise: String?): Int {
+         modeOfExercise?.let{
+             return when(it){
+                "Bicycle" -> R.drawable.ic_bicycle_24
+                 "Walk" -> R.drawable.ic_walk_24
+                 else -> R.drawable.ic_run_24
+            }
+        }?: return R.drawable.ic_run_24
     }
 
 
@@ -242,7 +253,7 @@ class WorkoutOnGoingService : Service() {
     private fun initializeStopwatchObserver() {
         stopWatchTimeObserver = Observer {
             if (notification == null) {
-                createNotification()
+                createNotification(workoutGoal?.modeOfExercise)
             }
             if(serviceRunning){
                 notification?.setContentText(it)
@@ -264,17 +275,17 @@ class WorkoutOnGoingService : Service() {
 
     private fun startRunningForeground(intent: Intent) {
         currentState = START
-        stopWatchRunningTime.value?.let { runTimer(it) }
+        stopWatchRunningTime.value?.let { startObservingProgress(it) }
         workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
         serviceRunning = true
-        createNotification()
+        createNotification(workoutGoal?.modeOfExercise)
         updateLocation()
         startForeground(NOTIFICATION_ID, notification?.build())
     }
 
     private fun resumeRunningForeground() {
         currentState = RESUME
-        stopWatchRunningTime.value?.let { runTimer(it) }
+        stopWatchRunningTime.value?.let { startObservingProgress(it) }
         updateLocation()
     }
 
