@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".bottomNavFragments.history.History">
+    tools:context=".bottomNavFragments.history.historyMain.History">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_recyclerView"
+        tools:listitem="@layout/list_item_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     

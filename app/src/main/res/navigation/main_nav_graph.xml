@@ -30,7 +30,7 @@
         tools:layout="@layout/fragment_statistics" />
     <fragment
         android:id="@+id/history"
-        android:name="com.example.exercisetracker.bottomNavFragments.history.History"
+        android:name="com.example.exercisetracker.bottomNavFragments.history.historyMain.History"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history" >
         <action
