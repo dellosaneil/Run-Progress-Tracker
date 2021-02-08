@@ -55,6 +55,10 @@ class WorkoutOnGoingService : Service() {
         private val mStopWatchServiceTime = MutableLiveData("00:00:00")
         val stopWatchServiceTime: LiveData<String> = mStopWatchServiceTime
 
+        private val mKilometers = MutableLiveData("0km")
+        val kilometers : LiveData<String> = mKilometers
+
+
     }
 
     @Inject
@@ -66,8 +70,8 @@ class WorkoutOnGoingService : Service() {
     private val routeTaken = mutableListOf<LatLng>()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
+    private var locationRequest: LocationRequest? = null
+    private var locationCallback: LocationCallback? = null
 
     private var notificationManager: NotificationManager? = null
     private var notification: NotificationCompat.Builder? = null
@@ -90,6 +94,7 @@ class WorkoutOnGoingService : Service() {
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
+                    mKilometers.value = "${computeDistance()} km"
                 }
                 delay(25)
             }
@@ -180,7 +185,7 @@ class WorkoutOnGoingService : Service() {
             .setOngoing(true)
             .setContentTitle(getString(R.string.notification_title))
             .setSmallIcon(R.drawable.ic_run_24)
-            .setContentText(getString(R.string.notification_content))
+            .setContentText(getString(R.string.notification_defaultTime))
             .setContentIntent(createPendingIntent())
     }
 
@@ -201,12 +206,10 @@ class WorkoutOnGoingService : Service() {
 
     private val TAG = "WorkoutOnGoingService"
 
-
     @SuppressLint("MissingPermission")
     private fun updateLocation() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
-
 
     private fun buildLocationRequest() {
         locationRequest = LocationRequest().apply {
@@ -241,18 +244,14 @@ class WorkoutOnGoingService : Service() {
             if (notification == null) {
                 createNotification()
             }
-            Log.i(TAG, "initializeStopwatchObserver: $serviceRunning")
             if(serviceRunning){
                 notification?.setContentText(it)
                 notificationManager?.notify(NOTIFICATION_ID, notification?.build())
             }
-
         }
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.i(TAG, "onStartCommand: ${intent?.action}")
         when (intent?.action) {
             START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()
@@ -302,12 +301,16 @@ class WorkoutOnGoingService : Service() {
         serviceRunning = false
 
         mStopWatchRunningTime.value = 0L
-        mStopWatchServiceTime.value = "00:00:00"
-        mStopWatchFragmentTime.value = "00:00:00:00"
+        mStopWatchServiceTime.value = getString(R.string.notification_defaultTime)
+        mStopWatchFragmentTime.value = getString(R.string.workoutOnGoing_defaultTime)
 
         workoutGoal = null
         currentState = null
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        locationCallback = null
+        locationRequest = null
+
+
         stopWatchTimeObserver?.let { stopWatchServiceTime.removeObserver(it) }
         stopWatchTimeObserver?.let { stopWatchFragmentTime.removeObserver(it) }
 

@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.kilometers
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchFragmentTime
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
@@ -51,6 +52,10 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         requestLocationPermission()
         setOnClickListeners()
         displayStopwatchTimer()
+        kilometers.observe(viewLifecycleOwner){
+            binding.workoutOnGoingKilometer.text = it
+        }
+
         return binding.root
     }
 
@@ -59,7 +64,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             binding.workoutOnGoingTimer.text = it
         }
     }
-
 
     private fun handleNotificationContinue() {
         currentState?.let {
@@ -83,7 +87,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
@@ -97,47 +100,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private fun setOnClickListeners() {
         binding.workoutOnGoingStartOrPause.setOnClickListener(this)
         binding.workoutOnGoingStop.setOnClickListener(this)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.workoutOnGoingStartOrPause.setOnClickListener(null)
-        binding.workoutOnGoingStop.setOnClickListener(null)
-        _binding = null
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    @AfterPermissionGranted(LOCATION_CODE)
-    private fun requestLocationPermission() {
-        val permissionLocation = Manifest.permission.ACCESS_FINE_LOCATION
-        if (!EasyPermissions.hasPermissions(requireContext(), permissionLocation)) {
-            EasyPermissions.requestPermissions(
-                this,
-                resources.getString(R.string.permission_rationale),
-                LOCATION_CODE,
-                permissionLocation
-            )
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val backgroundLocation = Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            if (!EasyPermissions.hasPermissions(requireContext(), backgroundLocation)) {
-                EasyPermissions.requestPermissions(
-                    this,
-                    resources.getString(R.string.permission_rationale),
-                    LOCATION_CODE,
-                    backgroundLocation
-                )
-            }
-        }
     }
 
     override fun onClick(v: View?) {
@@ -198,8 +160,9 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
     }
 
-    private fun resumeOrPauseIntent(action : String){
-        val viewText = if(action == RESUME) getString(R.string.workout_pauseRun) else getString(R.string.workout_resumeRun)
+    private fun resumeOrPauseIntent(action: String) {
+        val viewText =
+            if (action == RESUME) getString(R.string.workout_pauseRun) else getString(R.string.workout_resumeRun)
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = action
             requireActivity().startService(service)
@@ -217,5 +180,49 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
         binding.workoutOnGoingStop.visibility = View.VISIBLE
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.workoutOnGoingStartOrPause.setOnClickListener(null)
+        binding.workoutOnGoingStop.setOnClickListener(null)
+        _binding = null
+    }
+
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    @AfterPermissionGranted(LOCATION_CODE)
+    private fun requestLocationPermission() {
+        val permissionLocation = Manifest.permission.ACCESS_FINE_LOCATION
+        if (!EasyPermissions.hasPermissions(requireContext(), permissionLocation)) {
+            EasyPermissions.requestPermissions(
+                this,
+                resources.getString(R.string.rationale_ask),
+                LOCATION_CODE,
+                permissionLocation
+            )
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val backgroundLocation = Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            if (!EasyPermissions.hasPermissions(requireContext(), backgroundLocation)) {
+                EasyPermissions.requestPermissions(
+                    this,
+                    resources.getString(R.string.rationale_ask),
+                    LOCATION_CODE,
+                    backgroundLocation
+                )
+            }
+        }
+    }
+
 
 }

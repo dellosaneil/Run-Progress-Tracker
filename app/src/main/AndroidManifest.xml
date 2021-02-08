@@ -3,9 +3,9 @@
     package="com.example.exercisetracker">
 
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:name=".utility.DaggerHiltApplication"
@@ -23,8 +23,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService"
-            android:foregroundServiceType="location"/>
+        <service
+            android:name=".bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService"
+            android:foregroundServiceType="location" />
 
     </application>
 

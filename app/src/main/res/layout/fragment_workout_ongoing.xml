@@ -9,21 +9,35 @@
     tools:context=".bottomNavFragments.workout.workoutOngoing.WorkoutOngoing">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/workoutOnGoing_kilometer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:textSize="36sp"
+        tools:text="0km" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/workoutOnGoing_timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:textColor="@color/black"
         android:textSize="36sp"
-        tools:text="00:00:00" />
+        tools:text="00:00:00:00" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/workoutOnGoing_startOrPause"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:padding="10dp"
         android:text="@string/workout_startWorkout"
+        android:textSize="16sp"
         app:cornerRadius="10dp" />
 
     <com.google.android.material.button.MaterialButton
@@ -31,7 +45,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:padding="10dp"
         android:text="@string/workout_stopRun"
+        android:textSize="16sp"
         android:visibility="gone"
         app:cornerRadius="10dp" />
 

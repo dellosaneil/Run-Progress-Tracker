@@ -22,12 +22,13 @@
     <string name="workoutGoal_requiredField">Required Field</string>
     <string name="workoutDialog_title">Would you like to save workout?</string>
     <string name="workoutDialog_content">Add workout to list of workouts</string>
+    <string name="workoutOnGoing_defaultTime">00:00:00:00</string>
     
     
 <!--    Notifications-->
     <string name="notification_group">Run Tracker Application</string>
     <string name="notification_title">Run Tracker Application</string>
-    <string name="notification_content">00:00:00</string>
+    <string name="notification_defaultTime">00:00:00</string>
 
 <!--Global-->
     <string name="save">Save</string>
