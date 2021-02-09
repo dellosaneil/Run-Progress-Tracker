@@ -14,6 +14,7 @@ import com.example.exercisetracker.utility.MyItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class History : Fragment(), HistoryAdapter.HistoryListener,
     androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
@@ -22,9 +23,6 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private val binding get() = _binding!!
     private var historyAdapter: HistoryAdapter? = null
     private val historyViewModel: HistoryViewModel by viewModels()
-
-    private var sortNumber = -1
-    private var filterNumber = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +45,9 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             adapter = historyAdapter
             addItemDecoration(MyItemDecoration(5,5,5))
         }
-        historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
+        historyViewModel.workoutList().observe(viewLifecycleOwner){
+            historyAdapter?.placeWorkoutData(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -82,7 +82,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
                 dialog.dismiss()
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_filter)) { dialog, _ ->
-                filterWorkout(checkedItem)
+                historyViewModel.filterWorkoutList(checkedItem)
                 dialog.dismiss()
             }
             .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
@@ -90,16 +90,6 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             }
             .setCancelable(false)
             .show()
-    }
-
-    private fun filterWorkout(filterBy : Int){
-        filterNumber = filterBy
-        when(filterBy){
-            0 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Cycling"))
-            1 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Walking"))
-            2 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Jogging"))
-            3 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
-        }
     }
 
 
@@ -114,7 +104,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
                 dialog.dismiss()
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_sort)) { dialog, _ ->
-                sortWorkout(checkedItem)
+                historyViewModel.sortWorkoutList(checkedItem)
                 dialog.dismiss()
             }
             .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
@@ -122,16 +112,6 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             }
             .setCancelable(false)
             .show()
-    }
-
-    private fun sortWorkout(sortBy: Int) {
-        sortNumber = sortBy
-        when (sortBy) {
-            0 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
-            1 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByTotalTime())
-            2 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByTotalDistance())
-            3 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByAverageSpeed())
-        }
     }
 
 }

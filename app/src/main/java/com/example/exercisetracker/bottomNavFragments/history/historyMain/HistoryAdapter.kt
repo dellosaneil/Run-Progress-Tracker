@@ -39,21 +39,17 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
         return workoutList.size
     }
 
-
     private class DiffCallbackHistoryAdapter(
         private val oldList: List<WorkoutData>,
         private val newList: List<WorkoutData>
     ) : DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
-
         override fun getNewListSize() = newList.size
-
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             oldList[oldItemPosition].startTime == newList[newItemPosition].startTime
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             oldList[oldItemPosition] == newList[newItemPosition]
-
     }
 
 
@@ -110,7 +106,7 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
 
         private fun workoutType(workout: String): Int {
             return when (workout) {
-                "Bicycle" -> R.drawable.ic_bike_56
+                "Cycling" -> R.drawable.ic_bike_56
                 "Walking" -> R.drawable.ic_walking_56
                 else -> R.drawable.ic_jog_56
             }
