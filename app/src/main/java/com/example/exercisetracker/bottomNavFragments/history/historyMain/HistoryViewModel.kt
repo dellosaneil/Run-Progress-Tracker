@@ -17,8 +17,12 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
     private val mWorkoutList = MutableLiveData<List<WorkoutData>>()
     fun workoutList(): LiveData<List<WorkoutData>> = mWorkoutList
 
-    init{
-        viewModelScope.launch(IO){
+    private var sortNumber = -1
+    private var filterNumber = -1
+    private val workoutArrayFilters = arrayOf("Cycling", "Walking", "Jogging")
+
+    init {
+        viewModelScope.launch(IO) {
             val temp = workoutByStartTime()
             withContext(Main) {
                 mWorkoutList.value = temp
@@ -26,37 +30,71 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         }
     }
 
-
     fun sortWorkoutList(sortBy: Int) {
-        var temp : List<WorkoutData>? = null
-        viewModelScope.launch(IO){
-            when (sortBy) {
-                0 -> temp = workoutByStartTime()
-                1 -> temp = workoutByTotalTime()
-                2 -> temp = workoutByTotalDistance()
-                3 -> temp = workoutByAverageSpeed()
+        sortNumber = sortBy
+        var temp: List<WorkoutData>? = null
+        viewModelScope.launch(IO) {
+            if (filterNumber == -1 || filterNumber == 3) {
+                when (sortBy) {
+                    0 -> temp = workoutByStartTime()
+                    1 -> temp = workoutByTotalTime()
+                    2 -> temp = workoutByTotalDistance()
+                    3 -> temp = workoutByAverageSpeed()
+                }
+            } else {
+                when (sortBy) {
+                    0 -> temp = workoutFilterByStartTime(workoutArrayFilters[filterNumber])
+                    1 -> temp = workoutFilterByTotalTime(workoutArrayFilters[filterNumber])
+                    2 -> temp = workoutFilterByKM(workoutArrayFilters[filterNumber])
+                    3 -> temp = workoutFilterByAvgSpeed(workoutArrayFilters[filterNumber])
+                }
             }
-            withContext(Main){
+            withContext(Main) {
                 mWorkoutList.value = temp
             }
-
         }
     }
 
     fun filterWorkoutList(filterBy: Int) {
-        var temp : List<WorkoutData>? = null
-        viewModelScope.launch(IO){
-            when (filterBy) {
-                0 -> temp = workoutFilter("Cycling")
-                1 -> temp = workoutFilter("Walking")
-                2 -> temp = workoutFilter("Jogging")
-                3 -> temp = workoutByStartTime()
+        filterNumber = filterBy
+        var temp: List<WorkoutData>? = null
+        viewModelScope.launch(IO) {
+            if (sortNumber == -1) {
+                when (filterBy) {
+                    0, 1, 2 -> temp = workoutFilter(workoutArrayFilters[filterBy])
+                    3 -> temp = workoutByStartTime()
+                }
+                withContext(Main) {
+                    mWorkoutList.value = temp
+                }
+            } else {
+                if (filterNumber == 3) {
+                    sortWorkoutList(sortNumber)
+                } else {
+                    when (filterNumber) {
+                        0 -> temp = workoutFilterByStartTime(workoutArrayFilters[filterBy])
+                        1 -> temp = workoutFilterByTotalTime(workoutArrayFilters[filterBy])
+                        2 -> temp = workoutFilterByKM(workoutArrayFilters[filterBy])
+                        3 -> temp = workoutFilterByAvgSpeed(workoutArrayFilters[filterBy])
+                    }
+                    withContext(Main) {
+                        mWorkoutList.value = temp
+                    }
+                }
             }
-            withContext(Main){
-                mWorkoutList.value = temp
-            }
+
         }
     }
+
+    private fun workoutFilterByKM(filterBy: String) = workoutRepository.retrieveModeByKM(filterBy)
+    private fun workoutFilterByTotalTime(filterBy: String) =
+        workoutRepository.retrieveModeByTime(filterBy)
+
+    private fun workoutFilterByStartTime(filterBy: String) =
+        workoutRepository.retrieveModeByStartTime(filterBy)
+
+    private fun workoutFilterByAvgSpeed(filterBy: String) =
+        workoutRepository.retrieveModeByAvgSpeed(filterBy)
 
 
     private fun workoutByStartTime() = workoutRepository.retrieveByStartTime()

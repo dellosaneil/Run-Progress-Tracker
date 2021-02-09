@@ -24,6 +24,9 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private var historyAdapter: HistoryAdapter? = null
     private val historyViewModel: HistoryViewModel by viewModels()
 
+    private var sortItemChecked = 0
+    private var filterItemChecked = 3
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,7 +77,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
 
     private fun createFilterDialog(){
         val singleItems = resources.getStringArray(R.array.historyMenu_filter)
-        var checkedItem = 0
+        var checkedItem = filterItemChecked
 
         MaterialAlertDialogBuilder(binding.root.context)
             .setTitle(resources.getString(R.string.workoutHistory_menuFilterTitle))
@@ -83,6 +86,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_filter)) { dialog, _ ->
                 historyViewModel.filterWorkoutList(checkedItem)
+                filterItemChecked = checkedItem
                 dialog.dismiss()
             }
             .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
@@ -96,7 +100,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
 
     private fun createSortDialog() {
         val singleItems = resources.getStringArray(R.array.historyMenu_sort)
-        var checkedItem = 0
+        var checkedItem = sortItemChecked
 
         MaterialAlertDialogBuilder(binding.root.context)
             .setTitle(resources.getString(R.string.workoutHistory_menuSortTitle))
@@ -105,6 +109,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_sort)) { dialog, _ ->
                 historyViewModel.sortWorkoutList(checkedItem)
+                sortItemChecked = checkedItem
                 dialog.dismiss()
             }
             .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
