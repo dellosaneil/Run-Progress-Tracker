@@ -193,7 +193,7 @@ class WorkoutOnGoingService : Service() {
     private fun notificationDrawable(modeOfExercise: String?): Int {
          modeOfExercise?.let{
              return when(it){
-                "Bicycle" -> R.drawable.ic_bicycle_24
+                "Cycling" -> R.drawable.ic_bicycle_24
                  "Walking" -> R.drawable.ic_walk_24
                  else -> R.drawable.ic_run_24
             }

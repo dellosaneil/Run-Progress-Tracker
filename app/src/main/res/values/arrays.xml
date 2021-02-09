@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mode_of_exercise">
-        <item>Bicycle</item>
+        <item>Cycling</item>
         <item>Walking</item>
         <item>Jogging</item>
     </string-array>
@@ -16,6 +16,15 @@
         <item>Starting Time</item>
         <item>Total Time</item>
         <item>Total Distance</item>
+        <item>Average Speed</item>
     </string-array>
+
+    <string-array name="historyMenu_filter">
+        <item>Cycling</item>
+        <item>Walking</item>
+        <item>Jogging</item>
+        <item>No Filter</item>
+    </string-array>
+
 
 </resources>

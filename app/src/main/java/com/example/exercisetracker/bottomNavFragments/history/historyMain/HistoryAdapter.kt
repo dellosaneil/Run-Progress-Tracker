@@ -1,6 +1,5 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import java.util.*
 class HistoryAdapter(private val historyListener: HistoryListener) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
-    private val TAG = "HistoryAdapter"
     private var workoutList = listOf<WorkoutData>()
 
     fun placeWorkoutData(newList: List<WorkoutData>) {
@@ -37,8 +35,7 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
         holder.bind(workout)
     }
 
-    override fun getItemCount() :Int {
-        Log.i(TAG, "getItemCount: ${workoutList.size}")
+    override fun getItemCount(): Int {
         return workoutList.size
     }
 
@@ -46,14 +43,16 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
     private class DiffCallbackHistoryAdapter(
         private val oldList: List<WorkoutData>,
         private val newList: List<WorkoutData>
-    ) : DiffUtil.Callback(){
+    ) : DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
 
         override fun getNewListSize() = newList.size
 
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition].startTime == newList[newItemPosition].startTime
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition].startTime == newList[newItemPosition].startTime
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition] == newList[newItemPosition]
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition] == newList[newItemPosition]
 
     }
 
@@ -69,11 +68,11 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
         fun bind(workout: WorkoutData) {
             binding.historyRVDistance.text = resources.getString(
                 R.string.workoutHistoryRV_distance,
-                "${workout.totalKM} km"
+                "${String.format("%.2f", workout.totalKM)} km "
             )
             binding.historyRVSpeed.text = resources.getString(
                 R.string.workoutHistoryRV_speed,
-                "${workout.averageSpeed} "
+                "${String.format("%.2f", workout.averageSpeed)} "
             )
             binding.historyRVTime.text = resources.getString(
                 R.string.workoutHistoryRV_time, formatTime(
@@ -103,9 +102,9 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
             return "$hourString : $minuteString : $secondString"
         }
 
-        private fun millisecondsToDate(milliseconds : Long) : String{
+        private fun millisecondsToDate(milliseconds: Long): String {
             val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
-            return  simpleDateFormat.format(milliseconds)
+            return simpleDateFormat.format(milliseconds)
         }
 
 
@@ -116,6 +115,7 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
                 else -> R.drawable.ic_jog_56
             }
         }
+
         override fun onClick(v: View?) {
             historyListener.onHistoryWorkoutClicked(adapterPosition)
         }

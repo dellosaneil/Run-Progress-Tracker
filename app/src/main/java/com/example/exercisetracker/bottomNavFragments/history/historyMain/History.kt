@@ -1,8 +1,10 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,9 +47,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             adapter = historyAdapter
             addItemDecoration(MyItemDecoration(5,5,5))
         }
-        historyViewModel.workoutByStartTime().observe(viewLifecycleOwner) {
-            historyAdapter!!.placeWorkoutData(it)
-        }
+        historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
     }
 
     override fun onDestroyView() {
@@ -73,7 +73,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     }
 
     private fun createFilterDialog(){
-        val singleItems = resources.getStringArray(R.array.mode_of_exercise)
+        val singleItems = resources.getStringArray(R.array.historyMenu_filter)
         var checkedItem = 0
 
         MaterialAlertDialogBuilder(binding.root.context)
@@ -95,15 +95,10 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private fun filterWorkout(filterBy : Int){
         filterNumber = filterBy
         when(filterBy){
-            0 -> historyViewModel.workoutFilter("Bicycle").observe(viewLifecycleOwner){
-                historyAdapter?.placeWorkoutData(it)
-            }
-            1 -> historyViewModel.workoutFilter("Walking").observe(viewLifecycleOwner){
-                historyAdapter?.placeWorkoutData(it)
-            }
-            2 -> historyViewModel.workoutFilter("Jogging").observe(viewLifecycleOwner){
-                historyAdapter?.placeWorkoutData(it)
-            }
+            0 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Cycling"))
+            1 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Walking"))
+            2 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutFilter("Jogging"))
+            3 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
         }
     }
 
@@ -132,15 +127,10 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private fun sortWorkout(sortBy: Int) {
         sortNumber = sortBy
         when (sortBy) {
-            0 -> historyViewModel.workoutByStartTime().observe(viewLifecycleOwner) {
-                historyAdapter!!.placeWorkoutData(it)
-            }
-            1 -> historyViewModel.workoutByTotalTime().observe(viewLifecycleOwner) {
-                historyAdapter!!.placeWorkoutData(it)
-            }
-            2 -> historyViewModel.workoutByTotalDistance().observe(viewLifecycleOwner) {
-                historyAdapter!!.placeWorkoutData(it)
-            }
+            0 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByStartTime())
+            1 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByTotalTime())
+            2 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByTotalDistance())
+            3 -> historyAdapter?.placeWorkoutData(historyViewModel.workoutByAverageSpeed())
         }
     }
 
