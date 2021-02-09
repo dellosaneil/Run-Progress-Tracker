@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
+import com.example.exercisetracker.utility.MyItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,6 +22,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private val historyViewModel: HistoryViewModel by viewModels()
 
     private var sortNumber = -1
+    private var filterNumber = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +43,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         binding.historyRecyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = historyAdapter
+            addItemDecoration(MyItemDecoration(5,5,5))
         }
         historyViewModel.workoutByStartTime().observe(viewLifecycleOwner) {
             historyAdapter!!.placeWorkoutData(it)
@@ -52,10 +55,8 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         _binding = null
     }
 
-    override fun onHistoryWorkoutClicked(index: Int) {
-    }
+    override fun onHistoryWorkoutClicked(index: Int) {}
 
-    private val TAG = "History"
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         return when (item?.itemId) {
@@ -92,6 +93,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     }
 
     private fun filterWorkout(filterBy : Int){
+        filterNumber = filterBy
         when(filterBy){
             0 -> historyViewModel.workoutFilter("Bicycle").observe(viewLifecycleOwner){
                 historyAdapter?.placeWorkoutData(it)
@@ -102,14 +104,8 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             2 -> historyViewModel.workoutFilter("Jogging").observe(viewLifecycleOwner){
                 historyAdapter?.placeWorkoutData(it)
             }
-
-
         }
     }
-
-//    <item>Bicycle</item>
-//        <item>Walking</item>
-//        <item>Jogging</item>
 
 
 

@@ -7,7 +7,7 @@ import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.room.dao.WorkoutDao
 
 
-@Database(entities = [WorkoutData::class], version = 4, exportSchema = false)
+@Database(entities = [WorkoutData::class], version = 5, exportSchema = false)
 @TypeConverters(MyConverters::class)
 abstract class WorkoutDatabase : RoomDatabase(){
     abstract fun workoutDao() : WorkoutDao

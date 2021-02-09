@@ -18,18 +18,4 @@
         <item>Total Distance</item>
     </string-array>
 
-
-
 </resources>
-
-<!--    @Query("SELECT * FROM workout_main ORDER BY  totalTime DESC")
-    fun retrieveDataByTime(): LiveData<List<WorkoutData>>
-
-    @Query("SELECT * FROM workout_main ORDER BY averageSpeed DESC")
-    fun retrieveDataByAvgSpeed(): LiveData<List<WorkoutData>>
-
-    @Query("SELECT * FROM workout_main ORDER BY startTime DESC")
-    fun retrieveDataByStartTime(): LiveData<List<WorkoutData>>
-
-    @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode")
-    fun retrieveSpecificMode(mode : String) : LiveData<List<WorkoutData>>-->

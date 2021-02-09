@@ -194,7 +194,7 @@ class WorkoutOnGoingService : Service() {
          modeOfExercise?.let{
              return when(it){
                 "Bicycle" -> R.drawable.ic_bicycle_24
-                 "Walk" -> R.drawable.ic_walk_24
+                 "Walking" -> R.drawable.ic_walk_24
                  else -> R.drawable.ic_run_24
             }
         }?: return R.drawable.ic_run_24

@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.ListItemHistoryBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HistoryAdapter(private val historyListener: HistoryListener) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
@@ -41,7 +43,10 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
     }
 
 
-    private class DiffCallbackHistoryAdapter(private val oldList: List<WorkoutData>, private val newList: List<WorkoutData>) : DiffUtil.Callback(){
+    private class DiffCallbackHistoryAdapter(
+        private val oldList: List<WorkoutData>,
+        private val newList: List<WorkoutData>
+    ) : DiffUtil.Callback(){
         override fun getOldListSize() = oldList.size
 
         override fun getNewListSize() = newList.size
@@ -66,8 +71,16 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
                 R.string.workoutHistoryRV_distance,
                 "${workout.totalKM} km"
             )
-            binding.historyRVSpeed.text = resources.getString(R.string.workoutHistoryRV_speed, "${workout.averageSpeed} ")
-            binding.historyRVTime.text = resources.getString(R.string.workoutHistoryRV_time, formatTime(workout.totalTime))
+            binding.historyRVSpeed.text = resources.getString(
+                R.string.workoutHistoryRV_speed,
+                "${workout.averageSpeed} "
+            )
+            binding.historyRVTime.text = resources.getString(
+                R.string.workoutHistoryRV_time, formatTime(
+                    workout.totalTime
+                )
+            )
+            binding.historyRVStartTime.text = millisecondsToDate(workout.startTime)
 
             Glide.with(binding.root.context)
                 .asDrawable()
@@ -90,10 +103,16 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
             return "$hourString : $minuteString : $secondString"
         }
 
+        private fun millisecondsToDate(milliseconds : Long) : String{
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
+            return  simpleDateFormat.format(milliseconds)
+        }
+
+
         private fun workoutType(workout: String): Int {
             return when (workout) {
                 "Bicycle" -> R.drawable.ic_bike_56
-                "Walk" -> R.drawable.ic_walking_56
+                "Walking" -> R.drawable.ic_walking_56
                 else -> R.drawable.ic_jog_56
             }
         }
