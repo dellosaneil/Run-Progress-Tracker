@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/historyMenu_sort"
+        android:title="@string/historyMenu_sort"
+        android:icon="@drawable/ic_sort_24"/>
+
+    <item android:id="@+id/historyMenu_filter"
+        android:title="@string/historyMenu_filter"
+        android:icon="@drawable/ic_filter_24"/>
+
+</menu>

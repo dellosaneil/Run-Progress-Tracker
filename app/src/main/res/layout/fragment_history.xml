@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".bottomNavFragments.history.historyMain.History">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/history_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:menu="@menu/menu_history"
+        app:title="@string/history"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/history_recyclerView"
@@ -11,4 +20,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     
-</FrameLayout>
+</LinearLayout>

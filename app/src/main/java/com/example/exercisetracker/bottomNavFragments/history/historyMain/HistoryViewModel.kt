@@ -13,7 +13,9 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(private val workoutRepository: WorkoutRepository) : ViewModel() {
 
     private val TAG = "HistoryViewModel"
-//    private val _workoutData = MutableLiveData<List<WorkoutData>>()
-    fun workoutData() : LiveData<List<WorkoutData>> = workoutRepository.retrieveByAvgSpeed()
+    fun workoutByStartTime() = workoutRepository.retrieveByStartTime()
+    fun workoutByTotalTime() = workoutRepository.retrieveByTime()
+    fun workoutByTotalDistance() = workoutRepository.retrieveByKM()
+    fun workoutFilter(filterBy : String) = workoutRepository.retrieveByMode(filterBy)
 
 }

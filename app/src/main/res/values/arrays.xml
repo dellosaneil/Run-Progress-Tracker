@@ -2,8 +2,8 @@
 <resources>
     <string-array name="mode_of_exercise">
         <item>Bicycle</item>
-        <item>Walk</item>
-        <item>Jog</item>
+        <item>Walking</item>
+        <item>Jogging</item>
     </string-array>
 
     <string-array name="goal_type">
@@ -12,5 +12,24 @@
         <item>None</item>
     </string-array>
 
+    <string-array name="historyMenu_sort">
+        <item>Starting Time</item>
+        <item>Total Time</item>
+        <item>Total Distance</item>
+    </string-array>
+
+
 
 </resources>
+
+<!--    @Query("SELECT * FROM workout_main ORDER BY  totalTime DESC")
+    fun retrieveDataByTime(): LiveData<List<WorkoutData>>
+
+    @Query("SELECT * FROM workout_main ORDER BY averageSpeed DESC")
+    fun retrieveDataByAvgSpeed(): LiveData<List<WorkoutData>>
+
+    @Query("SELECT * FROM workout_main ORDER BY startTime DESC")
+    fun retrieveDataByStartTime(): LiveData<List<WorkoutData>>
+
+    @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode")
+    fun retrieveSpecificMode(mode : String) : LiveData<List<WorkoutData>>-->

@@ -16,13 +16,13 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_main ORDER BY totalKM")
     fun retrieveDataByKM(): LiveData<List<WorkoutData>>
 
-    @Query("SELECT * FROM workout_main ORDER BY  totalTime")
+    @Query("SELECT * FROM workout_main ORDER BY  totalTime DESC")
     fun retrieveDataByTime(): LiveData<List<WorkoutData>>
 
-    @Query("SELECT * FROM workout_main ORDER BY averageSpeed")
+    @Query("SELECT * FROM workout_main ORDER BY averageSpeed DESC")
     fun retrieveDataByAvgSpeed(): LiveData<List<WorkoutData>>
 
-    @Query("SELECT * FROM workout_main ORDER BY startTime")
+    @Query("SELECT * FROM workout_main ORDER BY startTime DESC")
     fun retrieveDataByStartTime(): LiveData<List<WorkoutData>>
 
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode")

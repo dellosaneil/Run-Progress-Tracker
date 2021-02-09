@@ -243,7 +243,6 @@ class WorkoutOnGoingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.i(TAG, "onCreate: ")
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         initializeStopwatchObserver()
         buildLocationRequest()
@@ -314,6 +313,7 @@ class WorkoutOnGoingService : Service() {
         mStopWatchRunningTime.value = 0L
         mStopWatchServiceTime.value = getString(R.string.notification_defaultTime)
         mStopWatchFragmentTime.value = getString(R.string.workoutOnGoing_defaultTime)
+        mKilometers.value = getString(R.string.workoutOnGoing_defaultKilometer)
 
         workoutGoal = null
         currentState = null
