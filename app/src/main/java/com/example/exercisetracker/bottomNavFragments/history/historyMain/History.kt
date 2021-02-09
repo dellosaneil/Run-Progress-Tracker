@@ -1,15 +1,21 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.WorkoutGoalDirections
+import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
+import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.MyItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +29,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private val binding get() = _binding!!
     private var historyAdapter: HistoryAdapter? = null
     private val historyViewModel: HistoryViewModel by viewModels()
+    private lateinit var currentWorkoutList : List<WorkoutData> 
 
     private var sortItemChecked = 0
     private var filterItemChecked = 3
@@ -50,6 +57,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         }
         historyViewModel.workoutList().observe(viewLifecycleOwner){
             historyAdapter?.placeWorkoutData(it)
+            currentWorkoutList = it
         }
     }
 
@@ -58,7 +66,11 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         _binding = null
     }
 
-    override fun onHistoryWorkoutClicked(index: Int) {}
+
+    override fun onHistoryWorkoutClicked(index: Int) {
+        val action = HistoryDirections.historyWorkoutHistoryPolyline(currentWorkoutList[index])
+        Navigation.findNavController(binding.root).navigate(action)
+    }
 
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

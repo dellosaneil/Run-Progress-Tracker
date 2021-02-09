@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOngoingArgs
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -16,22 +19,16 @@ import com.google.android.gms.maps.model.PolylineOptions
 
 class HistoryPolyline : Fragment() {
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    private val args: HistoryPolylineArgs? by navArgs()
 
+    private val callback = OnMapReadyCallback { googleMap ->
+        val polyLines = args?.polylines?.route
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polyLines?.get(0), 18f))
+        googleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
         googleMap.addPolyline(
             PolylineOptions()
                 .clickable(true)
-                .add(
-                    LatLng(-35.016, 143.321),
-                    LatLng(-34.747, 145.592),
-                    LatLng(-34.364, 147.891),
-                    LatLng(-33.501, 150.217),
-                    LatLng(-32.306, 149.248),
-                    LatLng(-32.491, 147.309)
-                )
+                .addAll(polyLines)
         )
     }
 

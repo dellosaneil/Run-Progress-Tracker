@@ -11,7 +11,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -30,7 +29,7 @@ import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
-import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
+import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -275,7 +274,7 @@ class WorkoutOnGoingService : Service() {
     private fun startRunningForeground(intent: Intent) {
         currentState = START
         stopWatchRunningTime.value?.let { startObservingProgress(it) }
-        workoutGoal = intent.getParcelableExtra(WORKOUT_GOAL_BUNDLE)
+        workoutGoal = intent.getParcelableExtra(BUNDLE)
         serviceRunning = true
         createNotification(workoutGoal?.modeOfExercise)
         updateLocation()

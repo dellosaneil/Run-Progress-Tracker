@@ -23,7 +23,7 @@ import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
-import com.example.exercisetracker.utility.Constants.Companion.WORKOUT_GOAL_BUNDLE
+import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -174,7 +174,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         workoutOnGoingViewModel.changeState()
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = START
-            service.putExtra(WORKOUT_GOAL_BUNDLE, args?.workoutgoal)
+            service.putExtra(BUNDLE, args?.workoutgoal)
             requireActivity().startService(service)
         }
         binding.workoutOnGoingStop.visibility = View.VISIBLE

@@ -82,7 +82,6 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
                     }
                 }
             }
-
         }
     }
 

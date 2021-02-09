@@ -66,5 +66,11 @@
         android:id="@+id/workoutHistoryPolyline"
         android:name="com.example.exercisetracker.bottomNavFragments.history.HistoryPolyline"
         android:label="fragment_workout_history_polyline"
-        tools:layout="@layout/fragment_history_polyline" />
+        tools:layout="@layout/fragment_history_polyline" >
+        <argument
+            android:name="polylines"
+            app:argType="com.example.exercisetracker.data.WorkoutData"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>
