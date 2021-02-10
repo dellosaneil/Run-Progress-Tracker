@@ -23,7 +23,9 @@
     <string name="workoutDialog_content">Add workout to list of workouts</string>
     <string name="workoutOnGoing_defaultTime">00:00:00:00</string>
     <string name="workoutOnGoing_defaultKilometer">0.00km</string>
-
+    <string name="workoutOnGoing_locationOffTitle">Turn on GPS</string>
+    <string name="workoutOnGoing_locationOffMessage">The application cannot function properly without GPS turned on</string>
+    <string name="workoutOnGoing_locationOffSettings">Settings</string>
 
 <!--    History-->
     <string name="workoutHistoryRV_time"><b>Time:</b>\n%1$s</string>

@@ -54,7 +54,7 @@ class WorkoutOnGoingService : Service() {
         private val mStopWatchServiceTime = MutableLiveData("00:00:00")
         val stopWatchServiceTime: LiveData<String> = mStopWatchServiceTime
 
-        private val mKilometers = MutableLiveData("0.00km")
+        private val mKilometers = MutableLiveData("0.00 km")
         val kilometers : LiveData<String> = mKilometers
     }
 
@@ -224,8 +224,8 @@ class WorkoutOnGoingService : Service() {
     private fun buildLocationRequest() {
         locationRequest = LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 500
-            fastestInterval = 250
+            interval = 60000
+            fastestInterval = 60000
         }
     }
 

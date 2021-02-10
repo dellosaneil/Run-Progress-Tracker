@@ -1,7 +1,9 @@
 package com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,19 +19,20 @@ import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.Wor
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchFragmentTime
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
+import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
-import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
@@ -54,6 +57,16 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         displayProgressIndicator()
         return binding.root
     }
+
+    private fun checkLocation() : Boolean{
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        var locationStatus = false
+        try{
+            locationStatus = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
+        }catch (e: Exception){}
+        return locationStatus
+    }
+
 
     private fun displayProgressIndicator() {
         stopWatchFragmentTime.observe(viewLifecycleOwner) {
@@ -170,14 +183,28 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     }
 
     private fun startWorkout() {
-        workoutOnGoingViewModel.startRun()
-        workoutOnGoingViewModel.changeState()
-        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-            service.action = START
-            service.putExtra(BUNDLE, args?.workoutgoal)
-            requireActivity().startService(service)
+        if(checkLocation()){
+            workoutOnGoingViewModel.startRun()
+            workoutOnGoingViewModel.changeState()
+            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                service.action = START
+                service.putExtra(BUNDLE, args?.workoutgoal)
+                requireActivity().startService(service)
+            }
+            binding.workoutOnGoingStop.visibility = View.VISIBLE
+        }else{
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.workoutOnGoing_locationOffTitle))
+                .setMessage(R.string.workoutOnGoing_locationOffMessage)
+                .setPositiveButton(R.string.workoutOnGoing_locationOffSettings){_,_->
+                    Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS).also{
+                        startActivity(it)
+                    }
+                }
+                .setNegativeButton(R.string.cancel){dialog, _ ->
+                    dialog.dismiss()
+                }
         }
-        binding.workoutOnGoingStop.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
@@ -222,6 +249,4 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             }
         }
     }
-
-
 }
