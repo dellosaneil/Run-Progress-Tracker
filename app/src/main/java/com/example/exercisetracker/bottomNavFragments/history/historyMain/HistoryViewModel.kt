@@ -32,6 +32,14 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         }
     }
 
+    fun insertNewWorkout(workoutData : WorkoutData){
+        viewModelScope.launch(IO){
+            workoutRepository.insertWorkout(workoutData)
+        }
+        sortWorkoutList(sortNumber)
+    }
+
+
     fun sortWorkoutList(sortBy: Int) {
         sortNumber = sortBy
         var temp: List<WorkoutData>? = null

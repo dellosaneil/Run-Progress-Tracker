@@ -16,6 +16,7 @@ import com.example.exercisetracker.databinding.FragmentHistoryBinding
 import com.example.exercisetracker.utility.MyItemDecoration
 import com.example.exercisetracker.utility.SwipeListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -32,6 +33,8 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
     private var sortItemChecked = 0
     private var filterItemChecked = 3
     private lateinit var swipeListener : SwipeListener
+    private var latestDeletedWorkout : WorkoutData? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -127,13 +130,25 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             .show()
     }
 
+    private fun undoDelete(){
+        Snackbar.make(binding.root, getString(R.string.workoutHistory_snackBarDelete), Snackbar.LENGTH_LONG)
+            .setAction(R.string.workoutHistory_snackBarUndo){
+                latestDeletedWorkout?.let{historyViewModel.insertNewWorkout(it)
+                }
+            }
+            .show()
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
     override fun onViewHolderIndex(index: Int) {
-        val timeStarted = currentWorkoutList[index].startTime
+        latestDeletedWorkout = currentWorkoutList[index]
+        val timeStarted = latestDeletedWorkout!!.startTime
         historyViewModel.deleteWorkout(timeStarted)
+        undoDelete()
     }
 }

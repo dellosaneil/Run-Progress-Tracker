@@ -13,13 +13,13 @@ class Constants {
         const val STOP = "stop"
         const val ACTION_NOTIFICATION_SERVICE = "notification_service"
 
-        const val DATABASE_NAME = "workout_table"
+        const val DATABASE_NAME = "workout_database"
 
         const val BUNDLE = "workout_bundle"
         const val EXTRA_SAVE = "save"
 
-        const val DISTANCE = "distance"
-        const val TIME = "time"
+        const val DISTANCE = "Distance"
+        const val TIME = "Time"
         const val NONE = "None"
 
     }

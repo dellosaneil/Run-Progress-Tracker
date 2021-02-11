@@ -35,7 +35,8 @@
     <string name="historyMenu_filter">Filter</string>
     <string name="workoutHistory_menuSortTitle">Sort by</string>
     <string name="workoutHistory_menuFilterTitle">Filter by</string>
-
+    <string name="workoutHistory_snackBarDelete">Workout Deleted</string>
+    <string name="workoutHistory_snackBarUndo">Undo</string>
 
     
 <!--    Notifications-->
