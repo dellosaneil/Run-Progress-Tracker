@@ -22,18 +22,19 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class History : Fragment(), HistoryAdapter.HistoryListener,
-    androidx.appcompat.widget.Toolbar.OnMenuItemClickListener, SwipeListener.SwipeListenerViewHolderAdapter{
+    androidx.appcompat.widget.Toolbar.OnMenuItemClickListener,
+    SwipeListener.SwipeListenerViewHolderAdapter {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
     private var historyAdapter: HistoryAdapter? = null
     private val historyViewModel: HistoryViewModel by viewModels()
-    private lateinit var currentWorkoutList : List<WorkoutData> 
+    private lateinit var currentWorkoutList: List<WorkoutData>
 
     private var sortItemChecked = 0
     private var filterItemChecked = 3
-    private lateinit var swipeListener : SwipeListener
-    private var latestDeletedWorkout : WorkoutData? = null
+    private lateinit var swipeListener: SwipeListener
+    private var latestDeletedWorkout: WorkoutData? = null
 
 
     override fun onCreateView(
@@ -56,12 +57,12 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         binding.historyRecyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = historyAdapter
-            addItemDecoration(MyItemDecoration(5,5,5))
+            addItemDecoration(MyItemDecoration(5, 5, 5))
             val itemTouchHelper = ItemTouchHelper(swipeListener)
             itemTouchHelper.attachToRecyclerView(this)
         }
 
-        historyViewModel.workoutList().observe(viewLifecycleOwner){
+        historyViewModel.workoutList().observe(viewLifecycleOwner) {
             historyAdapter?.placeWorkoutData(it)
             currentWorkoutList = it
         }
@@ -87,7 +88,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         }
     }
 
-    private fun createFilterDialog(){
+    private fun createFilterDialog() {
         val singleItems = resources.getStringArray(R.array.historyMenu_filter)
         var checkedItem = filterItemChecked
 
@@ -130,10 +131,15 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             .show()
     }
 
-    private fun undoDelete(){
-        Snackbar.make(binding.root, getString(R.string.workoutHistory_snackBarDelete), Snackbar.LENGTH_LONG)
-            .setAction(R.string.workoutHistory_snackBarUndo){
-                latestDeletedWorkout?.let{historyViewModel.insertNewWorkout(it)
+    private fun undoDelete() {
+        Snackbar.make(
+            binding.root,
+            getString(R.string.workoutHistory_snackBarDelete),
+            Snackbar.LENGTH_LONG
+        )
+            .setAction(R.string.workoutHistory_snackBarUndo) {
+                latestDeletedWorkout?.let {
+                    historyViewModel.insertNewWorkout(it)
                 }
             }
             .show()

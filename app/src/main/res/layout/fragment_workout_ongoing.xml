@@ -8,6 +8,21 @@
     android:orientation="vertical"
     tools:context=".bottomNavFragments.workout.workoutOngoing.WorkoutOngoing">
 
+    <ProgressBar
+        android:id="@+id/workoutOnGoing_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:progressTint="@color/purple_500"
+        android:layout_marginBottom="50dp"
+        android:indeterminate="false"
+        android:max="100"
+        tools:ignore="UnusedAttribute"
+        tools:progress="20" />
+
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/workoutOnGoing_kilometer"
         android:layout_width="match_parent"

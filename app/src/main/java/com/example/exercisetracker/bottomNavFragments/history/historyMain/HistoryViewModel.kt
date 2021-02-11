@@ -35,32 +35,32 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
     fun insertNewWorkout(workoutData : WorkoutData){
         viewModelScope.launch(IO){
             workoutRepository.insertWorkout(workoutData)
+            sortWorkoutList(sortNumber)
         }
-        sortWorkoutList(sortNumber)
     }
 
 
     fun sortWorkoutList(sortBy: Int) {
         sortNumber = sortBy
-        var temp: List<WorkoutData>? = null
+        var tempWorkoutList: List<WorkoutData>? = null
         viewModelScope.launch(IO) {
             if (filterNumber == -1 || filterNumber == 3) {
                 when (sortBy) {
-                    0 -> temp = workoutByStartTime()
-                    1 -> temp = workoutByTotalTime()
-                    2 -> temp = workoutByTotalDistance()
-                    3 -> temp = workoutByAverageSpeed()
+                    0 -> tempWorkoutList = workoutByStartTime()
+                    1 -> tempWorkoutList = workoutByTotalTime()
+                    2 -> tempWorkoutList = workoutByTotalDistance()
+                    3 -> tempWorkoutList = workoutByAverageSpeed()
                 }
             } else {
                 when (sortBy) {
-                    0 -> temp = workoutFilterByStartTime(workoutArrayFilters[filterNumber])
-                    1 -> temp = workoutFilterByTotalTime(workoutArrayFilters[filterNumber])
-                    2 -> temp = workoutFilterByKM(workoutArrayFilters[filterNumber])
-                    3 -> temp = workoutFilterByAvgSpeed(workoutArrayFilters[filterNumber])
+                    0 -> tempWorkoutList = workoutFilterByStartTime(workoutArrayFilters[filterNumber])
+                    1 -> tempWorkoutList = workoutFilterByTotalTime(workoutArrayFilters[filterNumber])
+                    2 -> tempWorkoutList = workoutFilterByKM(workoutArrayFilters[filterNumber])
+                    3 -> tempWorkoutList = workoutFilterByAvgSpeed(workoutArrayFilters[filterNumber])
                 }
             }
             withContext(Main) {
-                mWorkoutList.value = temp
+                mWorkoutList.value = tempWorkoutList
             }
         }
     }

@@ -11,6 +11,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -58,7 +59,11 @@ class WorkoutOnGoingService : Service() {
 
         private val mKilometers = MutableLiveData("0.00 km")
         val kilometers: LiveData<String> = mKilometers
+
+        private val mGoalProgress = MutableLiveData(0)
+        val goalProgress: LiveData<Int> = mGoalProgress
     }
+
 
     @Inject
     lateinit var workoutRepository: WorkoutRepository
@@ -80,6 +85,7 @@ class WorkoutOnGoingService : Service() {
         return null
     }
 
+
     /*update notification every second.*/
     private fun initializeStopwatchObserver() {
         stopWatchTimeObserver = Observer {
@@ -100,17 +106,27 @@ class WorkoutOnGoingService : Service() {
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
             while (currentState != PAUSE && currentState != STOP && currentState != null) {
+                val distance = computeDistance()
+                val updatedTime = System.currentTimeMillis() - timeStarted + previousTime
                 withContext(Main) {
-                    mStopWatchRunningTime.value =
-                        System.currentTimeMillis() - timeStarted + previousTime
+                    mStopWatchRunningTime.value = updatedTime
                     mStopWatchFragmentTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
-                    mKilometers.value = "${String.format("%.2f", computeDistance())} km"
+                    mKilometers.value = "${String.format("%.2f", distance)} km"
+                    progressGoalIndicator(updatedTime, distance)
                 }
                 delay(25)
             }
+        }
+    }
+
+    private fun progressGoalIndicator(updatedTime: Long, distance: Float) {
+        if (workoutGoal?.kmGoal != null) {
+            mGoalProgress.value = (distance / workoutGoal?.kmGoal!! * 100).toInt()
+        } else if (workoutGoal?.minutesGoal != null) {
+            mGoalProgress.value = (updatedTime / workoutGoal?.minutesGoal!! * 100).toInt()
         }
     }
 
@@ -318,6 +334,7 @@ class WorkoutOnGoingService : Service() {
         mStopWatchServiceTime.value = getString(R.string.notification_defaultTime)
         mStopWatchFragmentTime.value = getString(R.string.workoutOnGoing_defaultTime)
         mKilometers.value = getString(R.string.workoutOnGoing_defaultKilometer)
+        mGoalProgress.value = 0
 
         workoutGoal = null
         currentState = null

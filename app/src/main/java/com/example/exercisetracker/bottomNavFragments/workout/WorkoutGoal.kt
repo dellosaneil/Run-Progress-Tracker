@@ -113,7 +113,7 @@ class WorkoutGoal : Fragment() {
                 } else {
                     val goal = binding.workoutGoalGoal.editText?.text.toString().toDouble()
                     if (binding.workoutGoalGoalType.editText?.text?.toString() == TIME) {
-                        WorkoutGoalData(modeOfExercise = typeOfExercise!!, minutesGoal = goal)
+                        WorkoutGoalData(modeOfExercise = typeOfExercise!!, minutesGoal = goal * 60_000)
                     } else {
                         WorkoutGoalData(modeOfExercise = typeOfExercise!!, kmGoal = goal)
                     }

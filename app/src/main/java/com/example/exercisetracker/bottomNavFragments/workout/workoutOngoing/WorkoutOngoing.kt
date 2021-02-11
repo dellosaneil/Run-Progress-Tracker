@@ -15,6 +15,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.goalProgress
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.kilometers
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchFragmentTime
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
@@ -55,9 +56,15 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         requestLocationPermission()
         setOnClickListeners()
         displayProgressIndicator()
+        progressGoalIndication()
         return binding.root
     }
 
+    private fun progressGoalIndication() {
+        goalProgress.observe(viewLifecycleOwner){
+            binding.workoutOnGoingProgress.progress = it
+        }
+    }
 
     /*Checks if GPS is turned on*/
     private fun checkLocation(): Boolean {
