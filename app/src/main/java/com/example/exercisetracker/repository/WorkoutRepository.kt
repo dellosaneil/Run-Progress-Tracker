@@ -18,8 +18,4 @@ class WorkoutRepository @Inject constructor(private val workoutDao: WorkoutDao) 
     fun retrieveModeByAvgSpeed(mode : String) = workoutDao.retrieveModeByAvgSpeed(mode)
     fun retrieveModeByStartTime(mode : String) = workoutDao.retrieveModeByStartTime(mode)
 
-
-
-
-
 }

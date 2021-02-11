@@ -105,9 +105,10 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
 
 
         private fun workoutType(workout: String): Int {
+            val exerciseArray = resources.getStringArray(R.array.mode_of_exercise)
             return when (workout) {
-                "Cycling" -> R.drawable.ic_bike_56
-                "Walking" -> R.drawable.ic_walking_56
+                exerciseArray[0] -> R.drawable.ic_bike_56
+                exerciseArray[1] -> R.drawable.ic_walking_56
                 else -> R.drawable.ic_jog_56
             }
         }

@@ -12,6 +12,9 @@ import androidx.navigation.Navigation
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.databinding.FragmentWorkoutGoalBinding
+import com.example.exercisetracker.utility.Constants.Companion.DISTANCE
+import com.example.exercisetracker.utility.Constants.Companion.NONE
+import com.example.exercisetracker.utility.Constants.Companion.TIME
 
 class WorkoutGoal : Fragment() {
 
@@ -28,26 +31,27 @@ class WorkoutGoal : Fragment() {
         return binding.root
     }
 
+    /*place values in the dropDownMenu*/
     private fun setUpDropDownMenu() {
-        val typeOfExercise = resources.getStringArray(R.array.mode_of_exercise)
-        val adapter = ArrayAdapter(requireContext(), R.layout.drop_down, typeOfExercise)
-        (binding.workoutGoalTypeOfExercise.editText as? AutoCompleteTextView)?.setAdapter(adapter)
-
-        val setGoal = resources.getStringArray(R.array.goal_type)
-        val goalAdapter = ArrayAdapter(requireContext(), R.layout.drop_down, setGoal)
-        (binding.workoutGoalGoalType.editText as? AutoCompleteTextView)?.setAdapter(goalAdapter)
+        val arrayGoals = arrayOf(resources.getStringArray(R.array.mode_of_exercise), resources.getStringArray(R.array.goal_type))
+        val arrayViews = arrayOf(binding.workoutGoalTypeOfExercise, binding.workoutGoalGoalType)
+        repeat(2){
+            val adapter = ArrayAdapter(requireContext(), R.layout.drop_down, arrayGoals[it])
+            (arrayViews[it].editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        }
     }
 
+    /*Changes the Property of Goal according to the GoalType selected*/
     private fun setGoalListener() {
         binding.workoutGoalGoalType.editText?.doOnTextChanged { text, _, _, _ ->
             binding.workoutGoalGoal.editText?.text?.clear()
             when (text.toString()) {
-                "Distance" -> {
+                DISTANCE -> {
                     binding.workoutGoalGoal.visibility = View.VISIBLE
                     binding.workoutGoalGoal.suffixText =
                         resources.getString(R.string.workoutGoal_km)
                 }
-                "Time" -> {
+                TIME -> {
                     binding.workoutGoalGoal.visibility = View.VISIBLE
                     binding.workoutGoalGoal.suffixText =
                         resources.getString(R.string.workoutGoal_minutes)
@@ -60,6 +64,7 @@ class WorkoutGoal : Fragment() {
         }
     }
 
+    /*Checks all of the EditText have values*/
     private fun checkValues(): Boolean {
         var completeFields = true
         if (binding.workoutGoalTypeOfExercise.editText?.text?.isEmpty()!!) {
@@ -75,7 +80,7 @@ class WorkoutGoal : Fragment() {
                 resources.getString(R.string.workoutGoal_requiredField)
         } else {
             binding.workoutGoalGoalType.error = null
-            if (binding.workoutGoalGoalType.editText?.text.toString() != "None") {
+            if (binding.workoutGoalGoalType.editText?.text.toString() != NONE) {
                 if (binding.workoutGoalGoal.editText?.text?.isEmpty()!!) {
                     completeFields = false
                     binding.workoutGoalGoal.error =
@@ -94,16 +99,19 @@ class WorkoutGoal : Fragment() {
         redirectToOnGoingWorkout(view)
     }
 
+
+    /*When Button is clicked first check the values if it is complete then send it in a Bundle by SafeArgs to
+     WorkoutOnGoing Fragment*/
     private fun redirectToOnGoingWorkout(view : View){
         binding.workoutGoalSetGoal.setOnClickListener {
             if (checkValues()) {
                 val workoutGoal: WorkoutGoalData
                 val typeOfExercise = binding.workoutGoalTypeOfExercise.editText?.text?.toString()
-                workoutGoal = if (binding.workoutGoalGoalType.editText?.text.toString() == "None") {
+                workoutGoal = if (binding.workoutGoalGoalType.editText?.text.toString() == NONE) {
                     WorkoutGoalData(modeOfExercise = typeOfExercise!!)
                 } else {
                     val goal = binding.workoutGoalGoal.editText?.text.toString().toDouble()
-                    if (binding.workoutGoalGoalType.editText?.text?.toString() == "Time") {
+                    if (binding.workoutGoalGoalType.editText?.text?.toString() == TIME) {
                         WorkoutGoalData(modeOfExercise = typeOfExercise!!, minutesGoal = goal)
                     } else {
                         WorkoutGoalData(modeOfExercise = typeOfExercise!!, kmGoal = goal)

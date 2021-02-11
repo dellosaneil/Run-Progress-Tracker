@@ -1,7 +1,9 @@
 package com.example.exercisetracker.room.dao
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.example.exercisetracker.data.WorkoutData
 
 @Dao
@@ -34,10 +36,6 @@ interface WorkoutDao {
     fun retrieveModeByAvgSpeed(mode : String) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode ORDER BY startTime DESC")
     fun retrieveModeByStartTime(mode : String) : List<WorkoutData>
-
-
-
-
 
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode")
     fun retrieveSpecificMode(mode : String) : List<WorkoutData>

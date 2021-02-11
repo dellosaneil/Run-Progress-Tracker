@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         setUpNavController()
     }
 
+    /*connect bottom nav graph with Navigation Component
+      listens where destination is then hide bottom nav bar accordingly*/
     private fun setUpNavController() {
         binding.bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -46,11 +48,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*called when Pending Intent is clicked*/
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         navigateToWorkoutOngoing(intent)
     }
 
+    /*redirect to OnGoingWorkoutFragment when workout is OnGoing*/
     private fun navigateToWorkoutOngoing(intent: Intent?) {
         navController = findNavController(R.id.nav_host_fragment_container)
         if (intent?.action == ACTION_NOTIFICATION_SERVICE) {

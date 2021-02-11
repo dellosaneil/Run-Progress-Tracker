@@ -57,28 +57,28 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
 
     fun filterWorkoutList(filterBy: Int) {
         filterNumber = filterBy
-        var temp: List<WorkoutData>? = null
+        var tempWorkoutList: List<WorkoutData>? = null
         viewModelScope.launch(IO) {
             if (sortNumber == -1) {
                 when (filterBy) {
-                    0, 1, 2 -> temp = workoutFilter(workoutArrayFilters[filterBy])
-                    3 -> temp = workoutByStartTime()
+                    0, 1, 2 -> tempWorkoutList = workoutFilter(workoutArrayFilters[filterBy])
+                    3 -> tempWorkoutList = workoutByStartTime()
                 }
                 withContext(Main) {
-                    mWorkoutList.value = temp
+                    mWorkoutList.value = tempWorkoutList
                 }
             } else {
                 if (filterNumber == 3) {
                     sortWorkoutList(sortNumber)
                 } else {
                     when (filterNumber) {
-                        0 -> temp = workoutFilterByStartTime(workoutArrayFilters[filterBy])
-                        1 -> temp = workoutFilterByTotalTime(workoutArrayFilters[filterBy])
-                        2 -> temp = workoutFilterByKM(workoutArrayFilters[filterBy])
-                        3 -> temp = workoutFilterByAvgSpeed(workoutArrayFilters[filterBy])
+                        0 -> tempWorkoutList = workoutFilterByStartTime(workoutArrayFilters[filterBy])
+                        1 -> tempWorkoutList = workoutFilterByTotalTime(workoutArrayFilters[filterBy])
+                        2 -> tempWorkoutList = workoutFilterByKM(workoutArrayFilters[filterBy])
+                        3 -> tempWorkoutList = workoutFilterByAvgSpeed(workoutArrayFilters[filterBy])
                     }
                     withContext(Main) {
-                        mWorkoutList.value = temp
+                        mWorkoutList.value = tempWorkoutList
                     }
                 }
             }

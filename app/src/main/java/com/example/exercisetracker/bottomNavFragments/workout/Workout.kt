@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class Workout : FragmentLifecycleLog() {
+class Workout : FragmentLifecycleLog(), View.OnClickListener {
     private var _binding: FragmentWorkoutBinding? = null
     private val binding get() = _binding!!
 
@@ -34,14 +34,7 @@ class Workout : FragmentLifecycleLog() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.workoutButton.setOnClickListener {
-            if (serviceRunning) {
-                Navigation.findNavController(it).navigate(R.id.workout_workoutOnGoing)
-            } else {
-                Navigation.findNavController(it)
-                    .navigate(R.id.workout_workoutGoal)
-            }
-        }
+        binding.workoutButton.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -49,5 +42,19 @@ class Workout : FragmentLifecycleLog() {
         _binding = null
     }
 
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.workout_button -> redirectToNextFragment()
+        }
+    }
 
+    /*Redirect to the appropriate fragment depending if service is already running.*/
+    private fun redirectToNextFragment(){
+        if (serviceRunning) {
+            Navigation.findNavController(binding.root).navigate(R.id.workout_workoutOnGoing)
+        } else {
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.workout_workoutGoal)
+        }
+    }
 }

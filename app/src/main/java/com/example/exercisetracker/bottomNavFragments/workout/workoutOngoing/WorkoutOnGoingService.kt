@@ -41,6 +41,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WorkoutOnGoingService : Service() {
 
+
+    /*static objects to update fragments outside of class*/
     companion object {
         var serviceRunning = false
         var currentState: String? = null
@@ -55,7 +57,7 @@ class WorkoutOnGoingService : Service() {
         val stopWatchServiceTime: LiveData<String> = mStopWatchServiceTime
 
         private val mKilometers = MutableLiveData("0.00 km")
-        val kilometers : LiveData<String> = mKilometers
+        val kilometers: LiveData<String> = mKilometers
     }
 
     @Inject
@@ -78,7 +80,21 @@ class WorkoutOnGoingService : Service() {
         return null
     }
 
+    /*update notification every second.*/
+    private fun initializeStopwatchObserver() {
+        stopWatchTimeObserver = Observer {
+            if (notification == null) {
+                createNotification()
+            }
+            if (serviceRunning) {
+                notification?.setContentText(it)
+                notificationManager?.notify(NOTIFICATION_ID, notification?.build())
+            }
+        }
+    }
 
+    /*calculate time by subtracting current time to time started.
+      calculate KM*/
     private fun startObservingProgress(previousTime: Long) {
         stopWatchTimeObserver?.let { stopWatchServiceTime.observeForever(it) }
         val timeStarted = System.currentTimeMillis()
@@ -98,6 +114,7 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
+    /*converts milliseconds to human readable time*/
     private suspend fun convertMilliSecondsToText(time: Long, toFragment: Boolean): String {
         val timeInString = serviceScope.async {
             var timeMilli = time
@@ -130,7 +147,6 @@ class WorkoutOnGoingService : Service() {
             workoutGoal?.let {
                 val timeFinished = System.currentTimeMillis()
                 val distance = computeDistance()
-
                 val temp = stopWatchRunningTime.value?.let { workoutLength ->
                     val avgSpeed = computeAverageSpeed(distance, workoutLength)
                     WorkoutData(
@@ -171,14 +187,14 @@ class WorkoutOnGoingService : Service() {
         return distance
     }
 
-    private fun createNotification(modeOfExercise: String?) {
+    private fun createNotification() {
         notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(notificationManager!!)
         }
 
-        val iconDrawable = notificationDrawable(modeOfExercise)
+        val iconDrawable = notificationDrawable()
 
         notification = NotificationCompat.Builder(this, ONGOING_NOTIFICATION_ID)
             .setAutoCancel(false)
@@ -189,17 +205,19 @@ class WorkoutOnGoingService : Service() {
             .setContentIntent(createPendingIntent())
     }
 
-    private fun notificationDrawable(modeOfExercise: String?): Int {
-         modeOfExercise?.let{
-             return when(it){
-                "Cycling" -> R.drawable.ic_bicycle_24
-                 "Walking" -> R.drawable.ic_walk_24
-                 else -> R.drawable.ic_run_24
+    /*Changes the notification icon depending on the mode of exercise*/
+    private fun notificationDrawable(): Int {
+        val arrayExercise = resources.getStringArray(R.array.mode_of_exercise)
+        workoutGoal?.modeOfExercise.let {
+            return when (it) {
+                arrayExercise[0] -> R.drawable.ic_bicycle_24
+                arrayExercise[1] -> R.drawable.ic_walk_24
+                else -> R.drawable.ic_run_24
             }
-        }?: return R.drawable.ic_run_24
+        }
     }
 
-
+    /*returns Pending intent to redirect when Notification is clicked*/
     private fun createPendingIntent(): PendingIntent {
         val notificationIntent = Intent(this, MainActivity::class.java).also {
             it.action = ACTION_NOTIFICATION_SERVICE
@@ -213,8 +231,6 @@ class WorkoutOnGoingService : Service() {
         val channel = NotificationChannel(ONGOING_NOTIFICATION_ID, CHANNEL_ID, IMPORTANCE_LOW)
         notificationManager.createNotificationChannel(channel)
     }
-
-    private val TAG = "WorkoutOnGoingService"
 
     @SuppressLint("MissingPermission")
     private fun updateLocation() {
@@ -248,17 +264,6 @@ class WorkoutOnGoingService : Service() {
         buildLocationCallback()
     }
 
-    private fun initializeStopwatchObserver() {
-        stopWatchTimeObserver = Observer {
-            if (notification == null) {
-                createNotification(workoutGoal?.modeOfExercise)
-            }
-            if(serviceRunning){
-                notification?.setContentText(it)
-                notificationManager?.notify(NOTIFICATION_ID, notification?.build())
-            }
-        }
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -276,7 +281,7 @@ class WorkoutOnGoingService : Service() {
         stopWatchRunningTime.value?.let { startObservingProgress(it) }
         workoutGoal = intent.getParcelableExtra(BUNDLE)
         serviceRunning = true
-        createNotification(workoutGoal?.modeOfExercise)
+        createNotification()
         updateLocation()
         startForeground(NOTIFICATION_ID, notification?.build())
     }

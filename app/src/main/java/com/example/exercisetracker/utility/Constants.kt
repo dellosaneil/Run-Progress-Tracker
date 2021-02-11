@@ -18,6 +18,9 @@ class Constants {
         const val BUNDLE = "workout_bundle"
         const val EXTRA_SAVE = "save"
 
-    }
+        const val DISTANCE = "distance"
+        const val TIME = "time"
+        const val NONE = "None"
 
+    }
 }

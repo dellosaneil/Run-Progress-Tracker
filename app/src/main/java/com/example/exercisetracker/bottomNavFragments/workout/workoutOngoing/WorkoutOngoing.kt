@@ -58,25 +58,31 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         return binding.root
     }
 
-    private fun checkLocation() : Boolean{
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+
+    /*Checks if GPS is turned on*/
+    private fun checkLocation(): Boolean {
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
         var locationStatus = false
-        try{
-            locationStatus = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
-        }catch (e: Exception){}
+        try {
+            locationStatus =
+                locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
+        } catch (ignored: Exception) {}
         return locationStatus
     }
 
-
+    /*Listens to changes in the values in the Foreground service and displays it to the View*/
     private fun displayProgressIndicator() {
         stopWatchFragmentTime.observe(viewLifecycleOwner) {
             binding.workoutOnGoingTimer.text = it
         }
-        kilometers.observe(viewLifecycleOwner){
+        kilometers.observe(viewLifecycleOwner) {
             binding.workoutOnGoingKilometer.text = it
         }
     }
 
+
+    /*Handle the Views property when Fragment was reopened when it is Foreground Service is running*/
     private fun handleNotificationContinue() {
         currentState?.let {
             workoutOnGoingViewModel.startRun()
@@ -118,9 +124,13 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         when (v!!.id) {
             R.id.workoutOnGoing_startOrPause -> {
                 if (workoutOnGoingViewModel.firstStart().value == false) {
-                    startWorkout()
-                    binding.workoutOnGoingStartOrPause.text =
-                        resources.getString(R.string.workout_pauseRun)
+                    if (checkLocation()) {
+                        startWorkout()
+                        binding.workoutOnGoingStartOrPause.text =
+                            resources.getString(R.string.workout_pauseRun)
+                    } else {
+                        createMaterialDialogLocationOff()
+                    }
                 } else {
                     resumeOrPauseWorkout()
                 }
@@ -129,6 +139,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
     }
 
+    /*Shows AlertDialog to check if data should be saved or discarded*/
     private fun alertDialogSaveWorkout() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.workoutDialog_title))
@@ -144,6 +155,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             .show()
     }
 
+    /*Sends an Extra and Action to the WorkoutOnGoingService to save or not save data*/
     private fun stopServiceIntent(extra: Boolean) {
         Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
             service.action = STOP
@@ -183,29 +195,31 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     }
 
     private fun startWorkout() {
-        if(checkLocation()){
-            workoutOnGoingViewModel.startRun()
-            workoutOnGoingViewModel.changeState()
-            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
-                service.action = START
-                service.putExtra(BUNDLE, args?.workoutgoal)
-                requireActivity().startService(service)
-            }
-            binding.workoutOnGoingStop.visibility = View.VISIBLE
-        }else{
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.workoutOnGoing_locationOffTitle))
-                .setMessage(R.string.workoutOnGoing_locationOffMessage)
-                .setPositiveButton(R.string.workoutOnGoing_locationOffSettings){_,_->
-                    Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS).also{
-                        startActivity(it)
-                    }
-                }
-                .setNegativeButton(R.string.cancel){dialog, _ ->
-                    dialog.dismiss()
-                }
+        workoutOnGoingViewModel.startRun()
+        workoutOnGoingViewModel.changeState()
+        Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+            service.action = START
+            service.putExtra(BUNDLE, args?.workoutgoal)
+            requireActivity().startService(service)
         }
+        binding.workoutOnGoingStop.visibility = View.VISIBLE
     }
+
+    private fun createMaterialDialogLocationOff() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.workoutOnGoing_locationOffTitle))
+            .setMessage(R.string.workoutOnGoing_locationOffMessage)
+            .setPositiveButton(R.string.workoutOnGoing_locationOffSettings) { _, _ ->
+                Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS).also {
+                    startActivity(it)
+                }
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -213,7 +227,6 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         binding.workoutOnGoingStop.setOnClickListener(null)
         _binding = null
     }
-
 
 
     override fun onRequestPermissionsResult(
