@@ -54,9 +54,10 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             layoutManager = LinearLayoutManager(activity)
             adapter = historyAdapter
             addItemDecoration(MyItemDecoration(5,5,5))
+            val itemTouchHelper = ItemTouchHelper(swipeListener)
+            itemTouchHelper.attachToRecyclerView(this)
         }
-        val itemTouchHelper = ItemTouchHelper(swipeListener)
-        itemTouchHelper.attachToRecyclerView(binding.historyRecyclerView)
+
         historyViewModel.workoutList().observe(viewLifecycleOwner){
             historyAdapter?.placeWorkoutData(it)
             currentWorkoutList = it
@@ -126,7 +127,6 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
             .show()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -137,22 +137,3 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         historyViewModel.deleteWorkout(timeStarted)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -37,7 +37,4 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode ORDER BY startTime DESC")
     fun retrieveModeByStartTime(mode : String) : List<WorkoutData>
 
-    @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode")
-    fun retrieveSpecificMode(mode : String) : List<WorkoutData>
-
 }
