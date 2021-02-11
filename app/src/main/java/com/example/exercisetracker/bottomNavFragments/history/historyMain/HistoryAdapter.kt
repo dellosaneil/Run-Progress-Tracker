@@ -1,6 +1,7 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -59,6 +60,7 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
 
         init {
             binding.historyRVContainer.setOnClickListener(this)
+
         }
 
         fun bind(workout: WorkoutData) {
@@ -116,6 +118,7 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
         override fun onClick(v: View?) {
             historyListener.onHistoryWorkoutClicked(adapterPosition)
         }
+
     }
 
     interface HistoryListener {

@@ -72,10 +72,13 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
                     sortWorkoutList(sortNumber)
                 } else {
                     when (filterNumber) {
-                        0 -> tempWorkoutList = workoutFilterByStartTime(workoutArrayFilters[filterBy])
-                        1 -> tempWorkoutList = workoutFilterByTotalTime(workoutArrayFilters[filterBy])
+                        0 -> tempWorkoutList =
+                            workoutFilterByStartTime(workoutArrayFilters[filterBy])
+                        1 -> tempWorkoutList =
+                            workoutFilterByTotalTime(workoutArrayFilters[filterBy])
                         2 -> tempWorkoutList = workoutFilterByKM(workoutArrayFilters[filterBy])
-                        3 -> tempWorkoutList = workoutFilterByAvgSpeed(workoutArrayFilters[filterBy])
+                        3 -> tempWorkoutList =
+                            workoutFilterByAvgSpeed(workoutArrayFilters[filterBy])
                     }
                     withContext(Main) {
                         mWorkoutList.value = tempWorkoutList
@@ -84,6 +87,11 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
             }
         }
     }
+
+    fun deleteWorkout(time: Long) = viewModelScope.launch(IO) {
+        workoutRepository.deleteFromDatabase(time)
+    }
+
 
     private fun workoutFilterByKM(filterBy: String) = workoutRepository.retrieveModeByKM(filterBy)
     private fun workoutFilterByTotalTime(filterBy: String) =
