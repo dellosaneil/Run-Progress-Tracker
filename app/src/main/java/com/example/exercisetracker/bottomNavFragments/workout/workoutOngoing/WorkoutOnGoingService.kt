@@ -11,7 +11,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -86,13 +85,13 @@ class WorkoutOnGoingService : Service() {
     }
 
 
-    /*update notification every second.*/
+    /*update notification every second for the Stopwatch*/
     private fun initializeStopwatchObserver() {
         stopWatchTimeObserver = Observer {
             if (notification == null) {
                 createNotification()
             }
-            if (serviceRunning) {
+            if (serviceRunning && currentState != null) {
                 notification?.setContentText(it)
                 notificationManager?.notify(NOTIFICATION_ID, notification?.build())
             }
@@ -157,21 +156,20 @@ class WorkoutOnGoingService : Service() {
         return timeInString.await()
     }
 
-
     private fun saveToDatabase() {
         serviceScope.launch {
             workoutGoal?.let {
                 val timeFinished = System.currentTimeMillis()
                 val distance = computeDistance()
-                val temp = stopWatchRunningTime.value?.let { workoutLength ->
+                val tempWorkoutData = stopWatchRunningTime.value?.let { workoutLength ->
                     val avgSpeed = computeAverageSpeed(distance, workoutLength)
                     WorkoutData(
                         it.modeOfExercise, it.startTime, timeFinished, routeTaken, distance,
                         workoutLength, avgSpeed
                     )
                 }
-                if (temp != null) {
-                    workoutRepository.insertWorkout(temp)
+                if (tempWorkoutData != null) {
+                    workoutRepository.insertWorkout(tempWorkoutData)
                 }
                 stopForeground(true)
                 stopSelf()

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
@@ -18,6 +19,7 @@ import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.Wor
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.goalProgress
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.kilometers
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchFragmentTime
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.workoutGoal
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
@@ -43,6 +45,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
     private val args: WorkoutOngoingArgs? by navArgs()
+    private var goalProgressObserver: Observer<Int>? = null
 
     @Inject
     lateinit var workoutRepository: WorkoutRepository
@@ -52,18 +55,38 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWorkoutOngoingBinding.inflate(inflater, container, false)
-        handleNotificationContinue()
+        handleIntentReOpened()
         requestLocationPermission()
         setOnClickListeners()
-        displayProgressIndicator()
-        progressGoalIndication()
+        handleDisplayProgressGoalIndicator()
         return binding.root
     }
 
-    private fun progressGoalIndication() {
-        goalProgress.observe(viewLifecycleOwner){
-            binding.workoutOnGoingProgress.progress = it
+    private fun handleDisplayProgressGoalIndicator() {
+        displayStopwatch()
+        initializeGoalProgressObserver()
+        if (args?.workoutgoal?.minutesGoal != null || args?.workoutgoal?.kmGoal != null || workoutGoal?.minutesGoal != null || workoutGoal?.kmGoal != null) {
+            progressGoalIndication()
+        } else {
+            binding.workoutOnGoingProgress.visibility = View.GONE
         }
+    }
+
+    private fun initializeGoalProgressObserver() {
+        goalProgressObserver = Observer {
+            binding.workoutOnGoingProgress.progress = it
+            if(it == 100){
+                removeProgressGoalIndication()
+            }
+        }
+    }
+
+    private fun progressGoalIndication() {
+        goalProgressObserver?.let { goalProgress.observe(viewLifecycleOwner, it) }
+    }
+
+    private fun removeProgressGoalIndication(){
+        goalProgressObserver?.let{ goalProgress.removeObserver(it)}
     }
 
     /*Checks if GPS is turned on*/
@@ -74,12 +97,13 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         try {
             locationStatus =
                 locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
-        } catch (ignored: Exception) {}
+        } catch (ignored: Exception) {
+        }
         return locationStatus
     }
 
     /*Listens to changes in the values in the Foreground service and displays it to the View*/
-    private fun displayProgressIndicator() {
+    private fun displayStopwatch() {
         stopWatchFragmentTime.observe(viewLifecycleOwner) {
             binding.workoutOnGoingTimer.text = it
         }
@@ -90,7 +114,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
 
     /*Handle the Views property when Fragment was reopened when it is Foreground Service is running*/
-    private fun handleNotificationContinue() {
+    private fun handleIntentReOpened() {
         currentState?.let {
             workoutOnGoingViewModel.startRun()
             binding.workoutOnGoingStop.visibility = View.VISIBLE
@@ -157,7 +181,9 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             .setNegativeButton(getString(R.string.discard)) { _, _ ->
                 stopServiceIntent(false)
             }
-            .setNeutralButton(getString(R.string.cancel), null)
+            .setNeutralButton(getString(R.string.cancel)) {dialog, _ ->
+                dialog.dismiss()
+            }
             .setCancelable(false)
             .show()
     }
@@ -232,6 +258,8 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         super.onDestroyView()
         binding.workoutOnGoingStartOrPause.setOnClickListener(null)
         binding.workoutOnGoingStop.setOnClickListener(null)
+        goalProgressObserver?.let { goalProgress.removeObserver(it) }
+        goalProgressObserver = null
         _binding = null
     }
 
