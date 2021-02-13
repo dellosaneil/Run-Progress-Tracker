@@ -34,16 +34,13 @@ interface WorkoutDao {
     fun retrieveModeByStartTime(mode : String) : List<WorkoutData>
 
 
-    /* **************** DATE RANGE QUERIES **************** */
 
+
+/* **************************************************************** DATE RANGE QUERIES **************************************************************** */
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY startTime DESC")
     fun retrieveDateRangeWithMode(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
 
-    @Query("SELECT * FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange ORDER BY startTime DESC")
-    fun retrieveRangeDate(firstRange: Long, secondRange : Long) : List<WorkoutData>
-
-
-
+        // With SORT
     @Query("SELECT * FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange ORDER BY startTime DESC")
     fun retrieveRangeDateStartTime(firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange ORDER BY totalTime DESC")
@@ -53,7 +50,7 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange ORDER BY totalKM DESC")
     fun retrieveRangeDateTotalKM(firstRange: Long, secondRange : Long) : List<WorkoutData>
 
-
+        // With SORT and Mode
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY startTime DESC")
     fun retrieveRangeDateWithModeWithStartTime(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY totalTime DESC")
@@ -62,8 +59,5 @@ interface WorkoutDao {
     fun retrieveRangeDateWithModeWithAvgSpeed(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY totalKM DESC")
     fun retrieveRangeDateWithModeWithTotalKM(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
-
-
-
-
+    
 }

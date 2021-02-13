@@ -100,10 +100,8 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
         materialDatePicker.show(parentFragmentManager, getString(R.string.workoutHistory_menuDateRange))
         materialDatePicker.addOnPositiveButtonClickListener {
-
+            historyViewModel.filterDateRangePicked(it.first!!, it.second!!)
         }
-
-
     }
 
     private fun createFilterDialog() {
