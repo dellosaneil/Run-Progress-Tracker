@@ -59,5 +59,5 @@ interface WorkoutDao {
     fun retrieveRangeDateWithModeWithAvgSpeed(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY totalKM DESC")
     fun retrieveRangeDateWithModeWithTotalKM(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
-    
+
 }

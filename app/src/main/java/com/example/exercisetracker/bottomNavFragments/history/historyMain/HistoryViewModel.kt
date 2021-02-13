@@ -20,6 +20,9 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
     private var sortNumber = -1
     private var filterNumber = -1
     private val workoutArrayFilters = arrayOf("Cycling", "Walking", "Jogging")
+    private var startDate = 0L
+    private var endDate = 0L
+
 
 
     init {
@@ -40,6 +43,8 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
     }
 
     fun filterDateRangePicked(firstRange : Long, secondRange: Long){
+        startDate = firstRange
+        endDate = secondRange
         var tempWorkoutList : List<WorkoutData>? = null
         viewModelScope.launch(IO){
             if(filterNumber != -1 && filterNumber != 3){
@@ -60,20 +65,18 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
             withContext(Main){
                 mWorkoutList.value = tempWorkoutList
             }
-
         }
-
     }
-
-
-
 
 
     fun sortWorkoutList(sortBy: Int) {
         sortNumber = sortBy
         var tempWorkoutList: List<WorkoutData>? = null
         viewModelScope.launch(IO) {
-            if (filterNumber == -1 || filterNumber == 3) {
+            if(startDate != 0L){
+                filterDateRangePicked(startDate, endDate)
+            }
+            else if (filterNumber == -1 || filterNumber == 3) {
                 when (sortBy) {
                     0 -> tempWorkoutList =  workoutRepository.retrieveByStartTime()
                     1 -> tempWorkoutList =  workoutRepository.retrieveByTotalTime()
@@ -98,17 +101,23 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         filterNumber = filterBy
         var tempWorkoutList: List<WorkoutData>? = null
         viewModelScope.launch(IO) {
-            if (filterNumber == 3) {
-                sortWorkoutList(sortNumber)
-            } else {
-                when (filterBy) {
-                    0 -> tempWorkoutList = workoutRepository.retrieveModeByStartTime(workoutArrayFilters[filterBy])
-                    1 -> tempWorkoutList = workoutRepository.retrieveModeByTotalTime(workoutArrayFilters[filterBy])
-                    2 -> tempWorkoutList = workoutRepository.retrieveModeByTotalKM(workoutArrayFilters[filterBy])
-                    3 -> tempWorkoutList = workoutRepository.retrieveModeByAvgSpeed(workoutArrayFilters[filterBy])
+            when {
+                startDate != 0L -> {
+                    filterDateRangePicked(startDate, endDate)
                 }
-                withContext(Main) {
-                    mWorkoutList.value = tempWorkoutList
+                filterNumber == 3 -> {
+                    sortWorkoutList(sortNumber)
+                }
+                else -> {
+                    when (filterBy) {
+                        0 -> tempWorkoutList = workoutRepository.retrieveModeByStartTime(workoutArrayFilters[filterBy])
+                        1 -> tempWorkoutList = workoutRepository.retrieveModeByTotalTime(workoutArrayFilters[filterBy])
+                        2 -> tempWorkoutList = workoutRepository.retrieveModeByTotalKM(workoutArrayFilters[filterBy])
+                        3 -> tempWorkoutList = workoutRepository.retrieveModeByAvgSpeed(workoutArrayFilters[filterBy])
+                    }
+                    withContext(Main) {
+                        mWorkoutList.value = tempWorkoutList
+                    }
                 }
             }
         }
