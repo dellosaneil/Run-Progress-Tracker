@@ -129,6 +129,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
                         resources.getString(R.string.workout_resumeRun)
                 }
                 else -> {
+                    workoutOnGoingViewModel.changeState()
                     binding.workoutOnGoingStartOrPause.text =
                         resources.getString(R.string.workout_pauseRun)
                 }

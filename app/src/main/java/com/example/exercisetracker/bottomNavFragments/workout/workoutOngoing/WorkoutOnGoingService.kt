@@ -287,8 +287,9 @@ class WorkoutOnGoingService : Service() {
         buildLocationCallback()
     }
 
-
+    private val TAG = "WorkoutOnGoingService"
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.i(TAG, "onStartCommand: ${intent?.action}")
         when (intent?.action) {
             START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()

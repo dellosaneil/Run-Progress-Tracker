@@ -75,24 +75,25 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         viewModelScope.launch(IO) {
             if(startDate != 0L){
                 filterDateRangePicked(startDate, endDate)
-            }
-            else if (filterNumber == -1 || filterNumber == 3) {
-                when (sortBy) {
-                    0 -> tempWorkoutList =  workoutRepository.retrieveByStartTime()
-                    1 -> tempWorkoutList =  workoutRepository.retrieveByTotalTime()
-                    2 -> tempWorkoutList =  workoutRepository.retrieveByTotalKM()
-                    3 -> tempWorkoutList =  workoutRepository.retrieveByAvgSpeed()
+            }else{
+                if (filterNumber == -1 || filterNumber == 3) {
+                    when (sortBy) {
+                        0 -> tempWorkoutList =  workoutRepository.retrieveByStartTime()
+                        1 -> tempWorkoutList =  workoutRepository.retrieveByTotalTime()
+                        2 -> tempWorkoutList =  workoutRepository.retrieveByTotalKM()
+                        3 -> tempWorkoutList =  workoutRepository.retrieveByAvgSpeed()
+                    }
+                } else {
+                    when (sortBy) {
+                        0 -> tempWorkoutList = workoutRepository.retrieveModeByStartTime(workoutArrayFilters[filterNumber])
+                        1 -> tempWorkoutList = workoutRepository.retrieveModeByTotalTime(workoutArrayFilters[filterNumber])
+                        2 -> tempWorkoutList = workoutRepository.retrieveModeByTotalKM(workoutArrayFilters[filterNumber])
+                        3 -> tempWorkoutList = workoutRepository.retrieveModeByAvgSpeed(workoutArrayFilters[filterNumber])
+                    }
                 }
-            } else {
-                when (sortBy) {
-                    0 -> tempWorkoutList = workoutRepository.retrieveModeByStartTime(workoutArrayFilters[filterNumber])
-                    1 -> tempWorkoutList = workoutRepository.retrieveModeByTotalTime(workoutArrayFilters[filterNumber])
-                    2 -> tempWorkoutList = workoutRepository.retrieveModeByTotalKM(workoutArrayFilters[filterNumber])
-                    3 -> tempWorkoutList = workoutRepository.retrieveModeByAvgSpeed(workoutArrayFilters[filterNumber])
+                withContext(Main) {
+                    mWorkoutList.value = tempWorkoutList
                 }
-            }
-            withContext(Main) {
-                mWorkoutList.value = tempWorkoutList
             }
         }
     }

@@ -12,17 +12,21 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 
 
 class HistoryPolyline : Fragment() {
 
     private val args: HistoryPolylineArgs? by navArgs()
+    private var polyLines : List<LatLng>? = null
 
     private val callback = OnMapReadyCallback { googleMap ->
-        val polyLines = args?.polylines?.route
+        polyLines = args?.polylines?.route
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polyLines?.get(0), 18f))
-        googleMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
         googleMap.addPolyline(
             PolylineOptions()
                 .clickable(true)
@@ -30,6 +34,27 @@ class HistoryPolyline : Fragment() {
                 .color(Color.RED)
                 .width(10f)
         )
+        placePolylineIndicators(googleMap)
+    }
+
+    private fun placePolylineIndicators(googleMap: GoogleMap?) {
+        val positions = arrayOf(polyLines!![0], polyLines!!.last())
+        val polylineColors = arrayOf(
+            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
+            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+        )
+        val polylineTitle = arrayOf(
+            getString(R.string.workoutHistoryPolyline_start),
+            getString(R.string.workoutHistoryPolyline_end)
+        )
+        repeat(2) {
+            googleMap?.addMarker(
+                MarkerOptions()
+                    .position(positions[it])
+                    .icon(polylineColors[it])
+                    .title(polylineTitle[it])
+            )
+        }
     }
 
     override fun onCreateView(
@@ -42,7 +67,8 @@ class HistoryPolyline : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.historyPolyline_map) as SupportMapFragment?
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.historyPolyline_map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
 

@@ -26,7 +26,4 @@ class WorkoutRepository @Inject constructor(private val workoutDao: WorkoutDao) 
     fun retrieveRangeDateWithModeWithAvgSpeed(mode: String, firstRange: Long, secondRange: Long) = workoutDao.retrieveRangeDateWithModeWithAvgSpeed(mode, firstRange, secondRange)
     fun retrieveRangeDateWithModeWithTotalKM(mode: String, firstRange: Long, secondRange: Long) = workoutDao.retrieveRangeDateWithModeWithTotalKM(mode, firstRange, secondRange)
 
-
-
-
 }
