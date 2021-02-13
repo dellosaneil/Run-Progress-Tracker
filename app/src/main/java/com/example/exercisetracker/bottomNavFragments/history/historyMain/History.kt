@@ -1,6 +1,7 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
 import com.example.exercisetracker.utility.MyItemDecoration
 import com.example.exercisetracker.utility.SwipeListener
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,8 +46,10 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         binding.historyToolbar.setOnMenuItemClickListener(this)
         swipeListener = SwipeListener(this)
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,8 +88,22 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
                 createFilterDialog()
                 true
             }
+            R.id.historyMenu_dateRange ->{
+                pickDateRange()
+                true
+            }
             else -> false
         }
+    }
+
+    private fun pickDateRange() {
+        val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
+        materialDatePicker.show(parentFragmentManager, getString(R.string.workoutHistory_menuDateRange))
+        materialDatePicker.addOnPositiveButtonClickListener {
+
+        }
+
+
     }
 
     private fun createFilterDialog() {
@@ -153,8 +171,7 @@ class History : Fragment(), HistoryAdapter.HistoryListener,
 
     override fun onViewHolderIndex(index: Int) {
         latestDeletedWorkout = currentWorkoutList[index]
-        val timeStarted = latestDeletedWorkout!!.startTime
-        historyViewModel.deleteWorkout(timeStarted)
+        historyViewModel.deleteWorkout(latestDeletedWorkout!!)
         undoDelete()
     }
 }

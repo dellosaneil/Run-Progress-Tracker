@@ -11,6 +11,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -116,7 +117,7 @@ class WorkoutOnGoingService : Service() {
                 delay(25)
             }
         }
-        
+
         serviceScope.launch {
             while (currentState != PAUSE && currentState != STOP && currentState != null) {
                 val distance = computeDistance()
@@ -124,8 +125,8 @@ class WorkoutOnGoingService : Service() {
                     mKilometers.value = "${String.format("%.2f", distance)} km"
                     mStopWatchRunningTime.value?.let { progressGoalIndicator(it, distance) }
                 }
+                delay(5000)
             }
-            delay(5000)
         }
     }
 

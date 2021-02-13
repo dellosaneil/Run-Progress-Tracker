@@ -1,6 +1,7 @@
 package com.example.exercisetracker.bottomNavFragments.history.historyMain
 
 import androidx.lifecycle.*
+import androidx.room.Query
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,8 +86,8 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         }
     }
 
-    fun deleteWorkout(time: Long) = viewModelScope.launch(IO) {
-        workoutRepository.deleteFromDatabase(time)
+    fun deleteWorkout(workoutData: WorkoutData) = viewModelScope.launch(IO) {
+        workoutRepository.deleteFromDatabase(workoutData)
         sortWorkoutList(sortNumber)
     }
 

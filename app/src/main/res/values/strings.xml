@@ -33,6 +33,8 @@
     <string name="workoutHistoryRV_speed"><b>Avg. Speed:</b>\n%1$s</string>
     <string name="historyMenu_sort">Sort</string>
     <string name="historyMenu_filter">Filter</string>
+    <string name="historyMenu_dateRange">Date Range</string>
+    <string name="workoutHistory_menuDateRange">Select Range</string>
     <string name="workoutHistory_menuSortTitle">Sort by</string>
     <string name="workoutHistory_menuFilterTitle">Filter by</string>
     <string name="workoutHistory_snackBarDelete">Workout Deleted</string>
