@@ -187,7 +187,8 @@ class WorkoutOnGoingService : Service() {
     }
 
     private fun computeAverageSpeed(distance: Float, workoutLength: Long): Double {
-        return (distance / workoutLength.toFloat() / 3600).toDouble()
+        Log.i(TAG, "computeAverageSpeed: ${(distance / (workoutLength.toFloat() / 3_600_000.00))}")
+        return (distance / (workoutLength.toFloat() / 3_600_000.00))
     }
 
     private fun computeDistance(): Float {

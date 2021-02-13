@@ -2,6 +2,7 @@ package com.example.exercisetracker.bottomNavFragments.history
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,8 @@ class HistoryPolyline : Fragment() {
     private val args: HistoryPolylineArgs? by navArgs()
     private var polyLines : List<LatLng>? = null
 
+    private val TAG = "HistoryPolyline"
+
     private val callback = OnMapReadyCallback { googleMap ->
         polyLines = args?.polylines?.route
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polyLines?.get(0), 18f))
@@ -34,6 +37,7 @@ class HistoryPolyline : Fragment() {
                 .color(Color.RED)
                 .width(10f)
         )
+        Log.i(TAG, "Average Speed:${args?.polylines?.averageSpeed} ")
         placePolylineIndicators(googleMap)
     }
 
