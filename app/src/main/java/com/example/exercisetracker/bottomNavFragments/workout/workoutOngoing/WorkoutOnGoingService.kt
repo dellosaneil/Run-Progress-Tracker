@@ -105,7 +105,6 @@ class WorkoutOnGoingService : Service() {
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
             while (currentState != PAUSE && currentState != STOP && currentState != null) {
-                val distance = computeDistance()
                 val updatedTime = System.currentTimeMillis() - timeStarted + previousTime
                 withContext(Main) {
                     mStopWatchRunningTime.value = updatedTime
@@ -113,11 +112,20 @@ class WorkoutOnGoingService : Service() {
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
-                    mKilometers.value = "${String.format("%.2f", distance)} km"
-                    progressGoalIndicator(updatedTime, distance)
                 }
                 delay(25)
             }
+        }
+        
+        serviceScope.launch {
+            while (currentState != PAUSE && currentState != STOP && currentState != null) {
+                val distance = computeDistance()
+                withContext(Main) {
+                    mKilometers.value = "${String.format("%.2f", distance)} km"
+                    mStopWatchRunningTime.value?.let { progressGoalIndicator(it, distance) }
+                }
+            }
+            delay(5000)
         }
     }
 
