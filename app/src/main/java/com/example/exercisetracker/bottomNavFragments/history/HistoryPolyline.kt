@@ -26,18 +26,20 @@ class HistoryPolyline : Fragment() {
 
     private val TAG = "HistoryPolyline"
 
+
+    /*https://roads.googleapis.com/v1/snapToRoads?path=-35.27801,149.12958|-35.28032,149.12907|-35.28099,149.12929|-35.28144,149.12984|-35.28194,149.13003|-35.28282,149.12956|-35.28302,149.12881|-35.28473,149.12836&interpolate=true&key=YOUR_API_KEY*/
+
+
     private val callback = OnMapReadyCallback { googleMap ->
         polyLines = args?.polylines?.route
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polyLines?.get(0), 18f))
         googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
         googleMap.addPolyline(
             PolylineOptions()
-                .clickable(true)
                 .addAll(polyLines)
                 .color(Color.RED)
                 .width(10f)
         )
-        Log.i(TAG, "Average Speed:${args?.polylines?.averageSpeed} ")
         placePolylineIndicators(googleMap)
     }
 

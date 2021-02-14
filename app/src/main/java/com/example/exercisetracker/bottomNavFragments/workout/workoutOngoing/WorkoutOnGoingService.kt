@@ -22,6 +22,7 @@ import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
+import com.example.exercisetracker.utility.Constants.Companion.BACKGROUND
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
@@ -31,6 +32,7 @@ import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
 import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
+import com.example.exercisetracker.utility.Constants.Companion.IN_BACKGROUND
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -81,6 +83,9 @@ class WorkoutOnGoingService : Service() {
     private var notification: NotificationCompat.Builder? = null
     private var stopWatchTimeObserver: Observer<String>? = null
 
+    private var isInBackground = false
+
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -99,9 +104,9 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
-    /*calculate time by subtracting current time to time started.
-      calculate KM*/
-    private fun startObservingProgress(previousTime: Long) {
+    /* calculate KM*/
+    private fun updateDistanceTravelled(previousTime: Long) {
+
         stopWatchTimeObserver?.let { stopWatchServiceTime.observeForever(it) }
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
@@ -113,8 +118,13 @@ class WorkoutOnGoingService : Service() {
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
+                    Log.i(TAG, "stopwatch:")
                 }
-                delay(25)
+                if(isInBackground){
+                    delay(1000)
+                }else{
+                    delay(25)
+                }
             }
         }
 
@@ -129,6 +139,9 @@ class WorkoutOnGoingService : Service() {
             }
         }
     }
+
+
+
 
     private fun progressGoalIndicator(updatedTime: Long, distance: Float) {
         if (workoutGoal?.kmGoal != null) {
@@ -186,8 +199,9 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
+
+    /*Computes KM/H*/
     private fun computeAverageSpeed(distance: Float, workoutLength: Long): Double {
-        Log.i(TAG, "computeAverageSpeed: ${(distance / (workoutLength.toFloat() / 3_600_000.00))}")
         return (distance / (workoutLength.toFloat() / 3_600_000.00))
     }
 
@@ -290,20 +304,24 @@ class WorkoutOnGoingService : Service() {
 
     private val TAG = "WorkoutOnGoingService"
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.i(TAG, "onStartCommand: ${intent?.action}")
         when (intent?.action) {
             START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()
             PAUSE -> pauseRunningForeground()
             STOP -> stopRunningForeground(intent)
+            IN_BACKGROUND -> serviceInBackground(intent)
         }
         return START_STICKY
+    }
+
+    private fun serviceInBackground(intent: Intent?) {
+        isInBackground = intent?.getBooleanExtra(BACKGROUND, false) == true
     }
 
 
     private fun startRunningForeground(intent: Intent) {
         currentState = START
-        stopWatchRunningTime.value?.let { startObservingProgress(it) }
+        stopWatchRunningTime.value?.let { updateDistanceTravelled(it) }
         workoutGoal = intent.getParcelableExtra(BUNDLE)
         serviceRunning = true
         createNotification()
@@ -311,9 +329,11 @@ class WorkoutOnGoingService : Service() {
         startForeground(NOTIFICATION_ID, notification?.build())
     }
 
+
+
     private fun resumeRunningForeground() {
         currentState = RESUME
-        stopWatchRunningTime.value?.let { startObservingProgress(it) }
+        stopWatchRunningTime.value?.let { updateDistanceTravelled(it) }
         updateLocation()
     }
 

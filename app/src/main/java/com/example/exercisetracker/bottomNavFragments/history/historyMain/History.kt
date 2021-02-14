@@ -16,6 +16,9 @@ import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
 import com.example.exercisetracker.utility.MyItemDecoration
 import com.example.exercisetracker.utility.SwipeListener
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.Chart
+import com.github.mikephil.charting.utils.MPPointD
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar

@@ -18,12 +18,15 @@ import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.goalProgress
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.kilometers
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.serviceRunning
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.stopWatchFragmentTime
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.workoutGoal
 import com.example.exercisetracker.databinding.FragmentWorkoutOngoingBinding
 import com.example.exercisetracker.repository.WorkoutRepository
+import com.example.exercisetracker.utility.Constants.Companion.BACKGROUND
 import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
+import com.example.exercisetracker.utility.Constants.Companion.IN_BACKGROUND
 import com.example.exercisetracker.utility.Constants.Companion.LOCATION_CODE
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
@@ -146,6 +149,28 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
             }
         })
     }
+
+    override fun onStop() {
+        super.onStop()
+        sendBackgroundAction(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sendBackgroundAction(false)
+    }
+
+
+    private fun sendBackgroundAction(inBackground : Boolean) {
+        if(serviceRunning) {
+            Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
+                service.action = IN_BACKGROUND
+                service.putExtra(BACKGROUND, inBackground)
+                requireActivity().startService(service)
+            }
+        }
+    }
+
 
     private fun setOnClickListeners() {
         binding.workoutOnGoingStartOrPause.setOnClickListener(this)

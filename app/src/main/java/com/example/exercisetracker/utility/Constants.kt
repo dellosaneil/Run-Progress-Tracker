@@ -11,6 +11,9 @@ class Constants {
         const val PAUSE = "pause"
         const val RESUME = "resume"
         const val STOP = "stop"
+        const val IN_BACKGROUND = "background"
+        const val BACKGROUND = "inBackground"
+
         const val ACTION_NOTIFICATION_SERVICE = "notification_service"
 
         const val DATABASE_NAME = "workout_database"
