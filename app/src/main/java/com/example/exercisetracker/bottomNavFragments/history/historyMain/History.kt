@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.FragmentHistoryBinding
+import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.example.exercisetracker.utility.MyItemDecoration
 import com.example.exercisetracker.utility.SwipeListener
 import com.github.mikephil.charting.charts.BarChart
@@ -26,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class History : Fragment(), HistoryAdapter.HistoryListener,
+class History : FragmentLifecycleLog(), HistoryAdapter.HistoryListener,
     androidx.appcompat.widget.Toolbar.OnMenuItemClickListener,
     SwipeListener.SwipeListenerViewHolderAdapter {
 

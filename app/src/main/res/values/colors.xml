@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="chart_bar_light">#FFF16A70</color>
+    <color name="chart_line_light">#FFB1D877</color>
+    <color name="chart_pie_light">#FF8CDCDA</color>
+    <color name="chart_combined_light">#FF4D4D4D</color>
+
+
+
 </resources>

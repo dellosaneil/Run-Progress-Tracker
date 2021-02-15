@@ -11,7 +11,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -104,9 +103,8 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
-    /* calculate KM*/
-    private fun updateDistanceTravelled(previousTime: Long) {
-
+    /* calculate KM & timer*/
+    private fun updateDistanceAndTime(previousTime: Long) {
         stopWatchTimeObserver?.let { stopWatchServiceTime.observeForever(it) }
         val timeStarted = System.currentTimeMillis()
         serviceScope.launch {
@@ -118,7 +116,6 @@ class WorkoutOnGoingService : Service() {
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
                     mStopWatchServiceTime.value =
                         convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
-                    Log.i(TAG, "stopwatch:")
                 }
                 if(isInBackground){
                     delay(1000)
@@ -321,7 +318,7 @@ class WorkoutOnGoingService : Service() {
 
     private fun startRunningForeground(intent: Intent) {
         currentState = START
-        stopWatchRunningTime.value?.let { updateDistanceTravelled(it) }
+        stopWatchRunningTime.value?.let { updateDistanceAndTime(it) }
         workoutGoal = intent.getParcelableExtra(BUNDLE)
         serviceRunning = true
         createNotification()
@@ -333,7 +330,7 @@ class WorkoutOnGoingService : Service() {
 
     private fun resumeRunningForeground() {
         currentState = RESUME
-        stopWatchRunningTime.value?.let { updateDistanceTravelled(it) }
+        stopWatchRunningTime.value?.let { updateDistanceAndTime(it) }
         updateLocation()
     }
 
