@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/statistics"
-        android:name="com.example.exercisetracker.bottomNavFragments.Statistics"
+        android:name="com.example.exercisetracker.bottomNavFragments.statistics.Statistics"
         android:label="fragment_statistics"
         tools:layout="@layout/fragment_statistics" />
     <fragment

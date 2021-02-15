@@ -26,4 +26,17 @@ class WorkoutRepository @Inject constructor(private val workoutDao: WorkoutDao) 
     fun retrieveRangeDateWithModeWithAvgSpeed(mode: String, firstRange: Long, secondRange: Long) = workoutDao.retrieveRangeDateWithModeWithAvgSpeed(mode, firstRange, secondRange)
     fun retrieveRangeDateWithModeWithTotalKM(mode: String, firstRange: Long, secondRange: Long) = workoutDao.retrieveRangeDateWithModeWithTotalKM(mode, firstRange, secondRange)
 
+    fun sumTotalTimeAll() = workoutDao.sumTotalTimeAll()
+    fun sumTotalTimeRangeDate(firstRange: Long, secondRange: Long) = workoutDao.sumTotalTimeRangeDate(firstRange, secondRange)
+    fun avgTotalTimeAll() = workoutDao.avgTotalTimeAll()
+    fun avgTotalTimeRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgTotalTimeRangeDate(firstRange, secondRange)
+    fun sumTotalKMAll() = workoutDao.sumTotalKMAll()
+    fun sumTotalKMRangeDate(firstRange: Long, secondRange: Long) = workoutDao.sumTotalKMRangeDate(firstRange, secondRange)
+    fun avgKMAll() = workoutDao.avgKMAll()
+    fun avgKMRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgKMRangeDate(firstRange, secondRange)
+    fun avgSpeedAll() = workoutDao.avgSpeedAll()
+    fun avgSpeedKMRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgSpeedKMRangeDate(firstRange, secondRange)
+    fun sumTotalWorkoutCountAll() = workoutDao.sumTotalWorkoutCountAll()
+    fun sumTotalWorkoutCountRangeDate(firstRange: Long, secondRange: Long) = workoutDao.sumTotalWorkoutCountRangeDate(firstRange, secondRange)
+
 }

@@ -58,4 +58,10 @@
     <string name="workoutHistory_distance">Distance</string>
     <string name="workoutHistory_mode">Type of Exercise</string>
 
+
+<!--    Statistics-->
+    <string name="workoutStatistics_dateMenu">Date Range</string>
+
+
+
 </resources>

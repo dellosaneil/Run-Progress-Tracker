@@ -33,6 +33,14 @@
         <item>Combined Chart</item>
     </string-array>
 
+    <string-array name="records">
+        <item>Total Distance</item>
+        <item>Total Time</item>
+        <item>Average Distance</item>
+        <item>Average Time</item>
+        <item>Average Speed</item>
+    </string-array>
+
 
 
 </resources>
