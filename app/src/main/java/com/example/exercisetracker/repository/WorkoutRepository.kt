@@ -35,7 +35,7 @@ class WorkoutRepository @Inject constructor(private val workoutDao: WorkoutDao) 
     fun avgKMAll() = workoutDao.avgKMAll()
     fun avgKMRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgKMRangeDate(firstRange, secondRange)
     fun avgSpeedAll() = workoutDao.avgSpeedAll()
-    fun avgSpeedKMRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgSpeedKMRangeDate(firstRange, secondRange)
+    fun avgSpeedRangeDate(firstRange: Long, secondRange: Long) = workoutDao.avgSpeedRangeDate(firstRange, secondRange)
     fun sumTotalWorkoutCountAll() = workoutDao.sumTotalWorkoutCountAll()
     fun sumTotalWorkoutCountRangeDate(firstRange: Long, secondRange: Long) = workoutDao.sumTotalWorkoutCountRangeDate(firstRange, secondRange)
 

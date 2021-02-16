@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/dateRange"
+    <item android:id="@+id/fragmentStatisticsMenu_dateRange"
         android:title="@string/workoutStatistics_dateMenu"
         android:icon="@drawable/ic_calendar_24"
         app:showAsAction="always"/>

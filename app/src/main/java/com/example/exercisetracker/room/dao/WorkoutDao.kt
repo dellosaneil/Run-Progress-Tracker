@@ -87,7 +87,7 @@ interface WorkoutDao {
     @Query("SELECT AVG(averageSpeed) FROM workout_main")
     fun avgSpeedAll() : Double
     @Query("SELECT AVG(averageSpeed) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
-    fun avgSpeedKMRangeDate(firstRange: Long, secondRange: Long) : Double
+    fun avgSpeedRangeDate(firstRange: Long, secondRange: Long) : Double
 
     @Query("SELECT COUNT(totalTime) FROM workout_main")
     fun sumTotalWorkoutCountAll(): Int

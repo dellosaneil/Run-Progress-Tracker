@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -11,10 +12,11 @@ import com.bumptech.glide.Glide
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.utility.FragmentLifecycleLog
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class Statistics : FragmentLifecycleLog(), View.OnClickListener {
+class Statistics : FragmentLifecycleLog(), View.OnClickListener, androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
 
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
@@ -42,6 +44,11 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener {
         statisticsViewModel.totalWorkout().observe(viewLifecycleOwner){
             binding.fragmentStatisticsToolBar.title = "Statistics (${it} workouts)"
         }
+
+        binding.fragmentStatisticsToolBar.setOnMenuItemClickListener(this)
+
+
+
     }
 
     private fun setRecords(view: View) {
@@ -158,5 +165,21 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener {
         _binding = null
     }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+       return when(item?.itemId){
+           R.id.fragmentStatisticsMenu_dateRange -> {
+               chooseDateRange()
+               true
+           }
+            else -> false
+        }
+    }
 
+    private fun chooseDateRange() {
+        val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
+        materialDatePicker.show(parentFragmentManager, getString(R.string.workoutHistory_menuDateRange))
+        materialDatePicker.addOnPositiveButtonClickListener {
+            statisticsViewModel.dateRangeRecord(it.first!!, it.second!! + 86_400_000)
+        }
+    }
 }

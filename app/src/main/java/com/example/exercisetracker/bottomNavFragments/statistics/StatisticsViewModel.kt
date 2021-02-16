@@ -26,7 +26,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     private val _totalWorkout = MutableLiveData(0)
 
 
-    fun totalWorkout() : LiveData<Int> = _totalWorkout
+    fun totalWorkout(): LiveData<Int> = _totalWorkout
     fun totalDistance(): LiveData<String> = _totalDistance
     fun totalTime(): LiveData<String> = _totalTime
     fun averageDistance(): LiveData<String> = _averageDistance
@@ -34,6 +34,10 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     fun averageSpeed(): LiveData<String> = _averageSpeed
 
     init {
+        allWorkoutRecord()
+    }
+
+    private fun allWorkoutRecord() {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMAll()
             val tTime = repository.sumTotalTimeAll()
@@ -51,6 +55,26 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             }
         }
     }
+
+    fun dateRangeRecord(firstRange: Long, secondRange: Long) {
+        viewModelScope.launch(IO) {
+            val tDistance = repository.sumTotalKMRangeDate(firstRange, secondRange)
+            val tTime = repository.sumTotalTimeRangeDate(firstRange, secondRange)
+            val aDistance = repository.avgKMRangeDate(firstRange, secondRange)
+            val aTime = repository.avgTotalTimeRangeDate(firstRange, secondRange)
+            val aSpeed = repository.avgSpeedRangeDate(firstRange, secondRange)
+            val tWorkout = repository.sumTotalWorkoutCountRangeDate(firstRange, secondRange)
+            withContext(Main) {
+                _totalDistance.value = formatKM(tDistance)
+                _totalTime.value = millisecondToTime(tTime)
+                _averageDistance.value = formatKM(aDistance)
+                _averageTime.value = millisecondToTime(aTime.toLong())
+                _averageSpeed.value = formatAverageSpeed(aSpeed)
+                _totalWorkout.value = tWorkout
+            }
+        }
+    }
+
 
     private fun formatAverageSpeed(speed: Double) = "${String.format("%.2f", speed)} km/h"
 
