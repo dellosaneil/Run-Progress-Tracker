@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBarChartBinding
-import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -36,7 +36,7 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
         super.onViewCreated(view, savedInstanceState)
         navigationUp()
         populateBarChart()
-        binding.radioGroup.setOnCheckedChangeListener(this)
+        binding.statisticsBarChartRadioGroup.setOnCheckedChangeListener(this)
     }
 
     private fun navigationUp() {
@@ -46,17 +46,17 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
     }
 
     private fun populateBarChart(label: String = "Kilometers") {
-        xAxisLabel = resources.getStringArray(R.array.mode_of_exercise)
+        xAxisLabel = arrayOf("Cycling", "", "Walking", "", "Jogging")
         val entries = mutableListOf<BarEntry>()
         args?.barChartData.let {
             if (label == "Kilometers") {
                 entries.add(BarEntry(0f, it!!.cyclingKilometers))
-                entries.add(BarEntry(1f, it.joggingKilometers))
                 entries.add(BarEntry(2f, it.walkingKilometers))
+                entries.add(BarEntry(4f, it.joggingKilometers))
             } else {
                 entries.add(BarEntry(0f, it!!.cyclingTime / 60_000))
-                entries.add(BarEntry(1f, it.joggingTime / 60_000))
                 entries.add(BarEntry(2f, it.walkingTime / 60_000))
+                entries.add(BarEntry(4f, it.joggingTime / 60_000))
             }
         }
         val dataSet = BarDataSet(entries, label)
@@ -64,8 +64,12 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
         binding.statisticsBarChartChart.apply {
             setFitBars(true)
             data = barData
+            xAxis.isGranularityEnabled = true
             setDrawValueAboveBar(true)
             xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabel)
+            xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
+            xAxis.granularity = 2f
+            description.isEnabled = false
             animateY(1000)
         }
     }
@@ -76,10 +80,10 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
-        if(group?.id == R.id.radioGroup){
-            when(checkedId){
-                R.id.time -> populateBarChart("Minutes")
-                R.id.distance -> populateBarChart("Kilometers")
+        if (group?.id == R.id.statisticsBarChart_radioGroup) {
+            when (checkedId) {
+                R.id.statisticsBarChart_time -> populateBarChart("Minutes")
+                R.id.statisticsBarChart_distance -> populateBarChart("Kilometers")
             }
         }
     }

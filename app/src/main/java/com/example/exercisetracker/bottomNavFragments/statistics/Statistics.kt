@@ -159,9 +159,10 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.fragmentStatistics_bar -> {
-                first?.let{
+                Log.i(TAG, "FIRST: $first \nSECOND: $second")
+                first?.let {
                     redirectBarChart(it, second!!)
-                }?: redirectBarChart()
+                } ?: redirectBarChart()
             }
             R.id.fragmentStatistics_line -> Log.i(TAG, "onClick: LINE")
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
@@ -222,7 +223,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         materialDatePicker.addOnPositiveButtonClickListener {
             statisticsViewModel.dateRangeRecord(it.first!!, it.second!! + 86_400_000)
             first = it.first
-            second = it.second
+            second = it.second!! + 86_400_000
         }
         materialDatePicker.addOnNegativeButtonClickListener {
             statisticsViewModel.allWorkoutRecord()

@@ -24,21 +24,24 @@
 
     <RadioGroup
         android:layout_weight="1"
-        android:gravity="center|left"
-        android:id="@+id/radioGroup"
+        android:gravity="center|start"
+        android:id="@+id/statisticsBarChart_radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/time"
+            android:id="@+id/statisticsBarChart_distance"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distance"/>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/statisticsBarChart_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/time"/>
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/distance"/>
+
     </RadioGroup>
 </LinearLayout>
