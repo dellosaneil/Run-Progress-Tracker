@@ -5,8 +5,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BarChartData(
-    val kilometers: List<Double>,
-    val time: List<Long>,
-    val totalKM: Double,
-    val totalTime: Long
+    val cyclingKilometers: Float,
+    val cyclingTime: Float,
+
+    val walkingKilometers: Float,
+    val walkingTime: Float,
+
+    val joggingKilometers: Float,
+    val joggingTime: Float,
 ) : Parcelable

@@ -8,12 +8,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.exercisetracker.R
+import com.example.exercisetracker.data.BarChartData
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class Statistics : FragmentLifecycleLog(), View.OnClickListener,
@@ -149,10 +156,39 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private val TAG = "Statistics"
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.fragmentStatistics_bar -> Log.i(TAG, "onClick: BAR")
+            R.id.fragmentStatistics_bar -> redirectBarChartAll()
             R.id.fragmentStatistics_line -> Log.i(TAG, "onClick: LINE")
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
+        }
+    }
+
+    private fun redirectBarChartAll() {
+        val exercise = resources.getStringArray(R.array.mode_of_exercise)
+        lifecycleScope.launch(IO){
+            val tempData = statisticsViewModel.workoutList()
+            val arrayData = FloatArray(6){0.0F}
+            for(data in tempData){
+                when (data.modeOfExercise) {
+                    exercise[0] -> {
+                        arrayData[0] += data.totalKM
+                        arrayData[1] += data.totalTime.toFloat()
+                    }
+                    exercise[1] -> {
+                        arrayData[2] += data.totalKM
+                        arrayData[3] += data.totalTime.toFloat()
+                    }
+                    else -> {
+                        arrayData[4] += data.totalKM
+                        arrayData[5] += data.totalTime.toFloat()
+                    }
+                }
+            }
+            val data = BarChartData(arrayData[0], arrayData[1], arrayData[2], arrayData[3], arrayData[4], arrayData[5])
+            withContext(Main) {
+                val action = StatisticsDirections.statisticsStatisticsBarChart(data)
+                Navigation.findNavController(binding.root).navigate(action)
+            }
         }
     }
 

@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -55,6 +57,9 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             }
         }
     }
+
+    fun workoutList(): List<WorkoutData> = repository.retrieveByAvgSpeed()
+
 
     fun dateRangeRecord(firstRange: Long, secondRange: Long) {
         viewModelScope.launch(IO) {

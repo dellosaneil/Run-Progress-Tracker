@@ -61,6 +61,10 @@
 
     <!--    Statistics-->
     <string name="workoutStatistics_dateMenu">Date Range</string>
+    <string name="workoutStatisticsBar_title">Bar Chart</string>
+    <string name="workoutStatisticsLine_title">Line Chart</string>
+    <string name="workoutStatisticsPie_title">Pie Chart</string>
+    <string name="workoutStatisticsCombined_title">Combined Chart</string>
 
 
 </resources>

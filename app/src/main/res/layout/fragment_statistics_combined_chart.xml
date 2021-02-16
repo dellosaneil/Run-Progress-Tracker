@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatisticsCombinedChart">
+    tools:context="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsCombinedChart">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
