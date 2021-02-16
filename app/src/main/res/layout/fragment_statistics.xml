@@ -12,8 +12,7 @@
         android:id="@+id/fragmentStatistics_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:menu="@menu/menu_statistics"
-        app:title="@string/statistics" />
+        app:menu="@menu/menu_statistics"/>
 
     <ScrollView
         android:layout_width="match_parent"

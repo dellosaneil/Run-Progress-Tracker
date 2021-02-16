@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.exercisetracker.R
 import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.currentState
+import com.example.exercisetracker.bottomNavFragments.workout.workoutOngoing.WorkoutOnGoingService.Companion.serviceRunning
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.ActivityMainBinding
 import com.example.exercisetracker.repository.WorkoutRepository
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     /*redirect to OnGoingWorkoutFragment when workout is OnGoing*/
     private fun navigateToWorkoutOngoing(intent: Intent?) {
         navController = findNavController(R.id.nav_host_fragment_container)
-        if (intent?.action == ACTION_NOTIFICATION_SERVICE) {
+        if (intent?.action == ACTION_NOTIFICATION_SERVICE && serviceRunning) {
             navController.navigate(R.id.action_global_workout_service)
         }
     }

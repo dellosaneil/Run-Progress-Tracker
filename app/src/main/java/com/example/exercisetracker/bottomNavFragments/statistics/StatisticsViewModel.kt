@@ -13,35 +13,63 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class StatisticsViewModel @Inject constructor(private val repository : WorkoutRepository) : ViewModel(){
+class StatisticsViewModel @Inject constructor(private val repository: WorkoutRepository) :
+    ViewModel() {
 
 
-    private val _totalDistance = MutableLiveData(0.0)
-    private val _totalTime = MutableLiveData(0L)
-    private val _averageDistance = MutableLiveData(0.0)
-    private val _averageTime = MutableLiveData(0.0)
-    private val _averageSpeed = MutableLiveData(0.0)
+    private val _totalDistance = MutableLiveData("0.00 km")
+    private val _totalTime = MutableLiveData("00:00:00")
+    private val _averageDistance = MutableLiveData("0.00 km")
+    private val _averageTime = MutableLiveData("00:00:00")
+    private val _averageSpeed = MutableLiveData("0.00 km/h")
 
-    fun totalDistance() : LiveData<Double> = _totalDistance
-    fun totalTime() : LiveData<Long> = _totalTime
-    fun averageDistance() : LiveData<Double> = _averageDistance
-    fun averageTime() : LiveData<Double> = _averageTime
-    fun averageSpeed() : LiveData<Double> = _averageSpeed
+    private val _totalWorkout = MutableLiveData(0)
 
-    init{
+
+    fun totalWorkout() : LiveData<Int> = _totalWorkout
+    fun totalDistance(): LiveData<String> = _totalDistance
+    fun totalTime(): LiveData<String> = _totalTime
+    fun averageDistance(): LiveData<String> = _averageDistance
+    fun averageTime(): LiveData<String> = _averageTime
+    fun averageSpeed(): LiveData<String> = _averageSpeed
+
+    init {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMAll()
             val tTime = repository.sumTotalTimeAll()
             val aDistance = repository.avgKMAll()
             val aTime = repository.avgTotalTimeAll()
             val aSpeed = repository.avgSpeedAll()
-            withContext(Main){
-                _totalDistance.value = tDistance
-                _totalTime.value = tTime
-                _averageDistance.value = aDistance
-                _averageTime.value = aTime
-                _averageSpeed.value = aSpeed
+            val tWorkout = repository.sumTotalWorkoutCountAll()
+            withContext(Main) {
+                _totalDistance.value = formatKM(tDistance)
+                _totalTime.value = millisecondToTime(tTime)
+                _averageDistance.value = formatKM(aDistance)
+                _averageTime.value = millisecondToTime(aTime.toLong())
+                _averageSpeed.value = formatAverageSpeed(aSpeed)
+                _totalWorkout.value = tWorkout
             }
         }
     }
+
+    private fun formatAverageSpeed(speed: Double) = "${String.format("%.2f", speed)} km/h"
+
+    private fun formatKM(km: Double): String = "${String.format("%.2f", km)} km"
+
+    private fun millisecondToTime(time: Long): String {
+        var timeMilli = time
+        val hours = (timeMilli / 3_600_000).toInt()
+        timeMilli -= hours * 3_600_000
+        val minutes = (timeMilli / 60_000).toInt()
+        timeMilli -= minutes * 60_000
+        val seconds = (timeMilli / 1_000).toInt()
+        timeMilli -= seconds * 1_000
+
+        val hourString = if (hours <= 9) "0$hours" else hours
+        val minuteString = if (minutes <= 9) "0$minutes" else minutes
+        val secondString = if (seconds <= 9) "0$seconds" else seconds
+        return "$hourString : $minuteString : $secondString"
+    }
+
+
 }

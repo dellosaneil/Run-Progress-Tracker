@@ -34,6 +34,14 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener {
         populateGridLayout(view)
         setOnClickListeners()
         setRecords(view)
+        toolBarInitialize()
+    }
+
+
+    private fun toolBarInitialize(){
+        statisticsViewModel.totalWorkout().observe(viewLifecycleOwner){
+            binding.fragmentStatisticsToolBar.title = "Statistics (${it} workouts)"
+        }
     }
 
     private fun setRecords(view: View) {
@@ -74,14 +82,13 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener {
             R.drawable.ic_speed_24
         )
 
-
         repeat(5) { index ->
             Glide.with(view)
                 .load(drawableArray[index])
                 .into(viewImageArray[index])
             viewNameArray[index].text = labelArray[index]
             liveDataFunctions[index].observe(viewLifecycleOwner) {
-                viewValueArray[index].text = it.toString()
+                viewValueArray[index].text = it
             }
         }
     }

@@ -11,6 +11,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -301,6 +302,7 @@ class WorkoutOnGoingService : Service() {
 
     private val TAG = "WorkoutOnGoingService"
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.i(TAG, "onStartCommand Service Status: $serviceRunning")
         when (intent?.action) {
             START -> startRunningForeground(intent)
             RESUME -> resumeRunningForeground()
@@ -376,6 +378,8 @@ class WorkoutOnGoingService : Service() {
 
         notification = null
         notificationManager = null
+
+        Log.i(TAG, "onDestroy Service Status: ${serviceRunning}")
 
         serviceJob.cancel()
     }

@@ -43,7 +43,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
-
     private var _binding: FragmentWorkoutOngoingBinding? = null
     private val binding get() = _binding!!
     private val workoutOnGoingViewModel: WorkoutOnGoingViewModel by viewModels()
@@ -162,7 +161,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
 
 
     private fun sendBackgroundAction(inBackground : Boolean) {
-        if(serviceRunning) {
+        if(serviceRunning && currentState != null && currentState != STOP) {
             Intent(requireActivity(), WorkoutOnGoingService::class.java).also { service ->
                 service.action = IN_BACKGROUND
                 service.putExtra(BACKGROUND, inBackground)

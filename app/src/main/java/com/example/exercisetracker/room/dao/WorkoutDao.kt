@@ -69,9 +69,9 @@ interface WorkoutDao {
     @Query("SELECT SUM(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun sumTotalTimeRangeDate(firstRange: Long, secondRange: Long) : Long
 
-    @Query("SELECT AVG(totalKM) FROM workout_main")
+    @Query("SELECT AVG(totalTime) FROM workout_main")
     fun avgTotalTimeAll() : Double
-    @Query("SELECT AVG(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
+    @Query("SELECT AVG(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgTotalTimeRangeDate(firstRange: Long, secondRange: Long) : Double
 
     @Query("SELECT SUM(totalKM) FROM workout_main")
@@ -84,9 +84,9 @@ interface WorkoutDao {
     @Query("SELECT AVG(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgKMRangeDate(firstRange: Long, secondRange: Long) : Double
 
-    @Query("SELECT AVG(totalKM) FROM workout_main")
+    @Query("SELECT AVG(averageSpeed) FROM workout_main")
     fun avgSpeedAll() : Double
-    @Query("SELECT AVG(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
+    @Query("SELECT AVG(averageSpeed) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgSpeedKMRangeDate(firstRange: Long, secondRange: Long) : Double
 
     @Query("SELECT COUNT(totalTime) FROM workout_main")
