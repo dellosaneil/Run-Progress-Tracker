@@ -7,7 +7,7 @@
     <string name="history">Workout History</string>
     <string name="statistics">Statistics</string>
 
-<!--    Workout-->
+    <!--    Workout-->
     <string name="workout_continueWorkout">Continue Workout</string>
     <string name="workout_startWorkout">Start Workout</string>
     <string name="workout_setGoal">Set Goal</string>
@@ -27,7 +27,7 @@
     <string name="workoutOnGoing_locationOffMessage">The application cannot function properly without GPS turned on</string>
     <string name="workoutOnGoing_locationOffSettings">Settings</string>
 
-<!--    History-->
+    <!--    History-->
     <string name="workoutHistoryRV_time"><b>Time:</b>\n%1$s</string>
     <string name="workoutHistoryRV_distance"><b>Distance:</b>\n%1$s</string>
     <string name="workoutHistoryRV_speed"><b>Avg. Speed:</b>\n%1$s</string>
@@ -42,26 +42,25 @@
     <string name="workoutHistoryPolyline_start">START</string>
     <string name="workoutHistoryPolyline_end">END</string>
 
-    
-<!--    Notifications-->
+
+    <!--    Notifications-->
     <string name="notification_group">Run Tracker Application</string>
     <string name="notification_title">Run Tracker Application</string>
     <string name="notification_defaultTime">00:00:00</string>
 
-<!--Global-->
+    <!--Global-->
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="discard">Discard</string>
 
-<!--    Map Polyline-->
+    <!--    Map Polyline-->
     <string name="workoutHistory_time">Time</string>
     <string name="workoutHistory_distance">Distance</string>
     <string name="workoutHistory_mode">Type of Exercise</string>
 
 
-<!--    Statistics-->
+    <!--    Statistics-->
     <string name="workoutStatistics_dateMenu">Date Range</string>
-
 
 
 </resources>

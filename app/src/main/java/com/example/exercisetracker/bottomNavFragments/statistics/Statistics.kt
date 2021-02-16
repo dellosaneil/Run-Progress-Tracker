@@ -16,7 +16,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class Statistics : FragmentLifecycleLog(), View.OnClickListener, androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
+class Statistics : FragmentLifecycleLog(), View.OnClickListener,
+    androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
 
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
@@ -40,15 +41,11 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener, androidx.appcom
     }
 
 
-    private fun toolBarInitialize(){
-        statisticsViewModel.totalWorkout().observe(viewLifecycleOwner){
+    private fun toolBarInitialize() {
+        statisticsViewModel.totalWorkout().observe(viewLifecycleOwner) {
             binding.fragmentStatisticsToolBar.title = "Statistics (${it} workouts)"
         }
-
         binding.fragmentStatisticsToolBar.setOnMenuItemClickListener(this)
-
-
-
     }
 
     private fun setRecords(view: View) {
@@ -147,7 +144,6 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener, androidx.appcom
             cardViewArray[it].setCardBackgroundColor(requireContext().getColor(colorArray[it]))
             textViewArray[it].text = textArray[it]
         }
-
     }
 
     private val TAG = "Statistics"
@@ -166,20 +162,26 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener, androidx.appcom
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
-       return when(item?.itemId){
-           R.id.fragmentStatisticsMenu_dateRange -> {
-               chooseDateRange()
-               true
-           }
+        return when (item?.itemId) {
+            R.id.fragmentStatisticsMenu_dateRange -> {
+                chooseDateRange()
+                true
+            }
             else -> false
         }
     }
 
     private fun chooseDateRange() {
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
-        materialDatePicker.show(parentFragmentManager, getString(R.string.workoutHistory_menuDateRange))
+        materialDatePicker.show(
+            parentFragmentManager,
+            getString(R.string.workoutHistory_menuDateRange)
+        )
         materialDatePicker.addOnPositiveButtonClickListener {
             statisticsViewModel.dateRangeRecord(it.first!!, it.second!! + 86_400_000)
+        }
+        materialDatePicker.addOnNegativeButtonClickListener {
+            statisticsViewModel.allWorkoutRecord()
         }
     }
 }

@@ -37,7 +37,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         allWorkoutRecord()
     }
 
-    private fun allWorkoutRecord() {
+    fun allWorkoutRecord() {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMAll()
             val tTime = repository.sumTotalTimeAll()

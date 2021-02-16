@@ -1,3 +1,11 @@
 package com.example.exercisetracker.data
 
-data class PieChart()
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class PieChart(
+    val cycling: Float,
+    val walking: Float,
+    val jogging: Float
+) : Parcelable

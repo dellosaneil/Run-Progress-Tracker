@@ -27,7 +27,20 @@
         android:id="@+id/statistics"
         android:name="com.example.exercisetracker.bottomNavFragments.statistics.Statistics"
         android:label="fragment_statistics"
-        tools:layout="@layout/fragment_statistics" />
+        tools:layout="@layout/fragment_statistics" >
+        <action
+            android:id="@+id/statistics_statisticsBarChart"
+            app:destination="@id/statisticsBarChart" />
+        <action
+            android:id="@+id/statistics_statisticsLineChart"
+            app:destination="@id/statisticsLineChart" />
+        <action
+            android:id="@+id/statistics_statisticsPieChart"
+            app:destination="@id/statisticsPieChart" />
+        <action
+            android:id="@+id/statistics_statisticsCombinedChart"
+            app:destination="@id/statisticsCombinedChart" />
+    </fragment>
     <fragment
         android:id="@+id/history"
         android:name="com.example.exercisetracker.bottomNavFragments.history.historyMain.History"
@@ -73,4 +86,42 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
+    <fragment
+        android:id="@+id/statisticsBarChart"
+        android:name="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsBarChart"
+        android:label="fragment_statistics_bar_chart"
+        tools:layout="@layout/fragment_statistics_bar_chart" >
+        <argument
+            android:name="barChartData"
+            app:argType="com.example.exercisetracker.data.BarChartData"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsLineChart"
+        android:name="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsLineChart"
+        android:label="fragment_statistics_line_chart"
+        tools:layout="@layout/fragment_statistics_line_chart" >
+        <argument
+            android:name="lineChartData"
+            app:argType="com.example.exercisetracker.data.LineChartData"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsPieChart"
+        android:name="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsPieChart"
+        android:label="fragment_statistics_pie_chart"
+        tools:layout="@layout/fragment_statistics_pie_chart" >
+        <argument
+            android:name="pieChartData"
+            app:argType="com.example.exercisetracker.data.PieChart"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsCombinedChart"
+        android:name="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsCombinedChart"
+        android:label="fragment_statistics_combined_chart"
+        tools:layout="@layout/fragment_statistics_combined_chart" />
 </navigation>
