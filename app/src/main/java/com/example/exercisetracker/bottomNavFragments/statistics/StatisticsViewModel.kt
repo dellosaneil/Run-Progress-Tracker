@@ -58,7 +58,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         }
     }
 
-    fun workoutList(): List<WorkoutData> = repository.retrieveByAvgSpeed()
+    fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> = repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
 
 
     fun dateRangeRecord(firstRange: Long, secondRange: Long) {

@@ -29,6 +29,8 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
     private val statisticsViewModel: StatisticsViewModel by viewModels()
+    private var first : Long? = null
+    private var second : Long? =null
 
 
     override fun onCreateView(
@@ -156,17 +158,21 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private val TAG = "Statistics"
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.fragmentStatistics_bar -> redirectBarChartAll()
+            R.id.fragmentStatistics_bar -> {
+                first?.let{
+                    redirectBarChart(it, second!!)
+                }?: redirectBarChart()
+            }
             R.id.fragmentStatistics_line -> Log.i(TAG, "onClick: LINE")
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
         }
     }
 
-    private fun redirectBarChartAll() {
+    private fun redirectBarChart(firstRange : Long = 0, secondRange : Long = System.currentTimeMillis()) {
         val exercise = resources.getStringArray(R.array.mode_of_exercise)
         lifecycleScope.launch(IO){
-            val tempData = statisticsViewModel.workoutList()
+            val tempData = statisticsViewModel.workoutList(firstRange, secondRange)
             val arrayData = FloatArray(6){0.0F}
             for(data in tempData){
                 when (data.modeOfExercise) {
@@ -215,9 +221,13 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         )
         materialDatePicker.addOnPositiveButtonClickListener {
             statisticsViewModel.dateRangeRecord(it.first!!, it.second!! + 86_400_000)
+            first = it.first
+            second = it.second
         }
         materialDatePicker.addOnNegativeButtonClickListener {
             statisticsViewModel.allWorkoutRecord()
+            first = null
+            second = null
         }
     }
 }

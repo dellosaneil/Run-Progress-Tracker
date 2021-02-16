@@ -65,6 +65,7 @@
     <string name="workoutStatisticsLine_title">Line Chart</string>
     <string name="workoutStatisticsPie_title">Pie Chart</string>
     <string name="workoutStatisticsCombined_title">Combined Chart</string>
-
+    <string name="time">Time</string>
+    <string name="distance">Distance</string>
 
 </resources>
