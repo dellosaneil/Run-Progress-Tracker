@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.exercisetracker.R
-import com.example.exercisetracker.data.BarChartData
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -29,8 +28,8 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
     private val statisticsViewModel: StatisticsViewModel by viewModels()
-    private var first : Long? = null
-    private var second : Long? =null
+    private var first: Long? = null
+    private var second: Long? = null
 
 
     override fun onCreateView(
@@ -159,45 +158,42 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.fragmentStatistics_bar -> {
-                Log.i(TAG, "FIRST: $first \nSECOND: $second")
                 first?.let {
                     redirectBarChart(it, second!!)
                 } ?: redirectBarChart()
             }
-            R.id.fragmentStatistics_line -> Log.i(TAG, "onClick: LINE")
+            R.id.fragmentStatistics_line -> {
+                first?.let{
+
+                }
+            }
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
         }
     }
 
-    private fun redirectBarChart(firstRange : Long = 0, secondRange : Long = System.currentTimeMillis()) {
+    private fun redirectBarChart(
+        firstRange: Long = 0,
+        secondRange: Long = System.currentTimeMillis()
+    ) {
         val exercise = resources.getStringArray(R.array.mode_of_exercise)
-        lifecycleScope.launch(IO){
-            val tempData = statisticsViewModel.workoutList(firstRange, secondRange)
-            val arrayData = FloatArray(6){0.0F}
-            for(data in tempData){
-                when (data.modeOfExercise) {
-                    exercise[0] -> {
-                        arrayData[0] += data.totalKM
-                        arrayData[1] += data.totalTime.toFloat()
-                    }
-                    exercise[1] -> {
-                        arrayData[2] += data.totalKM
-                        arrayData[3] += data.totalTime.toFloat()
-                    }
-                    else -> {
-                        arrayData[4] += data.totalKM
-                        arrayData[5] += data.totalTime.toFloat()
-                    }
-                }
-            }
-            val data = BarChartData(arrayData[0], arrayData[1], arrayData[2], arrayData[3], arrayData[4], arrayData[5])
+        lifecycleScope.launch(IO) {
+            val barChartData = statisticsViewModel.barChartData(firstRange, secondRange, exercise)
             withContext(Main) {
-                val action = StatisticsDirections.statisticsStatisticsBarChart(data)
+                val action = StatisticsDirections.statisticsStatisticsBarChart(barChartData)
                 Navigation.findNavController(binding.root).navigate(action)
             }
         }
     }
+
+    fun redirectLineChart(firstRange: Long = 0, secondRange: Long = System.currentTimeMillis()){
+
+
+
+    }
+
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

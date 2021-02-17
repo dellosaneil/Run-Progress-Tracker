@@ -6,13 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.exercisetracker.R
+import com.example.exercisetracker.databinding.FragmentStatisticsBinding
+import com.example.exercisetracker.databinding.FragmentStatisticsPieChartBinding
 
 class StatisticsPieChart : Fragment() {
+
+    private var _binding: FragmentStatisticsPieChartBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistics_pie_chart, container, false)
+    ): View {
+        _binding = FragmentStatisticsPieChartBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }

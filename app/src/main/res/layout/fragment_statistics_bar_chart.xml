@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:weightSum="5"
+    android:weightSum="10"
     tools:context="com.example.exercisetracker.bottomNavFragments.statistics.charts.StatisticsBarChart">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -19,8 +19,7 @@
         android:id="@+id/statisticsBarChart_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4" />
-
+        android:layout_weight="9" />
 
     <RadioGroup
         android:layout_weight="1"

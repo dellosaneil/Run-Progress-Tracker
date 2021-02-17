@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
 
 
 class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
@@ -21,7 +22,6 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
     private val args: StatisticsBarChartArgs? by navArgs()
     private var _binding: FragmentStatisticsBarChartBinding? = null
     private val binding get() = _binding!!
-    private var xAxisLabel = arrayOf<String>()
 
 
     override fun onCreateView(
@@ -46,20 +46,23 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
     }
 
     private fun populateBarChart(label: String = "Kilometers") {
-        xAxisLabel = arrayOf("Cycling", "", "Walking", "", "Jogging")
+        val xAxisLabel = arrayOf("Cycling", "Walking", "Jogging")
         val entries = mutableListOf<BarEntry>()
         args?.barChartData.let {
             if (label == "Kilometers") {
                 entries.add(BarEntry(0f, it!!.cyclingKilometers))
-                entries.add(BarEntry(2f, it.walkingKilometers))
-                entries.add(BarEntry(4f, it.joggingKilometers))
+                entries.add(BarEntry(1f, it.walkingKilometers))
+                entries.add(BarEntry(2f, it.joggingKilometers))
             } else {
                 entries.add(BarEntry(0f, it!!.cyclingTime / 60_000))
-                entries.add(BarEntry(2f, it.walkingTime / 60_000))
-                entries.add(BarEntry(4f, it.joggingTime / 60_000))
+                entries.add(BarEntry(1f, it.walkingTime / 60_000))
+                entries.add(BarEntry(2f, it.joggingTime / 60_000))
             }
         }
         val dataSet = BarDataSet(entries, label)
+        dataSet.apply{
+            valueTextSize = 16f
+        }
         val barData = BarData(dataSet)
         binding.statisticsBarChartChart.apply {
             setFitBars(true)
@@ -68,7 +71,7 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
             setDrawValueAboveBar(true)
             xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabel)
             xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
-            xAxis.granularity = 2f
+            xAxis.granularity = 1f
             description.isEnabled = false
             animateY(1000)
         }

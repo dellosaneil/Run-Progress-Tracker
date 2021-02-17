@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.exercisetracker.data.BarChartData
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -59,6 +59,37 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     }
 
     fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> = repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
+
+    fun barChartData(firstRange: Long, secondRange: Long, exercise: Array<String>) : BarChartData {
+        val arrayData = FloatArray(6) { 0.0F }
+        val tempData = workoutList(firstRange, secondRange)
+        for (data in tempData) {
+            when (data.modeOfExercise) {
+                exercise[0] -> {
+                    arrayData[0] += data.totalKM
+                    arrayData[1] += data.totalTime.toFloat()
+                }
+                exercise[1] -> {
+                    arrayData[2] += data.totalKM
+                    arrayData[3] += data.totalTime.toFloat()
+                }
+                else -> {
+                    arrayData[4] += data.totalKM
+                    arrayData[5] += data.totalTime.toFloat()
+                }
+            }
+        }
+        return BarChartData(
+            arrayData[0],
+            arrayData[1],
+            arrayData[2],
+            arrayData[3],
+            arrayData[4],
+            arrayData[5]
+        )
+    }
+
+
 
 
     fun dateRangeRecord(firstRange: Long, secondRange: Long) {
