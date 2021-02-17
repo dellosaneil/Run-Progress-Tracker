@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 @AndroidEntryPoint
 class Statistics : FragmentLifecycleLog(), View.OnClickListener,
@@ -32,6 +33,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private var first: Long? = null
     private var second: Long? = null
     private var filterItemChecked = 3
+    private lateinit var singleItems: Array<String>
 
 
     override fun onCreateView(
@@ -44,6 +46,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        singleItems = resources.getStringArray(R.array.historyMenu_filter)
         populateGridLayout(view)
         setOnClickListeners()
         setRecords(view)
@@ -192,19 +195,13 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         firstRange: Long = 0,
         secondRange: Long = System.currentTimeMillis()
     ) {
-        lifecycleScope.launch(IO){
+        lifecycleScope.launch(IO) {
             val lineChartData = statisticsViewModel.lineChartData(firstRange, secondRange)
-            withContext(Main){
+            withContext(Main) {
                 val action = StatisticsDirections.statisticsStatisticsLineChart(lineChartData)
                 Navigation.findNavController(binding.root).navigate(action)
             }
         }
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -223,9 +220,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     }
 
     private fun chooseModeOfExercise() {
-        val singleItems = resources.getStringArray(R.array.historyMenu_filter)
         var checkedItem = filterItemChecked
-
         MaterialAlertDialogBuilder(binding.root.context)
             .setTitle(resources.getString(R.string.workoutHistory_menuFilterTitle))
             .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ ->
@@ -244,20 +239,23 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     }
 
     private fun modeOfExerciseFilter(singleItems: Array<String>) {
-        first?.let{
-            if(filterItemChecked != 3) {
-                statisticsViewModel.workoutRecordWithFilter(it, second!!, singleItems[filterItemChecked])
-            }else{
+        first?.let {
+            if (filterItemChecked != 3) {
+                statisticsViewModel.workoutRecordWithFilter(
+                    it,
+                    second!!,
+                    singleItems[filterItemChecked]
+                )
+            } else {
                 statisticsViewModel.dateRangeRecord(it, second!!)
             }
-        }?: if(filterItemChecked == 3){
+        } ?: if (filterItemChecked == 3) {
             statisticsViewModel.allWorkoutRecord()
-        }else{
+        } else {
             statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
         }
     }
 
-    
     private fun chooseDateRange() {
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
         materialDatePicker.show(
@@ -265,14 +263,32 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             getString(R.string.workoutHistory_menuDateRange)
         )
         materialDatePicker.addOnPositiveButtonClickListener {
-            statisticsViewModel.dateRangeRecord(it.first!!, it.second!! + 86_400_000)
-            first = it.first
-            second = it.second!! + 86_400_000
+            first = it.first?.minus(28_800_000)
+            second = it.second?.plus(86_400_000)?.minus(28_800_000)
+            if (filterItemChecked == 3) {
+                statisticsViewModel.dateRangeRecord(first!!, second!!)
+            } else {
+                statisticsViewModel.workoutRecordWithFilter(
+                    first!!,
+                    second!!,
+                    singleItems[filterItemChecked]
+                )
+            }
         }
         materialDatePicker.addOnNegativeButtonClickListener {
-            statisticsViewModel.allWorkoutRecord()
+            if (filterItemChecked == 3) {
+                statisticsViewModel.allWorkoutRecord()
+            } else {
+                statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
+            }
             first = null
             second = null
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

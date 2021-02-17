@@ -104,7 +104,7 @@ class History : FragmentLifecycleLog(), HistoryAdapter.HistoryListener,
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
         materialDatePicker.show(parentFragmentManager, getString(R.string.workoutHistory_menuDateRange))
         materialDatePicker.addOnPositiveButtonClickListener {
-            historyViewModel.filterDateRangePicked(it.first!!, it.second!! + 86_400_000)
+            historyViewModel.filterDateRangePicked(it.first!!.minus(28_800_000), it.second!!.plus( 86_400_000).minus(28_800_000))
         }
     }
 

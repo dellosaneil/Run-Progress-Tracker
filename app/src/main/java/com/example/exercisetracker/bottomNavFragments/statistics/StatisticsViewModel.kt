@@ -136,7 +136,6 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         )
     }
 
-
     fun dateRangeRecord(firstRange: Long = 0, secondRange: Long = System.currentTimeMillis()) {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMRangeDate(firstRange, secondRange)
@@ -155,7 +154,6 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             }
         }
     }
-
 
     private fun formatAverageSpeed(speed: Double) = "${String.format("%.2f", speed)} km/h"
 
