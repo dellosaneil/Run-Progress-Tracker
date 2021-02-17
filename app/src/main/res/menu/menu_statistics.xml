@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/fragmentStatisticsMenu_dateRange"
-        android:title="@string/workoutStatistics_dateMenu"
-        android:icon="@drawable/ic_calendar_24"
-        app:showAsAction="always"/>
+        android:title="@string/workoutStatistics_dateMenu"/>
+
+    <item android:id="@+id/fragmentStatisticsMenu_modeOfExercise"
+        android:title="@string/workoutHistory_mode"/>
 
 
 </menu>

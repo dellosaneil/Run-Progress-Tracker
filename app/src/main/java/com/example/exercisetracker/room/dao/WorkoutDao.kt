@@ -64,34 +64,39 @@ interface WorkoutDao {
 
 
     /* *****************************************STATISTICS**************************************** */
-    @Query("SELECT SUM(totalTime) FROM workout_main")
-    fun sumTotalTimeAll() : Long
+
     @Query("SELECT SUM(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun sumTotalTimeRangeDate(firstRange: Long, secondRange: Long) : Long
+    @Query("SELECT SUM(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND modeOfExercise =  :mode")
+    fun sumTotalTimeRangeDateWithFilter(firstRange: Long, secondRange: Long, mode : String) : Long
 
-    @Query("SELECT AVG(totalTime) FROM workout_main")
-    fun avgTotalTimeAll() : Double
+
     @Query("SELECT AVG(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgTotalTimeRangeDate(firstRange: Long, secondRange: Long) : Double
+    @Query("SELECT AVG(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND modeOfExercise = :mode")
+    fun avgTotalTimeRangeDateWithFilter(firstRange: Long, secondRange: Long, mode : String) : Double
 
-    @Query("SELECT SUM(totalKM) FROM workout_main")
-    fun sumTotalKMAll() : Double
+
     @Query("SELECT SUM(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun sumTotalKMRangeDate(firstRange: Long, secondRange: Long) : Double
+    @Query("SELECT SUM(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND modeOfExercise = :mode")
+    fun sumTotalKMRangeDateWithFilter(firstRange: Long, secondRange: Long, mode : String) : Double
 
-    @Query("SELECT AVG(totalKM) FROM workout_main")
-    fun avgKMAll() : Double
+
     @Query("SELECT AVG(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgKMRangeDate(firstRange: Long, secondRange: Long) : Double
+    @Query("SELECT AVG(totalKM) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND modeOfExercise = :mode")
+    fun avgKMRangeDateWithFilter(firstRange: Long, secondRange: Long, mode :String) : Double
 
-    @Query("SELECT AVG(averageSpeed) FROM workout_main")
-    fun avgSpeedAll() : Double
+
     @Query("SELECT AVG(averageSpeed) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun avgSpeedRangeDate(firstRange: Long, secondRange: Long) : Double
+    @Query("SELECT AVG(averageSpeed) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND :mode")
+    fun avgSpeedRangeDateWithFilter(firstRange: Long, secondRange: Long, mode : String) : Double
 
-    @Query("SELECT COUNT(totalTime) FROM workout_main")
-    fun sumTotalWorkoutCountAll(): Int
     @Query("SELECT COUNT(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange")
     fun sumTotalWorkoutCountRangeDate(firstRange: Long, secondRange: Long) : Int
+    @Query("SELECT COUNT(totalTime) FROM workout_main WHERE startTime BETWEEN :firstRange AND :secondRange AND modeOfExercise = :mode")
+    fun sumTotalWorkoutCountRangeDateWithFilter(firstRange: Long, secondRange: Long, mode : String) : Int
 
 }

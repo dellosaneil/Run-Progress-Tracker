@@ -42,12 +42,28 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
 
     fun allWorkoutRecord() {
         viewModelScope.launch(IO) {
-            val tDistance = repository.sumTotalKMAll()
-            val tTime = repository.sumTotalTimeAll()
-            val aDistance = repository.avgKMAll()
-            val aTime = repository.avgTotalTimeAll()
-            val aSpeed = repository.avgSpeedAll()
-            val tWorkout = repository.sumTotalWorkoutCountAll()
+            dateRangeRecord()
+        }
+    }
+
+    fun workoutRecordWithFilter(
+        firstRange: Long = 0,
+        secondRange: Long = System.currentTimeMillis(),
+        mode: String
+    ) {
+        viewModelScope.launch(IO) {
+            val tDistance: Double =
+                repository.sumTotalKMRangeDateWithFilter(firstRange, secondRange, mode)
+            val tTime: Long =
+                repository.sumTotalTimeRangeDateWithFilter(firstRange, secondRange, mode)
+            val aDistance: Double =
+                repository.avgKMRangeDateWithFilter(firstRange, secondRange, mode)
+            val aTime: Double =
+                repository.avgTotalTimeRangeDateWithFilter(firstRange, secondRange, mode)
+            val aSpeed: Double =
+                repository.avgSpeedRangeDateWithFilter(firstRange, secondRange, mode)
+            val tWorkout: Int =
+                repository.sumTotalWorkoutCountRangeDateWithFilter(firstRange, secondRange, mode)
             withContext(Main) {
                 _totalDistance.value = formatKM(tDistance)
                 _totalTime.value = millisecondToTime(tTime)
@@ -55,9 +71,15 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
                 _averageTime.value = millisecondToTime(aTime.toLong())
                 _averageSpeed.value = formatAverageSpeed(aSpeed)
                 _totalWorkout.value = tWorkout
+
             }
         }
     }
+
+
+    private fun workoutListWithFilter(firstRange: Long, secondRange: Long, mode: String) =
+        repository.retrieveRangeDateWithModeWithStartTime(mode, firstRange, secondRange)
+
 
     private fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> =
         repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
@@ -105,11 +127,17 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             averageSpeedArray.add(data.averageSpeed.toFloat())
             modeOfExercise.add(data.modeOfExercise)
         }
-        return LineChartData(startTimeArray, totalKMArray, totalTimeArray, averageSpeedArray, modeOfExercise)
+        return LineChartData(
+            startTimeArray,
+            totalKMArray,
+            totalTimeArray,
+            averageSpeedArray,
+            modeOfExercise
+        )
     }
 
 
-    fun dateRangeRecord(firstRange: Long, secondRange: Long) {
+    fun dateRangeRecord(firstRange: Long = 0, secondRange: Long = System.currentTimeMillis()) {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMRangeDate(firstRange, secondRange)
             val tTime = repository.sumTotalTimeRangeDate(firstRange, secondRange)

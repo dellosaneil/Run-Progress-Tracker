@@ -15,6 +15,7 @@ import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBinding
 import com.example.exercisetracker.utility.FragmentLifecycleLog
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -30,6 +31,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private val statisticsViewModel: StatisticsViewModel by viewModels()
     private var first: Long? = null
     private var second: Long? = null
+    private var filterItemChecked = 3
 
 
     override fun onCreateView(
@@ -211,10 +213,51 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
                 chooseDateRange()
                 true
             }
+            R.id.fragmentStatisticsMenu_modeOfExercise -> {
+                chooseModeOfExercise()
+                true
+            }
+
             else -> false
         }
     }
 
+    private fun chooseModeOfExercise() {
+        val singleItems = resources.getStringArray(R.array.historyMenu_filter)
+        var checkedItem = filterItemChecked
+
+        MaterialAlertDialogBuilder(binding.root.context)
+            .setTitle(resources.getString(R.string.workoutHistory_menuFilterTitle))
+            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(resources.getString(R.string.historyMenu_filter)) { dialog, _ ->
+                filterItemChecked = checkedItem
+                modeOfExerciseFilter(singleItems)
+                dialog.dismiss()
+            }
+            .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
+                checkedItem = which
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun modeOfExerciseFilter(singleItems: Array<String>) {
+        first?.let{
+            if(filterItemChecked != 3) {
+                statisticsViewModel.workoutRecordWithFilter(it, second!!, singleItems[filterItemChecked])
+            }else{
+                statisticsViewModel.dateRangeRecord(it, second!!)
+            }
+        }?: if(filterItemChecked == 3){
+            statisticsViewModel.allWorkoutRecord()
+        }else{
+            statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
+        }
+    }
+
+    
     private fun chooseDateRange() {
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
         materialDatePicker.show(
