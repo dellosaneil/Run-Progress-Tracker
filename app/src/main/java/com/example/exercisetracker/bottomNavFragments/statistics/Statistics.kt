@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 @AndroidEntryPoint
 class Statistics : FragmentLifecycleLog(), View.OnClickListener,
@@ -30,8 +29,8 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
     private val statisticsViewModel: StatisticsViewModel by viewModels()
-    private var first: Long? = null
-    private var second: Long? = null
+    private var first = 0L
+    private var second = 0L
     private var filterItemChecked = 3
     private lateinit var singleItems: Array<String>
 
@@ -51,6 +50,20 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         setOnClickListeners()
         setRecords(view)
         toolBarInitialize()
+        initializeObservables()
+    }
+
+    private fun initializeObservables() {
+        statisticsViewModel.firstMilliRange().observe(viewLifecycleOwner) {
+            first = it
+        }
+        statisticsViewModel.secondMilliRange().observe(viewLifecycleOwner) {
+            second = it
+        }
+        statisticsViewModel.filterItemChecked().observe(viewLifecycleOwner){
+            filterItemChecked = it
+        }
+
     }
 
 
@@ -163,14 +176,18 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.fragmentStatistics_bar -> {
-                first?.let {
-                    redirectBarChart(it, second!!)
-                } ?: redirectBarChart()
+                if (second != 0L) {
+                    redirectBarChart(first, second)
+                } else {
+                    redirectBarChart()
+                }
             }
             R.id.fragmentStatistics_line -> {
-                first?.let {
-                    redirectLineChart(it, second!!)
-                } ?: redirectLineChart()
+                if (second != 0L) {
+                    redirectLineChart(first,  second)
+                } else {
+                    redirectLineChart()
+                }
             }
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
@@ -196,7 +213,12 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         secondRange: Long = System.currentTimeMillis()
     ) {
         lifecycleScope.launch(IO) {
-            val lineChartData = statisticsViewModel.lineChartData(firstRange, secondRange)
+            val lineChartData = statisticsViewModel.lineChartData(
+                firstRange,
+                secondRange,
+                filterItemChecked,
+                singleItems
+            )
             withContext(Main) {
                 val action = StatisticsDirections.statisticsStatisticsLineChart(lineChartData)
                 Navigation.findNavController(binding.root).navigate(action)
@@ -227,7 +249,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
                 dialog.dismiss()
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_filter)) { dialog, _ ->
-                filterItemChecked = checkedItem
+                statisticsViewModel.setItemChecked(checkedItem)
                 modeOfExerciseFilter(singleItems)
                 dialog.dismiss()
             }
@@ -239,20 +261,22 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
     }
 
     private fun modeOfExerciseFilter(singleItems: Array<String>) {
-        first?.let {
+        if (second != 0L) {
             if (filterItemChecked != 3) {
                 statisticsViewModel.workoutRecordWithFilter(
-                    it,
-                    second!!,
+                    first,
+                    second,
                     singleItems[filterItemChecked]
                 )
             } else {
-                statisticsViewModel.dateRangeRecord(it, second!!)
+                statisticsViewModel.dateRangeRecord(first, second)
             }
-        } ?: if (filterItemChecked == 3) {
-            statisticsViewModel.allWorkoutRecord()
         } else {
-            statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
+            if (filterItemChecked == 3) {
+                statisticsViewModel.allWorkoutRecord()
+            } else {
+                statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
+            }
         }
     }
 
@@ -263,14 +287,16 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             getString(R.string.workoutHistory_menuDateRange)
         )
         materialDatePicker.addOnPositiveButtonClickListener {
-            first = it.first?.minus(28_800_000)
-            second = it.second?.plus(86_400_000)?.minus(28_800_000)
+            statisticsViewModel.setMilliRange(
+                it.first!!.minus(28_800_000L),
+                it.second!!.plus(86_400_000L).minus(28_800_000L)
+            )
             if (filterItemChecked == 3) {
-                statisticsViewModel.dateRangeRecord(first!!, second!!)
+                statisticsViewModel.dateRangeRecord(first, second)
             } else {
                 statisticsViewModel.workoutRecordWithFilter(
-                    first!!,
-                    second!!,
+                    first,
+                    second,
                     singleItems[filterItemChecked]
                 )
             }
@@ -281,8 +307,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             } else {
                 statisticsViewModel.workoutRecordWithFilter(mode = singleItems[filterItemChecked])
             }
-            first = null
-            second = null
+            statisticsViewModel.setMilliRange(0L, 0L)
         }
     }
 

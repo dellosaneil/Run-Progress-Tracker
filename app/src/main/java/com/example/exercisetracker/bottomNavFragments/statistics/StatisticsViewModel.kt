@@ -25,8 +25,25 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     private val _averageDistance = MutableLiveData("0.00 km")
     private val _averageTime = MutableLiveData("00:00:00")
     private val _averageSpeed = MutableLiveData("0.00 km/h")
-
     private val _totalWorkout = MutableLiveData(0)
+
+    private val _firstMilliRange = MutableLiveData(0L)
+    private val _secondMilliRange = MutableLiveData(0L)
+    private val _filterItemChecked = MutableLiveData(3)
+
+
+    fun firstMilliRange() : LiveData<Long> = _firstMilliRange
+    fun secondMilliRange() : LiveData<Long> = _secondMilliRange
+    fun filterItemChecked() : LiveData<Int> = _filterItemChecked
+
+    fun setMilliRange(first : Long, second : Long) {
+        _firstMilliRange.value = first
+        _secondMilliRange.value = second
+    }
+
+    fun setItemChecked(index : Int) {
+        _filterItemChecked.value = index
+    }
 
 
     fun totalWorkout(): LiveData<Int> = _totalWorkout
@@ -113,13 +130,18 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         )
     }
 
-    fun lineChartData(firstRange: Long, secondRange: Long): LineChartData {
+    fun lineChartData(firstRange: Long, secondRange: Long, index: Int, singleItems: Array<String>): LineChartData {
         val startTimeArray = mutableListOf<Long>()
         val totalKMArray = mutableListOf<Float>()
         val totalTimeArray = mutableListOf<Long>()
         val averageSpeedArray = mutableListOf<Float>()
         val modeOfExercise = mutableListOf<String>()
-        val tempData = workoutList(firstRange, secondRange)
+        val tempData : List<WorkoutData> = if(index == 3){
+            workoutList(firstRange, secondRange)
+        }else{
+            workoutListWithFilter(firstRange, secondRange, singleItems[index] )
+        }
+
         for (data in tempData) {
             startTimeArray.add(data.startTime)
             totalKMArray.add(data.totalKM)
