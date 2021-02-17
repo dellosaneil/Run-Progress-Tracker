@@ -73,7 +73,7 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
             xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
             xAxis.granularity = 1f
             description.isEnabled = false
-            animateY(1000)
+            animateY(500)
         }
     }
 

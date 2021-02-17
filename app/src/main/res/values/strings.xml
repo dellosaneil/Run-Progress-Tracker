@@ -67,5 +67,6 @@
     <string name="workoutStatisticsCombined_title">Combined Chart</string>
     <string name="time">Time</string>
     <string name="distance">Distance</string>
+    <string name="speed">Speed</string>
 
 </resources>

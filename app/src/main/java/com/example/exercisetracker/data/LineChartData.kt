@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class LineChartData(
     val startTime: List<Long>,
-    val totalKM: List<Double>,
+    val totalKM: List<Float>,
     val totalTime: List<Long>,
-    val averageSpeed: List<Double>
+    val averageSpeed: List<Float>
 ) : Parcelable

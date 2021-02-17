@@ -163,9 +163,9 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
                 } ?: redirectBarChart()
             }
             R.id.fragmentStatistics_line -> {
-                first?.let{
-
-                }
+                first?.let {
+                    redirectLineChart(it, second!!)
+                } ?: redirectLineChart()
             }
             R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
@@ -186,13 +186,18 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         }
     }
 
-    fun redirectLineChart(firstRange: Long = 0, secondRange: Long = System.currentTimeMillis()){
-
-
-
+    private fun redirectLineChart(
+        firstRange: Long = 0,
+        secondRange: Long = System.currentTimeMillis()
+    ) {
+        lifecycleScope.launch(IO){
+            val lineChartData = statisticsViewModel.lineChartData(firstRange, secondRange)
+            withContext(Main){
+                val action = StatisticsDirections.statisticsStatisticsLineChart(lineChartData)
+                Navigation.findNavController(binding.root).navigate(action)
+            }
+        }
     }
-
-
 
 
     override fun onDestroyView() {

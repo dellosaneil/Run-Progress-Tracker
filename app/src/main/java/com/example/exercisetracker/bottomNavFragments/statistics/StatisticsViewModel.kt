@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exercisetracker.data.BarChartData
+import com.example.exercisetracker.data.LineChartData
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,9 +59,10 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         }
     }
 
-    fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> = repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
+    private fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> =
+        repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
 
-    fun barChartData(firstRange: Long, secondRange: Long, exercise: Array<String>) : BarChartData {
+    fun barChartData(firstRange: Long, secondRange: Long, exercise: Array<String>): BarChartData {
         val arrayData = FloatArray(6) { 0.0F }
         val tempData = workoutList(firstRange, secondRange)
         for (data in tempData) {
@@ -89,7 +91,20 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         )
     }
 
-
+    fun lineChartData(firstRange: Long, secondRange: Long): LineChartData {
+        val startTimeArray = mutableListOf<Long>()
+        val totalKMArray = mutableListOf<Float>()
+        val totalTimeArray = mutableListOf<Long>()
+        val averageSpeedArray = mutableListOf<Float>()
+        val tempData = workoutList(firstRange, secondRange)
+        for (data in tempData) {
+            startTimeArray.add(data.startTime)
+            totalKMArray.add(data.totalKM)
+            totalTimeArray.add(data.totalTime)
+            averageSpeedArray.add(data.averageSpeed.toFloat())
+        }
+        return LineChartData(startTimeArray, totalKMArray, totalTimeArray, averageSpeedArray)
+    }
 
 
     fun dateRangeRecord(firstRange: Long, secondRange: Long) {
