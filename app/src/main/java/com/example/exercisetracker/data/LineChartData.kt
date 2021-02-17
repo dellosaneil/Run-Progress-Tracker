@@ -8,5 +8,6 @@ data class LineChartData(
     val startTime: List<Long>,
     val totalKM: List<Float>,
     val totalTime: List<Long>,
-    val averageSpeed: List<Float>
+    val averageSpeed: List<Float>,
+    val modeOfExercise : List<String>
 ) : Parcelable

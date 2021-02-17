@@ -96,14 +96,16 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         val totalKMArray = mutableListOf<Float>()
         val totalTimeArray = mutableListOf<Long>()
         val averageSpeedArray = mutableListOf<Float>()
+        val modeOfExercise = mutableListOf<String>()
         val tempData = workoutList(firstRange, secondRange)
         for (data in tempData) {
             startTimeArray.add(data.startTime)
             totalKMArray.add(data.totalKM)
             totalTimeArray.add(data.totalTime)
             averageSpeedArray.add(data.averageSpeed.toFloat())
+            modeOfExercise.add(data.modeOfExercise)
         }
-        return LineChartData(startTimeArray, totalKMArray, totalTimeArray, averageSpeedArray)
+        return LineChartData(startTimeArray, totalKMArray, totalTimeArray, averageSpeedArray, modeOfExercise)
     }
 
 
