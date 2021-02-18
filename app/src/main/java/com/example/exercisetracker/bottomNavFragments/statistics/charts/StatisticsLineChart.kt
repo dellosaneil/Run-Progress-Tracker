@@ -130,7 +130,7 @@ class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener {
             invalidate()
             data = lineData
             description.isEnabled = false
-            animateY(250)
+            animateY(500)
         }
     }
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {

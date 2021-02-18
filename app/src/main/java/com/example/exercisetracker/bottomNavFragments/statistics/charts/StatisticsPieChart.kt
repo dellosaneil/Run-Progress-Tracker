@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsPieChartBinding
 import com.example.exercisetracker.utility.Constants.Companion.SAVED_STATE_BOOLEAN
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData

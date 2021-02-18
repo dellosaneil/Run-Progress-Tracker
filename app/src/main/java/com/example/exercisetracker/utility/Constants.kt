@@ -15,6 +15,7 @@ class Constants {
         const val BACKGROUND = "inBackground"
 
         const val ACTION_NOTIFICATION_SERVICE = "notification_service"
+        const val ACTION_BLOCK = "block"
 
         const val DATABASE_NAME = "workout_database"
 

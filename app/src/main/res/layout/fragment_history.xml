@@ -8,6 +8,7 @@
     tools:context=".bottomNavFragments.history.historyMain.History">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,15 +18,17 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:menu="@menu/menu_history"
-            app:title="@string/history"/>
+            app:title="@string/history" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_recyclerView"
-            tools:listitem="@layout/list_item_history"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        
+            android:layout_height="match_parent"
+            tools:listitem="@layout/list_item_history" />
+
     </LinearLayout>
+
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

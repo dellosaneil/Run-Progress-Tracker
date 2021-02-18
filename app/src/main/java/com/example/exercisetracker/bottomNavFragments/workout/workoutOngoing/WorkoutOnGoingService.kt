@@ -23,16 +23,16 @@ import com.example.exercisetracker.data.WorkoutGoalData
 import com.example.exercisetracker.repository.WorkoutRepository
 import com.example.exercisetracker.utility.Constants.Companion.ACTION_NOTIFICATION_SERVICE
 import com.example.exercisetracker.utility.Constants.Companion.BACKGROUND
+import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
 import com.example.exercisetracker.utility.Constants.Companion.CHANNEL_ID
 import com.example.exercisetracker.utility.Constants.Companion.EXTRA_SAVE
+import com.example.exercisetracker.utility.Constants.Companion.IN_BACKGROUND
 import com.example.exercisetracker.utility.Constants.Companion.NOTIFICATION_ID
 import com.example.exercisetracker.utility.Constants.Companion.ONGOING_NOTIFICATION_ID
 import com.example.exercisetracker.utility.Constants.Companion.PAUSE
 import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
-import com.example.exercisetracker.utility.Constants.Companion.BUNDLE
-import com.example.exercisetracker.utility.Constants.Companion.IN_BACKGROUND
 import com.example.exercisetracker.utility.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -198,7 +198,7 @@ class WorkoutOnGoingService : Service() {
     }
 
 
-    /*Computes KM/H*/
+    /*Computes km/h*/
     private fun computeAverageSpeed(distance: Float, workoutLength: Long): Double {
         return (distance / (workoutLength.toFloat() / 3_600_000.00))
     }
@@ -378,8 +378,6 @@ class WorkoutOnGoingService : Service() {
 
         notification = null
         notificationManager = null
-
-        Log.i(TAG, "onDestroy Service Status: ${serviceRunning}")
 
         serviceJob.cancel()
     }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -114,6 +115,7 @@ class WorkoutOngoing : FragmentLifecycleLog(), View.OnClickListener {
         }
     }
 
+    private val TAG = "WorkoutOngoing"
 
     /*Handle the Views property when Fragment was reopened when it is Foreground Service is running*/
     private fun handleIntentReOpened() {

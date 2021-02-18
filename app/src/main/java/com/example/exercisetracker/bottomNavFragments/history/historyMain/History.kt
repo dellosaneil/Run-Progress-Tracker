@@ -42,6 +42,8 @@ class History : FragmentLifecycleLog(), HistoryAdapter.HistoryListener,
     private lateinit var swipeListener: SwipeListener
     private var latestDeletedWorkout: WorkoutData? = null
 
+    private var number = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
