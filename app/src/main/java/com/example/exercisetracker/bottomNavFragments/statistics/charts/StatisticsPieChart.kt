@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
@@ -30,7 +31,6 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
     private lateinit var exerciseArray: Array<String>
     private val pieEntries = mutableListOf<PieEntry>()
     private var isPercent = false
-    private var toast: Toast? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,7 +81,7 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
         }
 
         val pieData = PieData(pieDataSet)
-        pieData.setValueFormatter(PercentFormatter())
+        pieData.setValueFormatter(PercentFormatter(binding.statisticsPieChartChart))
         binding.statisticsPieChartChart.apply {
             data = pieData
             description.isEnabled = false
@@ -103,16 +103,9 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        isPercent = !isPercent
         binding.statisticsPieChartChart.apply {
             setUsePercentValues(isPercent)
         }
-        val inPercent = if (isPercent) "Data in Percentage" else "Data in numerical value"
-        toast?.cancel()
-        toast = Toast.makeText(requireContext(), inPercent, Toast.LENGTH_SHORT)
-        toast!!.show()
-
-
     }
 
     override fun onNothingSelected() {

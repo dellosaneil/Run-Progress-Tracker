@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val TAG = "MainActivity"
 
     /*redirect to OnGoingWorkoutFragment when workout is OnGoing*/
     private fun navigateToWorkoutOngoing(intent: Intent?) {
