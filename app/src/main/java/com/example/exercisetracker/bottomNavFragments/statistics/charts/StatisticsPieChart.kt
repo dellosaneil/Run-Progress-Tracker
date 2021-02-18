@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsPieChartBinding
+import com.example.exercisetracker.utility.Constants.Companion.SAVED_STATE_BOOLEAN
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
@@ -17,7 +19,6 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.google.android.material.snackbar.Snackbar
 
 
 class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
@@ -28,6 +29,7 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
     private lateinit var exerciseArray: Array<String>
     private val pieEntries = mutableListOf<PieEntry>()
     private var isPercent = false
+    private var toast: Toast? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +41,19 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        savedInstanceState?.let{
+            isPercent = it.getBoolean(SAVED_STATE_BOOLEAN)
+        }
         exerciseArray = resources.getStringArray(R.array.mode_of_exercise)
         navigationUpListener()
         populatePieChart()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(SAVED_STATE_BOOLEAN, isPercent)
+    }
+
 
     @SuppressLint("NewApi")
     private fun populatePieChart() {
@@ -57,7 +68,10 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             args.pieChartData?.jogging
         )
         repeat(3) {
-            pieEntries.add(PieEntry(argArray[it]!!, exerciseArray[it]))
+            if(argArray[it] != 0.0f){
+                pieEntries.add(PieEntry(argArray[it]!!, exerciseArray[it]))
+            }
+
         }
         val pieDataSet = PieDataSet(pieEntries, getString(R.string.exerciseType))
         pieDataSet.apply {
@@ -92,8 +106,10 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
         binding.statisticsPieChartChart.apply {
             setUsePercentValues(isPercent)
         }
-        val inPercent = if(isPercent) "Data in Percentage" else "Data in numerical value"
-        Snackbar.make(binding.root, inPercent, Snackbar.LENGTH_LONG).show()
+        val inPercent = if (isPercent) "Data in Percentage" else "Data in numerical value"
+        toast?.cancel()
+        toast = Toast.makeText(requireContext(), inPercent, Toast.LENGTH_SHORT)
+        toast!!.show()
 
 
     }

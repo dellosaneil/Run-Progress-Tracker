@@ -25,5 +25,7 @@ class Constants {
         const val TIME = "Time"
         const val NONE = "None"
 
+        const val SAVED_STATE_BOOLEAN = "percentState"
+
     }
 }
