@@ -53,6 +53,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         initializeObservables()
     }
 
+    /*Updates Global Variable, Save when recreated change*/
     private fun initializeObservables() {
         statisticsViewModel.firstMilliRange().observe(viewLifecycleOwner) {
             first = it
@@ -63,7 +64,6 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         statisticsViewModel.filterItemChecked().observe(viewLifecycleOwner){
             filterItemChecked = it
         }
-
     }
 
 
@@ -74,6 +74,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         binding.fragmentStatisticsToolBar.setOnMenuItemClickListener(this)
     }
 
+    /*Set the Material CardView Values*/
     private fun setRecords(view: View) {
         val labelArray = resources.getStringArray(R.array.records)
         val liveDataFunctions = arrayOf(
@@ -123,6 +124,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         }
     }
 
+    /*Activates Checkbox Listeners*/
     private fun setOnClickListeners() {
         binding.fragmentStatisticsBar.fragmentStatisticsGridCardView.setOnClickListener(this)
         binding.fragmentStatisticsLine.fragmentStatisticsGridCardView.setOnClickListener(this)
@@ -130,6 +132,8 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
         binding.fragmentStatisticsCombined.fragmentStatisticsGridCardView.setOnClickListener(this)
     }
 
+
+    /*Place Images, Labels, Color in Grid Layout*/
     @SuppressLint("NewApi")
     private fun populateGridLayout(view: View) {
         val cardViewArray = arrayOf(
@@ -189,8 +193,26 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
                     redirectLineChart()
                 }
             }
-            R.id.fragmentStatistics_pie -> Log.i(TAG, "onClick: PIE")
+            R.id.fragmentStatistics_pie ->{
+                if(second != 0L){
+                    redirectPieChart(first, second)
+                }else{
+                    redirectPieChart()
+                }
+
+            }
             R.id.fragmentStatistics_combined -> Log.i(TAG, "onClick: COMBINED")
+        }
+    }
+
+    private fun redirectPieChart(first: Long = 0, second: Long = System.currentTimeMillis()) {
+        lifecycleScope.launch(IO){
+            val pieChartData = statisticsViewModel.pieChartData(first, second, singleItems)
+            withContext(Main){
+                val action = StatisticsDirections.statisticsStatisticsPieChart(pieChartData)
+                Navigation.findNavController(binding.root).navigate(action)
+            }
+
         }
     }
 
@@ -233,15 +255,15 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
                 true
             }
             R.id.fragmentStatisticsMenu_modeOfExercise -> {
-                chooseModeOfExercise()
+                alertDialogModeOfExercise()
                 true
             }
-
             else -> false
         }
     }
 
-    private fun chooseModeOfExercise() {
+    /*Creates AlertDialog for Filter*/
+    private fun alertDialogModeOfExercise() {
         var checkedItem = filterItemChecked
         MaterialAlertDialogBuilder(binding.root.context)
             .setTitle(resources.getString(R.string.workoutHistory_menuFilterTitle))
@@ -250,7 +272,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             }
             .setPositiveButton(resources.getString(R.string.historyMenu_filter)) { dialog, _ ->
                 statisticsViewModel.setItemChecked(checkedItem)
-                modeOfExerciseFilter(singleItems)
+                modeOfExerciseFilter()
                 dialog.dismiss()
             }
             .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
@@ -260,7 +282,8 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             .show()
     }
 
-    private fun modeOfExerciseFilter(singleItems: Array<String>) {
+    /*Filters Workout Data specified by Exercise*/
+    private fun modeOfExerciseFilter() {
         if (second != 0L) {
             if (filterItemChecked != 3) {
                 statisticsViewModel.workoutRecordWithFilter(
@@ -279,7 +302,7 @@ class Statistics : FragmentLifecycleLog(), View.OnClickListener,
             }
         }
     }
-
+    /*Creates DatePicker to filter data*/
     private fun chooseDateRange() {
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().build()
         materialDatePicker.show(

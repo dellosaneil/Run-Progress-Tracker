@@ -49,10 +49,10 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         viewModelScope.launch(IO){
             if(filterNumber != -1 && filterNumber != 3){
                 when(sortNumber){
-                    0 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeWithStartTime(workoutArrayFilters[filterNumber], firstRange, secondRange)
-                    1 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeWithTotalTime(workoutArrayFilters[filterNumber], firstRange, secondRange)
-                    2 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeWithTotalKM(workoutArrayFilters[filterNumber], firstRange, secondRange)
-                    3 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeWithAvgSpeed(workoutArrayFilters[filterNumber], firstRange, secondRange)
+                    0 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeByStartTime(workoutArrayFilters[filterNumber], firstRange, secondRange)
+                    1 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeByTotalTime(workoutArrayFilters[filterNumber], firstRange, secondRange)
+                    2 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeByTotalKM(workoutArrayFilters[filterNumber], firstRange, secondRange)
+                    3 -> tempWorkoutList = workoutRepository.retrieveRangeDateWithModeByAvgSpeed(workoutArrayFilters[filterNumber], firstRange, secondRange)
                 }
             }else{
                 when(sortNumber){

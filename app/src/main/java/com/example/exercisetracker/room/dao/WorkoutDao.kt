@@ -52,13 +52,13 @@ interface WorkoutDao {
 
         // With SORT and Mode
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY startTime DESC")
-    fun retrieveRangeDateWithModeWithStartTime(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
+    fun retrieveRangeDateWithModeByStartTime(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY totalTime DESC")
-    fun retrieveRangeDateWithModeWithTotalTime(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
+    fun retrieveRangeDateWithModeByTotalTime(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY averageSpeed DESC")
-    fun retrieveRangeDateWithModeWithAvgSpeed(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
+    fun retrieveRangeDateWithModeByAvgSpeed(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
     @Query("SELECT * FROM workout_main WHERE modeOfExercise = :mode AND startTime BETWEEN :firstRange AND :secondRange ORDER BY totalKM DESC")
-    fun retrieveRangeDateWithModeWithTotalKM(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
+    fun retrieveRangeDateWithModeByTotalKM(mode: String, firstRange: Long, secondRange : Long) : List<WorkoutData>
 
     /* **********************************************END********************************************** */
 

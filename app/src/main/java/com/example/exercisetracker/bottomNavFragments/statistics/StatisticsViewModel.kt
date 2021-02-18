@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exercisetracker.data.BarChartData
 import com.example.exercisetracker.data.LineChartData
+import com.example.exercisetracker.data.PieChart
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,6 +64,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         }
     }
 
+    /*Updates Record depending on the WorkoutFilter*/
     fun workoutRecordWithFilter(
         firstRange: Long = 0,
         secondRange: Long = System.currentTimeMillis(),
@@ -93,14 +95,29 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         }
     }
 
-
+    /*Returns List of Workout Data with DateRange and Workout Filter*/
     private fun workoutListWithFilter(firstRange: Long, secondRange: Long, mode: String) =
-        repository.retrieveRangeDateWithModeWithStartTime(mode, firstRange, secondRange)
+        repository.retrieveRangeDateWithModeByStartTime(mode, firstRange, secondRange)
 
-
+    /*Returns List of Workout Data (ALL)*/
     private fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> =
-        repository.retrieveRangeDateAvgSpeed(firstRange, secondRange)
+        repository.retrieveRangeDateStartTime(firstRange, secondRange)
 
+    fun pieChartData(firstRange: Long, secondRange: Long, singleItems: Array<String>) : PieChart {
+        val arrayData = FloatArray(3) {0.0f}
+        val tempData = workoutList(firstRange, secondRange)
+        for(data in tempData){
+            when(data.modeOfExercise){
+                singleItems[0] -> arrayData[0]++
+                singleItems[1] -> arrayData[1]++
+                singleItems[2] -> arrayData[2]++
+            }
+        }
+        return PieChart(arrayData[0], arrayData[1], arrayData[2])
+    }
+
+
+    /*Returns a BarChartData*/
     fun barChartData(firstRange: Long, secondRange: Long, exercise: Array<String>): BarChartData {
         val arrayData = FloatArray(6) { 0.0F }
         val tempData = workoutList(firstRange, secondRange)
@@ -130,6 +147,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         )
     }
 
+    /*Returns a LineChartData*/
     fun lineChartData(firstRange: Long, secondRange: Long, index: Int, singleItems: Array<String>): LineChartData {
         val startTimeArray = mutableListOf<Long>()
         val totalKMArray = mutableListOf<Float>()
@@ -158,6 +176,7 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
         )
     }
 
+    /*Updates Record from Date Range*/
     fun dateRangeRecord(firstRange: Long = 0, secondRange: Long = System.currentTimeMillis()) {
         viewModelScope.launch(IO) {
             val tDistance = repository.sumTotalKMRangeDate(firstRange, secondRange)
