@@ -2,23 +2,22 @@ package com.example.exercisetracker.bottomNavFragments.statistics.charts
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsPieChartBinding
 import com.example.exercisetracker.utility.Constants.Companion.SAVED_STATE_BOOLEAN
-import com.github.mikephil.charting.animation.Easing
+import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
@@ -42,11 +41,11 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        savedInstanceState?.let{
+        savedInstanceState?.let {
             isPercent = it.getBoolean(SAVED_STATE_BOOLEAN)
         }
         exerciseArray = resources.getStringArray(R.array.mode_of_exercise)
-        navigationUpListener()
+        initializeMaterialToolbar()
         populatePieChart()
     }
 
@@ -69,7 +68,7 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             args.pieChartData?.jogging
         )
         repeat(3) {
-            if(argArray[it] != 0.0f){
+            if (argArray[it] != 0.0f) {
                 pieEntries.add(PieEntry(argArray[it]!!, exerciseArray[it]))
             }
 
@@ -91,25 +90,37 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             legend.setDrawInside(false)
             legend.textSize = 14f
             setUsePercentValues(isPercent)
+            isRotationEnabled = false
             isDrawHoleEnabled = false
         }
         binding.statisticsPieChartChart.setOnChartValueSelectedListener(this)
     }
 
-    private fun navigationUpListener() {
+    private fun initializeMaterialToolbar() {
         binding.statisticsPieChartToolBar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
+        if (args.pieChartData?.startDate != 0L) {
+            binding.statisticsPieChartToolBar.title = "Pie Chart\t\t(${dateFormatter(args.pieChartData?.startDate!!)} - ${dateFormatter(args.pieChartData?.endDate!!)})"
+        }
     }
 
+
+
     override fun onValueSelected(e: Entry?, h: Highlight?) {
+        isPercent = !isPercent
         binding.statisticsPieChartChart.apply {
             setUsePercentValues(isPercent)
+            highlightValue(null)
         }
     }
 
     override fun onNothingSelected() {
-
+        isPercent = !isPercent
+        binding.statisticsPieChartChart.apply {
+            setUsePercentValues(isPercent)
+            highlightValue(null)
+        }
     }
 
 }

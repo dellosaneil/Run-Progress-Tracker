@@ -8,7 +8,7 @@ import java.util.*
 object UtilityFunctions {
 
     fun dateFormatter(milliseconds: Long): String {
-        val simpleDateFormat = SimpleDateFormat("dd/MM", Locale.ROOT)
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yy", Locale.ROOT)
         return simpleDateFormat.format(milliseconds)
     }
 

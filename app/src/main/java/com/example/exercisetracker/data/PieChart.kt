@@ -7,5 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class PieChart(
     val cycling: Float,
     val walking: Float,
-    val jogging: Float
+    val jogging: Float,
+    val startDate: Long = 0,
+    val endDate : Long = System.currentTimeMillis()
 ) : Parcelable

@@ -42,6 +42,9 @@ class WorkoutGoal : Fragment() {
         }
     }
 
+
+
+
     /*Changes the Property of Goal according to the GoalType selected*/
     private fun setGoalListener() {
         binding.workoutGoalGoalType.editText?.doOnTextChanged { text, _, _, _ ->

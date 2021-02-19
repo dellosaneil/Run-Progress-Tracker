@@ -9,5 +9,7 @@ data class LineChartData(
     val totalKM: List<Float>,
     val totalTime: List<Long>,
     val averageSpeed: List<Float>,
-    val modeOfExercise : List<String>
+    val modeOfExercise : List<String>,
+    val startDate : Long = 0,
+    val endDate : Long = System.currentTimeMillis()
 ) : Parcelable

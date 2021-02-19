@@ -70,4 +70,14 @@
     <string name="distance">Distance</string>
     <string name="speed">Speed</string>
 
+    <string name="workout_details">Workout Details</string>
+    <string name="lineChart_startDate">Workout Date: %1$s</string>
+    <string name="lineChart_workout">Workout Type: %1$s</string>
+    <string name="lineChart_km">Distance: %1$s</string>
+    <string name="lineChart_minutes">Workout Duration: %1$s</string>
+    <string name="lineChart_avgSpeed">Average Speed: %1$s</string>
+
+
+
+
 </resources>

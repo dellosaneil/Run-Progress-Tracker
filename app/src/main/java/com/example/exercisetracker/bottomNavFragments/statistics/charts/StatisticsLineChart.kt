@@ -12,16 +12,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsLineChartBinding
+import com.example.exercisetracker.utility.UtilityFunctions.convertMilliSecondsToText
+import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener {
+class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener, OnChartValueSelectedListener {
 
     private var _binding: FragmentStatisticsLineChartBinding? = null
     private val binding get() = _binding!!
@@ -58,12 +62,16 @@ class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener {
         binding.statisticsLineChartToolBar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
+        if(args.lineChartData?.startDate != 0L){
+            binding.statisticsLineChartToolBar.title = "Line Chart\t\t(${dateFormatter(args.lineChartData?.startDate!!)} - ${dateFormatter(args.lineChartData?.endDate!!)})"
+        }
     }
 
     private fun setOnCheckListener() {
         binding.statisticsLineChartDistance.setOnCheckedChangeListener(this)
         binding.statisticsLineChartSpeed.setOnCheckedChangeListener(this)
         binding.statisticsLineChartTime.setOnCheckedChangeListener(this)
+        binding.statisticsLineChartChart.setOnChartValueSelectedListener(this)
     }
 
 
@@ -139,6 +147,23 @@ class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener {
             R.id.statisticsLineChart_time -> checkBoxLineChart(1, isChecked)
             R.id.statisticsLineChart_speed -> checkBoxLineChart(2, isChecked)
         }
+    }
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+        val index = e?.x?.toInt()
+        val lineChartData = args.lineChartData
+        binding.statisticsLineChartDetails.apply{
+            lineChartStartDate.text = getString(R.string.lineChart_startDate, dateFormatter(lineChartData!!.startTime[index!!]))
+            lineChartKm.text = getString(R.string.lineChart_km, String.format("%.2f km",lineChartData.totalKM[index]))
+            lineChartSpeed.text = getString(R.string.lineChart_avgSpeed, String.format("%.2f km/h",lineChartData.averageSpeed[index]))
+            lineChartWorkout.text = getString(R.string.lineChart_workout, lineChartData.modeOfExercise[index])
+            lifecycleScope.launch(Main){
+                lineChartTime.text = getString(R.string.lineChart_minutes, convertMilliSecondsToText(lineChartData.totalTime[index], false, lifecycleScope))
+            }
+        }
+    }
+
+    override fun onNothingSelected() {
+
     }
 }
 

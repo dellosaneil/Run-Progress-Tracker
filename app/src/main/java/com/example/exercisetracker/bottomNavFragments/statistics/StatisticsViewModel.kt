@@ -34,16 +34,16 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     private val _filterItemChecked = MutableLiveData(3)
 
 
-    fun firstMilliRange() : LiveData<Long> = _firstMilliRange
-    fun secondMilliRange() : LiveData<Long> = _secondMilliRange
-    fun filterItemChecked() : LiveData<Int> = _filterItemChecked
+    fun firstMilliRange(): LiveData<Long> = _firstMilliRange
+    fun secondMilliRange(): LiveData<Long> = _secondMilliRange
+    fun filterItemChecked(): LiveData<Int> = _filterItemChecked
 
-    fun setMilliRange(first : Long, second : Long) {
+    fun setMilliRange(first: Long, second: Long) {
         _firstMilliRange.value = first
         _secondMilliRange.value = second
     }
 
-    fun setItemChecked(index : Int) {
+    fun setItemChecked(index: Int) {
         _filterItemChecked.value = index
     }
 
@@ -88,7 +88,8 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
                 _totalDistance.value = formatKM(tDistance)
                 _totalTime.value = convertMilliSecondsToText(tTime, false, viewModelScope)
                 _averageDistance.value = formatKM(aDistance)
-                _averageTime.value = convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
+                _averageTime.value =
+                    convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
                 _averageSpeed.value = formatAverageSpeed(aSpeed)
                 _totalWorkout.value = tWorkout
 
@@ -104,17 +105,17 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     private fun workoutList(firstRange: Long, secondRange: Long): List<WorkoutData> =
         repository.retrieveRangeDateStartTime(firstRange, secondRange)
 
-    fun pieChartData(firstRange: Long, secondRange: Long, singleItems: Array<String>) : PieChart {
-        val arrayData = FloatArray(3) {0.0f}
+    fun pieChartData(firstRange: Long, secondRange: Long, singleItems: Array<String>): PieChart {
+        val arrayData = FloatArray(3) { 0.0f }
         val tempData = workoutList(firstRange, secondRange)
-        for(data in tempData){
-            when(data.modeOfExercise){
+        for (data in tempData) {
+            when (data.modeOfExercise) {
                 singleItems[0] -> arrayData[0]++
                 singleItems[1] -> arrayData[1]++
                 singleItems[2] -> arrayData[2]++
             }
         }
-        return PieChart(arrayData[0], arrayData[1], arrayData[2])
+        return PieChart(arrayData[0], arrayData[1], arrayData[2], firstRange, secondRange)
     }
 
 
@@ -151,16 +152,21 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     }
 
     /*Returns a LineChartData*/
-    fun lineChartData(firstRange: Long, secondRange: Long, index: Int, singleItems: Array<String>): LineChartData {
+    fun lineChartData(
+        firstRange: Long,
+        secondRange: Long,
+        index: Int,
+        singleItems: Array<String>
+    ): LineChartData {
         val startTimeArray = mutableListOf<Long>()
         val totalKMArray = mutableListOf<Float>()
         val totalTimeArray = mutableListOf<Long>()
         val averageSpeedArray = mutableListOf<Float>()
         val modeOfExercise = mutableListOf<String>()
-        val tempData : List<WorkoutData> = if(index == 3){
+        val tempData: List<WorkoutData> = if (index == 3) {
             workoutList(firstRange, secondRange)
-        }else{
-            workoutListWithFilter(firstRange, secondRange, singleItems[index] )
+        } else {
+            workoutListWithFilter(firstRange, secondRange, singleItems[index])
         }
 
         for (data in tempData) {
@@ -175,7 +181,8 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             totalKMArray,
             totalTimeArray,
             averageSpeedArray,
-            modeOfExercise
+            modeOfExercise,
+            firstRange, secondRange
         )
     }
 
@@ -192,7 +199,8 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
                 _totalDistance.value = formatKM(tDistance)
                 _totalTime.value = convertMilliSecondsToText(tTime, false, viewModelScope)
                 _averageDistance.value = formatKM(aDistance)
-                _averageTime.value = convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
+                _averageTime.value =
+                    convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
                 _averageSpeed.value = formatAverageSpeed(aSpeed)
                 _totalWorkout.value = tWorkout
             }
@@ -202,7 +210,6 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
     private fun formatAverageSpeed(speed: Double) = "${String.format("%.2f", speed)} km/h"
 
     private fun formatKM(km: Double): String = "${String.format("%.2f", km)} km"
-
 
 
 }

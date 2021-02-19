@@ -82,7 +82,10 @@ class HistoryPolyline : Fragment() {
     }
 
     private fun labelMaterialToolbar() {
-        binding.historyPolylineToolbar.title = "${args?.polylines?.modeOfExercise}\t\t${dateFormatter(args?.polylines?.startTime!!)}"
+        binding.historyPolylineToolbar.title = "${args?.polylines?.modeOfExercise}\t\t(${dateFormatter(args?.polylines?.startTime!!)})"
+        binding.historyPolylineToolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
     }
 
 }
