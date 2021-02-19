@@ -10,6 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.exercisetracker.R
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.databinding.ListItemHistoryBinding
+import com.example.exercisetracker.utility.UtilityFunctions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -72,11 +76,8 @@ class HistoryAdapter(private val historyListener: HistoryListener) :
                 R.string.workoutHistoryRV_speed,
                 "${String.format("%.2f", workout.averageSpeed)} "
             )
-            binding.historyRVTime.text = resources.getString(
-                R.string.workoutHistoryRV_time, formatTime(
-                    workout.totalTime
-                )
-            )
+            binding.historyRVTime.text =
+                resources.getString(R.string.workoutHistoryRV_time, formatTime(workout.totalTime))
             binding.historyRVStartTime.text = millisecondsToDate(workout.startTime)
 
             Glide.with(binding.root.context)

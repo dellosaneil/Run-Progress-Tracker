@@ -9,12 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBarChartBinding
+import com.example.exercisetracker.utility.UtilityFunctions
+import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
@@ -34,16 +37,24 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navigationUp()
+        setUpMaterialToolbar()
         populateBarChart()
         binding.statisticsBarChartRadioGroup.setOnCheckedChangeListener(this)
     }
 
-    private fun navigationUp() {
+    private fun setUpMaterialToolbar() {
         binding.statisticsBarChartToolBar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
+
+        if (args?.barChartData?.startDate != 0L) {
+            binding.statisticsBarChartToolBar.title =
+                "Bar Chart (${dateFormatter(args?.barChartData?.startDate!!)} - ${dateFormatter(args?.barChartData?.endDate!!)})"
+        }
     }
+
+
+
 
     private fun populateBarChart(label: String = "Kilometers") {
         val xAxisLabel = arrayOf("Cycling", "Walking", "Jogging")
@@ -60,7 +71,7 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
             }
         }
         val dataSet = BarDataSet(entries, label)
-        dataSet.apply{
+        dataSet.apply {
             valueTextSize = 16f
         }
         val barData = BarData(dataSet)

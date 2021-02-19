@@ -9,6 +9,7 @@ import com.example.exercisetracker.data.LineChartData
 import com.example.exercisetracker.data.PieChart
 import com.example.exercisetracker.data.WorkoutData
 import com.example.exercisetracker.repository.WorkoutRepository
+import com.example.exercisetracker.utility.UtilityFunctions.convertMilliSecondsToText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -85,9 +86,9 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
                 repository.sumTotalWorkoutCountRangeDateWithFilter(firstRange, secondRange, mode)
             withContext(Main) {
                 _totalDistance.value = formatKM(tDistance)
-                _totalTime.value = millisecondToTime(tTime)
+                _totalTime.value = convertMilliSecondsToText(tTime, false, viewModelScope)
                 _averageDistance.value = formatKM(aDistance)
-                _averageTime.value = millisecondToTime(aTime.toLong())
+                _averageTime.value = convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
                 _averageSpeed.value = formatAverageSpeed(aSpeed)
                 _totalWorkout.value = tWorkout
 
@@ -143,7 +144,9 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             arrayData[2],
             arrayData[3],
             arrayData[4],
-            arrayData[5]
+            arrayData[5],
+            firstRange,
+            secondRange
         )
     }
 
@@ -187,9 +190,9 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
             val tWorkout = repository.sumTotalWorkoutCountRangeDate(firstRange, secondRange)
             withContext(Main) {
                 _totalDistance.value = formatKM(tDistance)
-                _totalTime.value = millisecondToTime(tTime)
+                _totalTime.value = convertMilliSecondsToText(tTime, false, viewModelScope)
                 _averageDistance.value = formatKM(aDistance)
-                _averageTime.value = millisecondToTime(aTime.toLong())
+                _averageTime.value = convertMilliSecondsToText(aTime.toLong(), false, viewModelScope)
                 _averageSpeed.value = formatAverageSpeed(aSpeed)
                 _totalWorkout.value = tWorkout
             }
@@ -200,20 +203,6 @@ class StatisticsViewModel @Inject constructor(private val repository: WorkoutRep
 
     private fun formatKM(km: Double): String = "${String.format("%.2f", km)} km"
 
-    private fun millisecondToTime(time: Long): String {
-        var timeMilli = time
-        val hours = (timeMilli / 3_600_000).toInt()
-        timeMilli -= hours * 3_600_000
-        val minutes = (timeMilli / 60_000).toInt()
-        timeMilli -= minutes * 60_000
-        val seconds = (timeMilli / 1_000).toInt()
-        timeMilli -= seconds * 1_000
-
-        val hourString = if (hours <= 9) "0$hours" else hours
-        val minuteString = if (minutes <= 9) "0$minutes" else minutes
-        val secondString = if (seconds <= 9) "0$seconds" else seconds
-        return "$hourString : $minuteString : $secondString"
-    }
 
 
 }

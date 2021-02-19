@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
+import com.example.exercisetracker.databinding.FragmentHistoryPolylineBinding
+import com.example.exercisetracker.databinding.FragmentStatisticsBinding
+import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,10 +27,8 @@ class HistoryPolyline : Fragment() {
     private val args: HistoryPolylineArgs? by navArgs()
     private var polyLines : List<LatLng>? = null
 
-    private val TAG = "HistoryPolyline"
-
-
-    /*https://roads.googleapis.com/v1/snapToRoads?path=-35.27801,149.12958|-35.28032,149.12907|-35.28099,149.12929|-35.28144,149.12984|-35.28194,149.13003|-35.28282,149.12956|-35.28302,149.12881|-35.28473,149.12836&interpolate=true&key=YOUR_API_KEY*/
+    private var _binding: FragmentHistoryPolylineBinding? = null
+    private val binding get() = _binding!!
 
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -67,8 +68,9 @@ class HistoryPolyline : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_history_polyline, container, false)
+    ): View {
+        _binding = FragmentHistoryPolylineBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,6 +78,11 @@ class HistoryPolyline : Fragment() {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.historyPolyline_map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+        labelMaterialToolbar()
+    }
+
+    private fun labelMaterialToolbar() {
+        binding.historyPolylineToolbar.title = "${args?.polylines?.modeOfExercise}\t\t${dateFormatter(args?.polylines?.startTime!!)}"
     }
 
 }

@@ -34,6 +34,7 @@ import com.example.exercisetracker.utility.Constants.Companion.RESUME
 import com.example.exercisetracker.utility.Constants.Companion.START
 import com.example.exercisetracker.utility.Constants.Companion.STOP
 import com.example.exercisetracker.utility.MainActivity
+import com.example.exercisetracker.utility.UtilityFunctions.convertMilliSecondsToText
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
@@ -114,9 +115,9 @@ class WorkoutOnGoingService : Service() {
                 withContext(Main) {
                     mStopWatchRunningTime.value = updatedTime
                     mStopWatchFragmentTime.value =
-                        convertMilliSecondsToText(mStopWatchRunningTime.value!!, true)
+                        convertMilliSecondsToText(mStopWatchRunningTime.value!!, true, serviceScope)
                     mStopWatchServiceTime.value =
-                        convertMilliSecondsToText(mStopWatchRunningTime.value!!, false)
+                        convertMilliSecondsToText(mStopWatchRunningTime.value!!, false, serviceScope)
                 }
                 if(isInBackground){
                     delay(1000)
@@ -149,32 +150,32 @@ class WorkoutOnGoingService : Service() {
         }
     }
 
-    /*converts milliseconds to human readable time*/
-    private suspend fun convertMilliSecondsToText(time: Long, toFragment: Boolean): String {
-        val timeInString = serviceScope.async {
-            var timeMilli = time
-            val hours = (timeMilli / 3_600_000).toInt()
-            timeMilli -= hours * 3_600_000
-            val minutes = (timeMilli / 60_000).toInt()
-            timeMilli -= minutes * 60_000
-            val seconds = (timeMilli / 1_000).toInt()
-            timeMilli -= seconds * 1_000
-
-            return@async if (toFragment) {
-                val hourString = if (hours <= 9) "0$hours" else hours
-                val minuteString = if (minutes <= 9) "0$minutes" else minutes
-                val secondString = if (seconds <= 9) "0$seconds" else seconds
-                val milliString = if (timeMilli <= 99) "0$timeMilli" else timeMilli
-                "$hourString : $minuteString : $secondString : $milliString"
-            } else {
-                val hourString = if (hours <= 9) "0$hours" else hours
-                val minuteString = if (minutes <= 9) "0$minutes" else minutes
-                val secondString = if (seconds <= 9) "0$seconds" else seconds
-                "$hourString : $minuteString : $secondString"
-            }
-        }
-        return timeInString.await()
-    }
+//    /*converts milliseconds to human readable time*/
+//    private suspend fun convertMilliSecondsToText(time: Long, toFragment: Boolean): String {
+//        val timeInString = serviceScope.async {
+//            var timeMilli = time
+//            val hours = (timeMilli / 3_600_000).toInt()
+//            timeMilli -= hours * 3_600_000
+//            val minutes = (timeMilli / 60_000).toInt()
+//            timeMilli -= minutes * 60_000
+//            val seconds = (timeMilli / 1_000).toInt()
+//            timeMilli -= seconds * 1_000
+//
+//            return@async if (toFragment) {
+//                val hourString = if (hours <= 9) "0$hours" else hours
+//                val minuteString = if (minutes <= 9) "0$minutes" else minutes
+//                val secondString = if (seconds <= 9) "0$seconds" else seconds
+//                val milliString = if (timeMilli <= 99) "0$timeMilli" else timeMilli
+//                "$hourString : $minuteString : $secondString : $milliString"
+//            } else {
+//                val hourString = if (hours <= 9) "0$hours" else hours
+//                val minuteString = if (minutes <= 9) "0$minutes" else minutes
+//                val secondString = if (seconds <= 9) "0$seconds" else seconds
+//                "$hourString : $minuteString : $secondString"
+//            }
+//        }
+//        return timeInString.await()
+//    }
 
     private fun saveToDatabase() {
         serviceScope.launch {

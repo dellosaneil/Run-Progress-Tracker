@@ -13,4 +13,8 @@ data class BarChartData(
 
     val joggingKilometers: Float,
     val joggingTime: Float,
+
+    val startDate : Long = 0L,
+    val endDate : Long = System.currentTimeMillis()
+
 ) : Parcelable

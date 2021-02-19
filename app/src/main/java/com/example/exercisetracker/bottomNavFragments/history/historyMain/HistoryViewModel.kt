@@ -63,7 +63,7 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
                 }
             }
             withContext(Main){
-                mWorkoutList.value = tempWorkoutList
+                mWorkoutList.value = tempWorkoutList!!
             }
         }
     }
@@ -92,7 +92,7 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
                     }
                 }
                 withContext(Main) {
-                    mWorkoutList.value = tempWorkoutList
+                    mWorkoutList.value = tempWorkoutList!!
                 }
             }
         }
@@ -117,7 +117,7 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
                         3 -> tempWorkoutList = workoutRepository.retrieveModeByAvgSpeed(workoutArrayFilters[filterBy])
                     }
                     withContext(Main) {
-                        mWorkoutList.value = tempWorkoutList
+                        mWorkoutList.value = tempWorkoutList!!
                     }
                 }
             }
@@ -128,6 +128,4 @@ class HistoryViewModel @Inject constructor(private val workoutRepository: Workou
         workoutRepository.deleteFromDatabase(workoutData)
         sortWorkoutList(sortNumber)
     }
-
-
 }
