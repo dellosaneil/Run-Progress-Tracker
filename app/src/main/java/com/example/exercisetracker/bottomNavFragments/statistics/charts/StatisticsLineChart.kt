@@ -1,8 +1,8 @@
 package com.example.exercisetracker.bottomNavFragments.statistics.charts
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +14,7 @@ import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsLineChartBinding
 import com.example.exercisetracker.utility.UtilityFunctions.convertMilliSecondsToText
 import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -139,8 +140,22 @@ class StatisticsLineChart : Fragment(), CompoundButton.OnCheckedChangeListener, 
             data = lineData
             description.isEnabled = false
             animateY(500)
+            checkNightMode(this)
         }
     }
+
+    private fun checkNightMode(lineChart: LineChart) {
+        val configMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if(configMode == Configuration.UI_MODE_NIGHT_YES){
+            lineChart.apply{
+                legend.textColor = Color.WHITE
+                axisLeft.textColor = Color.WHITE
+                axisRight.textColor = Color.WHITE
+                xAxis.textColor = Color.WHITE
+            }
+        }
+    }
+
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         when (buttonView?.id) {
             R.id.statisticsLineChart_distance -> checkBoxLineChart(0, isChecked)

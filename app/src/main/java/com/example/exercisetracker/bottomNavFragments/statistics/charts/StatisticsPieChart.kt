@@ -1,8 +1,9 @@
 package com.example.exercisetracker.bottomNavFragments.statistics.charts
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsPieChartBinding
 import com.example.exercisetracker.utility.Constants.Companion.SAVED_STATE_BOOLEAN
 import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
@@ -92,8 +94,20 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             setUsePercentValues(isPercent)
             isRotationEnabled = false
             isDrawHoleEnabled = false
+            animateY(500)
+            checkNightMode(this)
+
         }
         binding.statisticsPieChartChart.setOnChartValueSelectedListener(this)
+    }
+
+    private fun checkNightMode(pieChart: PieChart) {
+        val test = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if(test == Configuration.UI_MODE_NIGHT_YES){
+            pieChart.apply{
+                legend.textColor = Color.WHITE
+            }
+        }
     }
 
     private fun initializeMaterialToolbar() {
@@ -104,8 +118,6 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             binding.statisticsPieChartToolBar.title = "Pie Chart\t\t(${dateFormatter(args.pieChartData?.startDate!!)} - ${dateFormatter(args.pieChartData?.endDate!!)})"
         }
     }
-
-
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
         isPercent = !isPercent
@@ -122,5 +134,4 @@ class StatisticsPieChart : Fragment(), OnChartValueSelectedListener {
             highlightValue(null)
         }
     }
-
 }

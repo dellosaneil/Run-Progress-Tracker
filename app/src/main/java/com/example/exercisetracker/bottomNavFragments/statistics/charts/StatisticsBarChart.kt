@@ -1,5 +1,7 @@
 package com.example.exercisetracker.bottomNavFragments.statistics.charts
 
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.exercisetracker.R
 import com.example.exercisetracker.databinding.FragmentStatisticsBarChartBinding
-import com.example.exercisetracker.utility.UtilityFunctions
 import com.example.exercisetracker.utility.UtilityFunctions.dateFormatter
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
@@ -85,6 +85,21 @@ class StatisticsBarChart : Fragment(), RadioGroup.OnCheckedChangeListener {
             xAxis.granularity = 1f
             description.isEnabled = false
             animateY(500)
+            checkNightMode(this, dataSet)
+        }
+    }
+
+    private fun checkNightMode(barChart: BarChart, dataSet: BarDataSet) {
+        val configMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if(configMode == Configuration.UI_MODE_NIGHT_YES){
+            barChart.apply{
+                xAxis.textColor = Color.WHITE
+                legend.textColor = Color.WHITE
+                axisLeft.textColor = Color.WHITE
+                axisRight.textColor = Color.WHITE
+            }
+            dataSet.valueTextColor = Color.WHITE
+
         }
     }
 

@@ -17,7 +17,7 @@
             android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:id="@+id/lineChart_startDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
